@@ -1,0 +1,358 @@
+[
+  {
+    "id": "olink-explore-ht",
+    "name": "Olink Explore HT",
+    "company": "Olink (Thermo Fisher)",
+    "technology": "Proximity Extension Assay (PEA), dual-antibody, NGS readout",
+    "readoutInstruments": "Illumina NovaSeq, NextSeq, or Ultima UG100",
+    "proteins": "~5,400 assays",
+    "proteinsNumeric": 5400,
+    "sampleInput": "~2 \u00b5L consumed in reaction; ~40 \u00b5L recommended to account for instrument dead volume and transfer losses",
+    "sampleTypes": "Plasma and serum fully validated; CSF and other biofluids compatible with caveats",
+    "quantification": "Relative (NPX units, log2 scale)",
+    "precision": "Median CV ~11.4% (Explore 3072) to ~26.8% (Explore HT) per Alkahest 2025 study; CV improves significantly for proteins above LOD",
+    "throughput": "Semi-automated, ~10M data points/week; 172 samples per reagent kit",
+    "costRange": "Low-to-moderate cost",
+    "costRangeNumeric": [
+      180,
+      500
+    ],
+    "keyStrengths": [
+      "High specificity via dual-antibody gating",
+      "Excellent sensitivity for low-abundance proteins",
+      "Strong cis-pQTL support (~72%)",
+      "Used in UKB-PPP (54,000+ participants)",
+      "Regeneron selected for ~200K sample study"
+    ],
+    "keyLimitations": [
+      "Higher proportion of HT assays below LOD in plasma versus the earlier Explore 3072 panel",
+      "Relative quantification only",
+      "CV increases at expanded plex",
+      "Higher cost at low volumes"
+    ],
+    "evidenceDepth": "High (multiple head-to-head studies)",
+    "platformType": "affinity",
+    "color": "#E85D26",
+    "overview": "Olink Explore HT is the leading affinity-based proteomics platform for large-scale epidemiological research, using Proximity Extension Assay (PEA) technology that requires dual-antibody binding before signal generation: dramatically reducing off-target noise. With ~5,400 assays and deployment in landmark studies including the UK Biobank Pharma Proteomics Project (UKB-PPP, 54,000+ participants) and a Regeneron ~200K-sample initiative, it is the de facto standard for population-scale plasma proteomics. Note: although only ~2 \u00b5L is consumed in the reaction, ~40 \u00b5L is typically recommended to account for instrument dead volume, transfer losses, and potential evaporation. It is best suited for researchers who prioritize specificity and validated cis-pQTL support over raw protein count.",
+    "bestFor": [
+      "Large population cohorts (>1,000 samples) in plasma or serum",
+      "Genetic association studies (GWAS/pQTL) where specificity is critical",
+      "Studies replicating findings from UKB-PPP or other Olink reference datasets",
+      "Archived biobank samples with limited volume (~40 \u00b5L recommended; ~2 \u00b5L consumed in reaction)",
+      "Consortium-scale studies where cross-lab standardization matters"
+    ],
+    "considerInstead": [
+      {
+        "platform": "SomaSeq",
+        "reason": "If maximizing protein coverage (9,500 vs 5,400) or data bridging to historical SomaScan datasets is a priority"
+      },
+      {
+        "platform": "Nomic nELISA",
+        "reason": "If absolute quantification or cost efficiency at very high sample volumes (>5,000) is the primary driver"
+      },
+      {
+        "platform": "Seer Proteograph XT",
+        "reason": "If studying non-European ancestry populations or needing unbiased discovery without pre-specified target lists"
+      }
+    ],
+    "historicalNames": null,
+    "ptmCapable": false
+  },
+  {
+    "id": "illumina-protein-prep",
+    "name": "SomaSeq",
+    "company": "Illumina acquired SomaLogic in Jan 2026",
+    "technology": "Aptamer-based (SOMAmer reagents), NGS readout",
+    "previousNames": [
+      "Illumina Protein Prep",
+      "SomaScan",
+      "SomaLogic"
+    ],
+    "proteins": "~9,500 unique human proteins",
+    "proteinsNumeric": 9500,
+    "sampleInput": "~55 \u00b5L plasma/serum",
+    "sampleTypes": "Plasma (EDTA preferred), serum",
+    "quantification": "Relative (cross-version bridging tools)",
+    "precision": "Median CV ~5.3%, best in class",
+    "throughput": "Automated NGS library prep on Illumina sequencers; ~9,500 proteins per sample in ~2.5 days",
+    "costRange": "Low-to-moderate cost",
+    "costRangeNumeric": [
+      150,
+      220
+    ],
+    "keyStrengths": [
+      "Highest proteome coverage",
+      "Best precision/reproducibility",
+      "Strong cross-version data bridging (5K\u21927K\u219211K)",
+      "CLIA-certified lab"
+    ],
+    "keyLimitations": [
+      "Lower target specificity than the dual-binding affinity platforms: single-aptamer binding with documented epitope effects and matrix sensitivity",
+      "Lowest cis-pQTL support (~43%): less suited to genetics-first study designs",
+      "Documented agreement with Olink is poor: median Spearman correlation 0.33 across 1,848 matched assays (Eldjarn et al., 2023); comparable data against other platforms has not been published",
+      "Larger sample volume requirement",
+      "Most published evidence (including pQTL and head-to-head studies) derives from the earlier array-based SomaScan readout, not the current NGS readout: performance characteristics may differ and the NGS evidence base is still emerging"
+    ],
+    "evidenceDepth": "High",
+    "note": "Historical studies reference 'SomaScan 7K,' 'SomaScan 11K,' or 'SomaLogic': these are the same underlying aptamer (SOMAmer) technology, originally an array-based readout, now adapted to next-generation sequencing and marketed by Illumina as SomaSeq (briefly sold as Illumina Protein Prep)",
+    "platformType": "affinity",
+    "color": "#1B8A4E",
+    "overview": "SomaSeq (Illumina), the NGS successor to the SomaScan microarray assay, briefly sold as Illumina Protein Prep, is the highest-coverage commercial proteomics platform, measuring ~9,500 unique human proteins from a single plasma or serum sample using modified DNA aptamers (SOMAmers). It offers best-in-class precision (median CV ~5.3%) and unmatched cross-version data bridging from the 5K \u2192 7K \u2192 11K \u2192 current platform, enabling longitudinal studies and meta-analyses across years of data. Its key limitation is specificity: single-aptamer binding carries elevated single-epitope binding-artifact risk relative to dual-binding designs, the lowest cis-pQTL support (~43%), and poor cross-platform correlation. It is well-suited for broad discovery and high-precision panel development, but should be used with caution in study designs where target confidence is critical. Following Illumina's $425M acquisition of SomaLogic in January 2026, the platform is being integrated into the Illumina NGS ecosystem.",
+    "bestFor": [
+      "Discovery studies prioritizing maximum proteome breadth (9,500 proteins)",
+      "Longitudinal studies or meta-analyses requiring cross-version data bridging",
+      "High-precision biomarker panel development where CV is critical",
+      "Studies building on existing SomaScan 5K/7K/11K datasets",
+      "CLIA-certified clinical research requiring a regulated laboratory"
+    ],
+    "considerInstead": [
+      {
+        "platform": "Olink Explore HT",
+        "reason": "If specificity and cis-pQTL support are more important than coverage: Olink's dual-antibody gating reduces off-target signal significantly"
+      },
+      {
+        "platform": "NULISA",
+        "reason": "If studying Alzheimer's biomarkers (p-tau217, A\u03b242/40): NULISA's attomolar sensitivity and FDA-cleared context is superior"
+      },
+      {
+        "platform": "Nomic nELISA",
+        "reason": "If absolute quantification is required: SomaSeq provides relative quantification only"
+      }
+    ],
+    "historicalNames": "This platform has been sold under several names. Published literature may reference it as SomaScan 1.3K, SomaScan 5K, SomaScan 7K, SomaScan 11K, or simply SomaLogic. The underlying aptamer (SOMAmer) technology is the same across all versions, with expanding panels. Following Illumina's acquisition of SomaLogic (January 2026, $425M), the platform is now marketed as SomaSeq (and was briefly sold as Illumina Protein Prep). Cross-version data bridging tools are available. Readout note: Earlier SomaScan versions used a microarray (array-based) readout; SomaSeq uses an NGS readout. The majority of published studies, including most pQTL analyses and head-to-head comparisons cited in this tool, were conducted using the array-based readout. The NGS implementation is newer, and performance differences between readout methods have been reported; independent validation of the NGS readout is still accumulating.",
+    "ptmCapable": false
+  },
+  {
+    "id": "nulisa",
+    "name": "NULISA",
+    "company": "Alamar Biosciences",
+    "technology": "Antibody-based, dual capture and release mechanism, NGS readout",
+    "proteins": "Focused panels: Inflammation (250 targets), CNS Disease (220 targets)",
+    "proteinsNumeric": 470,
+    "sampleInput": "25 \u00b5L",
+    "sampleTypes": "Plasma, serum, CSF",
+    "quantification": "Relative, with some absolute quantification for specific biomarkers (e.g., p-tau217)",
+    "sensitivity": "Attomolar level (0.1 pg/mL), highest sensitivity of any affinity platform",
+    "costRange": "Low cost",
+    "costRangeNumeric": [
+      100,
+      150
+    ],
+    "keyStrengths": [
+      "Ultra-high sensitivity for low-abundance targets",
+      "Particularly strong for AD biomarkers (p-tau217, A\u03b242/40)",
+      "APOE genotyping from protein panel",
+      "FDA-cleared p-tau217 test context"
+    ],
+    "keyLimitations": [
+      "Narrow panel coverage (470 proteins across both panels)",
+      "Limited to inflammation and CNS",
+      "Not suitable for broad discovery",
+      "Limited head-to-head data"
+    ],
+    "evidenceDepth": "Moderate",
+    "note": "NOT a broad proteome platform: focused on inflammation and CNS disease panels",
+    "platformType": "affinity",
+    "color": "#7C3AED",
+    "overview": "NULISA (Nucleic acid Linked Immuno-Sandwich Assay) by Alamar Biosciences is not a broad-proteome discovery platform; it is a precision, ultra-sensitive targeted assay purpose-built for low-abundance proteins in neurodegeneration and inflammation. Its dual capture-and-release mechanism achieves attomolar sensitivity (0.1 pg/mL), placing it roughly 1\u20132 orders of magnitude below the LOD of competing affinity platforms. NULISA is the leading choice for Alzheimer's disease biomarker studies, with p-tau217 detection cleared in an FDA context and demonstrated APOE genotyping from the same run. For researchers studying AD, neuroinflammation, or any biology involving extremely low-abundance analytes, NULISA fills a niche no other platform matches.",
+    "bestFor": [
+      "Alzheimer's disease and neurodegeneration biomarker studies (p-tau217, A\u03b242/40, NfL)",
+      "Neuroinflammation panels requiring attomolar-level sensitivity",
+      "CSF proteomics where low sample volume and high sensitivity are both needed",
+      "Studies requiring absolute quantification of specific AD biomarkers alongside a broader panel",
+      "Clinical research requiring FDA-cleared p-tau217 test context"
+    ],
+    "considerInstead": [
+      {
+        "platform": "Olink Explore HT",
+        "reason": "If broad discovery across 5,400 proteins is needed rather than targeted inflammation/CNS panels"
+      },
+      {
+        "platform": "SomaSeq",
+        "reason": "If hypothesis-free proteome-wide discovery across 9,500 proteins is the study objective"
+      },
+      {
+        "platform": "Nomic nELISA",
+        "reason": "If absolute quantification at 1,000-plex scale with high throughput and lower cost is needed"
+      }
+    ],
+    "historicalNames": null,
+    "ptmCapable": false
+  },
+  {
+    "id": "nomic-omni",
+    "name": "nELISA / Omni 1000",
+    "company": "Nomic Bio",
+    "technology": "Miniaturized bead-based sandwich ELISA, DNA-linked antibody pairs, flow cytometry readout",
+    "proteins": "1,058 proteins (Omni 1000, v2.1 marker list); also ~300-plex focused panels and custom Flex panels",
+    "proteinsNumeric": 1058,
+    "sampleInput": "50 \u00b5L (cell culture supernatants); 70 \u00b5L (plasma/serum)",
+    "sampleTypes": "Plasma, serum, cell culture supernatants; CSF and tissue validation status TBD",
+    "quantification": "ELISA-calibrated absolute quantification (pg/mL via recombinant standard curves): the only high-plex affinity platform reporting physical concentration units rather than arbitrary normalized units",
+    "sensitivity": "0.1 pg/mL; measurements spanning 8 orders of magnitude",
+    "specificity": "99.99% via pre-colocalized antibody pairs eliminating cross-reactivity",
+    "throughput": "1,000+ samples per day, highest throughput of any platform",
+    "costRange": "Ultra-low cost",
+    "costRangeNumeric": [
+      35,
+      90
+    ],
+    "keyStrengths": [
+      "ELISA-calibrated absolute quantification (pg/mL)",
+      "Radical throughput (1,000+ samples/day)",
+      "Disruptive cost efficiency changes study economics",
+      "No cross-reactivity by design",
+      "Nature Methods + Nature Nanotechnology publications"
+    ],
+    "keyLimitations": [
+      "1,000-protein coverage narrower than Olink/Illumina",
+      "Newer platform with limited published head-to-head data",
+      "Service-only model",
+      "CSF/tissue validation still emerging"
+    ],
+    "evidenceDepth": "Limited (newer platform)",
+    "platformType": "affinity",
+    "color": "#0891B2",
+    "overview": "Nomic Bio's nELISA / Omni 1000 is the most disruptive entrant in high-plex proteomics: a miniaturized bead-based sandwich ELISA platform that delivers ELISA-calibrated absolute quantification (pg/mL via recombinant standard curves) across 1,000 proteins at ultra-low cost and 1,000+ samples/day throughput. Unlike every other affinity platform reviewed here, nELISA uses pre-colocalized antibody pairs that must bind the same bead before signal generation, achieving 99.99% specificity and near-zero cross-reactivity. It is the only high-plex affinity platform reporting physical concentration units rather than arbitrary normalized units such as NPX or RFU, though concentrations are calibration-curve-derived rather than MS-traceable. Its cost structure fundamentally changes what is feasible in large studies, making population-scale quantitative proteomics economically accessible for the first time. Described in Nature Methods (2025) and Nature Nanotechnology, it is a young but well-validated platform with growing adoption.",
+    "bestFor": [
+      "Very large sample volumes (>5,000 samples) where cost efficiency is the primary constraint",
+      "Studies requiring calibrated protein concentrations (pg/mL) rather than relative normalized units",
+      "Cell culture supernatant or in vitro biology where ELISA-grade specificity is expected",
+      "Screening phases of drug development where cost per datapoint must be minimized",
+      "Biomarker validation at population scale after discovery on a broader platform"
+    ],
+    "considerInstead": [
+      {
+        "platform": "Olink Explore HT",
+        "reason": "If coverage beyond 1,000 proteins is needed, or if established cis-pQTL reference data is important"
+      },
+      {
+        "platform": "SomaSeq",
+        "reason": "If unbiased discovery across 9,500 proteins is the goal, or cross-version data bridging to historical datasets is required"
+      },
+      {
+        "platform": "NULISA",
+        "reason": "If ultra-low-abundance AD or neuroinflammation biomarkers (p-tau217, A\u03b242/40) are the primary analytes"
+      }
+    ],
+    "historicalNames": "The platform technology is called nELISA (nucleo-ELISA). The commercial product panel is called Omni 1000. Custom panels are offered as 'Flex' panels. Nomic Bio is the company name. Note: 'Nomic' is unrelated to Illumina's NovaSeq branding.",
+    "ptmCapable": false
+  },
+  {
+    "id": "seer-proteograph",
+    "name": "Proteograph XT",
+    "company": "Seer",
+    "technology": "Nanoparticle-based protein enrichment + MS-DIA (data-independent acquisition)",
+    "proteins": "10,698 protein groups (Seer PDC, April 2026); ~8,511 (Pietzner et al.)",
+    "proteinsNumeric": 10698,
+    "sampleInput": "~100\u2013200 \u00b5L typical for MS workflows",
+    "sampleTypes": "Plasma, serum; strong for tissue proteomics",
+    "quantification": "Label-free relative (MS intensity); absolute quantification possible with SIS peptides",
+    "precision": "Median CV ~26.4% (Alkahest study)",
+    "costRange": "Moderate cost",
+    "costRangeNumeric": [
+      150,
+      350
+    ],
+    "keyStrengths": [
+      "Unbiased discovery (not limited to pre-selected targets)",
+      "Competitive proteome depth",
+      "PTM and isoform detection",
+      "Can detect protein-altering variants and resolve epitope effects",
+      "Peptide-level data",
+      "Strong for non-European ancestry populations (Pietzner 2025)"
+    ],
+    "keyLimitations": [
+      "Higher CV",
+      "Requires MS expertise and infrastructure",
+      "Not a turnkey service like affinity platforms",
+      "Nanoparticle enrichment adds workflow complexity"
+    ],
+    "evidenceDepth": "Moderate-High",
+    "platformType": "ms",
+    "color": "#DC2626",
+    "overview": "Seer's Proteograph XT is a mass spectrometry-based platform that uses engineered nanoparticles to deplete abundant proteins and enrich the plasma proteome before LC-MS/MS data-independent acquisition (DIA) analysis. Because nanoparticles bind proteins based on physicochemical properties rather than antibody recognition, Proteograph is truly unbiased: it can detect proteins, isoforms, PTMs, and protein-altering variants that no pre-specified assay list would capture. Seer's full identification list (PDC, April 2026) confirms 10,698 protein groups, making it the broadest MS-DIA platform in this comparison. It has demonstrated particular strength in non-European ancestry populations (Pietzner et al., Genes & Health, 2025), where antibody-based platforms may underperform due to epitope variation. It is the platform of choice for researchers who need discovery without target selection bias.",
+    "bestFor": [
+      "Unbiased proteome discovery without pre-specified target lists",
+      "Diverse ancestry cohorts where epitope variation may affect antibody-based assays",
+      "Post-translational modification (PTM) and isoform-level biology",
+      "Studies requiring peptide-level resolution or detection of protein-altering variants",
+      "Tissue proteomics alongside plasma profiling"
+    ],
+    "considerInstead": [
+      {
+        "platform": "Olink Explore HT",
+        "reason": "If turnkey service, lower CV, and stronger cis-pQTL reference data are needed without requiring MS infrastructure"
+      },
+      {
+        "platform": "SomaSeq",
+        "reason": "If highest precision (CV ~5%) and maximum protein count in a service-lab model are prioritized"
+      },
+      {
+        "platform": "Nomic nELISA",
+        "reason": "If absolute quantification and cost efficiency at large scale are more important than unbiased discovery"
+      }
+    ],
+    "historicalNames": null,
+    "ptmCapable": true
+  },
+  {
+    "id": "biognosys-truediscovery",
+    "name": "TrueDiscovery",
+    "company": "Biognosys (recently acquired by Bruker)",
+    "technology": "High-abundance protein depletion + MS-DIA; also offers P2 nanoparticle enrichment workflow",
+    "proteins": "Up to 7,000 protein groups in plasma; 13,800 in tissue",
+    "proteinsNumeric": 7000,
+    "sampleInput": "~200 \u00b5L plasma (P2 enrichment); 50 \u00b5L (NULISA targeted panels available as add-on)",
+    "sampleTypes": "Plasma, serum, tissue, CSF, cell lysates, the broadest validated sample-type range",
+    "quantification": "Label-free relative; absolute via SIS peptides (TrueSignature panels)",
+    "precision": "Median CV ~29.8% (Alkahest study, older workflow); P2 enrichment claims median CVs below 10%",
+    "costRange": "Moderate-to-high cost",
+    "costRangeNumeric": [
+      500,
+      800
+    ],
+    "keyStrengths": [
+      "Deepest unbiased profiling especially in tissue (13,800 proteins)",
+      "PTM/isoform detection",
+      "GCP-compliant facility",
+      "Offers discovery\u2192validation pipeline (TrueDiscovery\u2192TrueSignature)",
+      "P2 enrichment improving plasma depth",
+      "NULISA partnership for combined workflows"
+    ],
+    "keyLimitations": [
+      "Highest CV in older workflows",
+      "CRO-only model",
+      "Depletion step can remove proteins of interest",
+      "Requires significant bioinformatics",
+      "Custom pricing"
+    ],
+    "evidenceDepth": "Moderate",
+    "platformType": "ms",
+    "color": "#2563EB",
+    "overview": "Biognosys TrueDiscovery is a CRO-operated, GCP-compliant mass spectrometry platform offering the deepest unbiased proteome profiling commercially available: up to 7,000 proteins in plasma and 13,800 in tissue. It combines high-abundance protein depletion with MS-DIA, and its newer P2 nanoparticle enrichment workflow (similar in concept to Seer) achieves median CVs below 10% in plasma. Biognosys was recently acquired by Bruker, and offers an integrated discovery-to-validation pipeline (TrueDiscovery \u2192 TrueSignature). It is the strongest choice for tissue proteomics, GCP biomarker studies, or programs requiring a validated CRO with regulatory-grade documentation.",
+    "bestFor": [
+      "Tissue proteomics requiring the deepest unbiased profiling (up to 13,800 proteins)",
+      "GCP-compliant biomarker studies for regulated drug development programs",
+      "Integrated discovery-to-validation workflows (TrueDiscovery \u2192 TrueSignature)",
+      "Complex sample types: CSF, cell lysates, FFPE tissue",
+      "Studies where a full-service CRO relationship is preferred over in-house capability"
+    ],
+    "considerInstead": [
+      {
+        "platform": "Seer Proteograph XT",
+        "reason": "If an instrument-based (rather than CRO-only) MS workflow is needed, or for non-European ancestry discovery cohorts"
+      },
+      {
+        "platform": "Olink Explore HT",
+        "reason": "If plasma-focused epidemiology with lower CV and stronger reference datasets is the priority"
+      },
+      {
+        "platform": "NULISA",
+        "reason": "If CSF work is focused on AD/neuroinflammation biomarkers requiring attomolar sensitivity"
+      }
+    ],
+    "historicalNames": "Biognosys was recently acquired by Bruker (2024\u20132025). The TrueDiscovery brand is retained. The company also offers TrueSignature (targeted absolute quantification panels using SIS peptides) and has a partnership with Alamar Biosciences for combined NULISA + TrueDiscovery workflows.",
+    "ptmCapable": true
+  }
+]

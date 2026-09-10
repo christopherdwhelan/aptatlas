@@ -1,0 +1,150 @@
+{
+  "dimensions": [
+    {
+      "id": "proteome_coverage",
+      "label": "Proteome Coverage",
+      "description": "Breadth of proteins measured",
+      "shortLabel": "Coverage"
+    },
+    {
+      "id": "precision",
+      "label": "Precision",
+      "description": "Reproducibility / CV",
+      "shortLabel": "Precision"
+    },
+    {
+      "id": "specificity",
+      "label": "Specificity",
+      "description": "Target confidence, cis-pQTL support, epitope risk",
+      "shortLabel": "Specificity"
+    },
+    {
+      "id": "sensitivity",
+      "label": "Sensitivity",
+      "description": "Ability to detect low-abundance proteins",
+      "shortLabel": "Sensitivity"
+    },
+    {
+      "id": "cost_efficiency",
+      "label": "Cost per sample",
+      "description": "Lower cost per sample = higher score",
+      "shortLabel": "Cost"
+    },
+    {
+      "id": "throughput",
+      "label": "Throughput",
+      "description": "Samples per day/week",
+      "shortLabel": "Throughput"
+    },
+    {
+      "id": "quantification_type",
+      "label": "Quantification Type",
+      "description": "Type of quantification: 4 = physical concentration (pg/mL); 3 = proteome-wide comparable label-free MS; 2 = within-assay relative units",
+      "shortLabel": "Quant Type"
+    },
+    {
+      "id": "sample_flexibility",
+      "label": "Multi-Matrix Validation",
+      "description": "Breadth of sample matrices with published validation (plasma, serum, CSF, tissue, cell lysate)",
+      "shortLabel": "Multi-Matrix"
+    },
+    {
+      "id": "evidence_depth",
+      "label": "Evidence Depth",
+      "description": "Published head-to-head data available",
+      "shortLabel": "Evidence"
+    },
+    {
+      "id": "pqtl_accuracy",
+      "label": "pQTL Accuracy",
+      "description": "Reliability for pQTL studies; lower epitope-binding artifact risk",
+      "shortLabel": "pQTL"
+    }
+  ],
+  "scores": {
+    "olink-explore-ht": {
+      "proteome_coverage": 4,
+      "precision": 2,
+      "specificity": 4,
+      "sensitivity": 4,
+      "cost_efficiency": 3,
+      "throughput": 5,
+      "quantification_type": 2,
+      "sample_flexibility": 3,
+      "evidence_depth": 5,
+      "pqtl_accuracy": 3
+    },
+    "illumina-protein-prep": {
+      "proteome_coverage": 5,
+      "precision": 5,
+      "specificity": 2,
+      "sensitivity": 4,
+      "cost_efficiency": 3,
+      "throughput": 4,
+      "quantification_type": 2,
+      "sample_flexibility": 3,
+      "evidence_depth": 5,
+      "pqtl_accuracy": 2
+    },
+    "nulisa": {
+      "proteome_coverage": 1,
+      "precision": 5,
+      "specificity": 4,
+      "sensitivity": 5,
+      "cost_efficiency": 4,
+      "throughput": 3,
+      "quantification_type": 2,
+      "sample_flexibility": 3,
+      "evidence_depth": 3,
+      "pqtl_accuracy": 3
+    },
+    "nomic-omni": {
+      "proteome_coverage": 2,
+      "precision": 4,
+      "specificity": 4,
+      "sensitivity": 3,
+      "cost_efficiency": 5,
+      "throughput": 5,
+      "quantification_type": 4,
+      "sample_flexibility": 2,
+      "evidence_depth": 1,
+      "pqtl_accuracy": 3
+    },
+    "seer-proteograph": {
+      "proteome_coverage": 5,
+      "precision": 3,
+      "specificity": 4,
+      "sensitivity": 3,
+      "cost_efficiency": 3,
+      "throughput": 3,
+      "quantification_type": 3,
+      "sample_flexibility": 3,
+      "evidence_depth": 4,
+      "pqtl_accuracy": 5
+    },
+    "biognosys-truediscovery": {
+      "proteome_coverage": 4,
+      "precision": 3,
+      "specificity": 4,
+      "sensitivity": 3,
+      "cost_efficiency": 3,
+      "throughput": 3,
+      "quantification_type": 3,
+      "sample_flexibility": 5,
+      "evidence_depth": 3,
+      "pqtl_accuracy": 3
+    }
+  },
+  "defaultWeights": {
+    "proteome_coverage": 1,
+    "precision": 1,
+    "specificity": 1,
+    "sensitivity": 1,
+    "cost_efficiency": 1,
+    "throughput": 1,
+    "quantification_type": 1,
+    "sample_flexibility": 1,
+    "evidence_depth": 1,
+    "pqtl_accuracy": 1
+  }
+}

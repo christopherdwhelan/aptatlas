@@ -1,0 +1,66 @@
+respondent_id,primary_goal,sample_type,study_size,absolute_quant,ptm_detection,cns_focus,w_cost,w_coverage,w_precision,w_specificity,w_sensitivity,w_throughput,w_pqtl
+r001,Population-scale,Plasma,"1,000-10,000",nice,no,no,5,4,4,4,2,4,4
+r002,Biomarker discovery,Plasma,"1,000-10,000",nice,no,no,2,2,4,4,2,4,1
+r003,Biomarker discovery,Plasma,"1,000-10,000",nice,no,no,3,3,3,3,3,3,1
+r004,Biomarker discovery,Plasma,"1,000-10,000",nice,no,no,4,4,4,4,4,4,1
+r005,Biomarker discovery,Plasma,">10,000",nice,no,no,3,3,3,3,3,3,1
+r006,Drug target ID,Plasma,"100-1,000",no,no,no,5,5,3,3,3,3,5
+r007,Biomarker validation,Plasma,"1,000-10,000",yes,no,no,5,1,5,4,3,3,1
+r008,Population-scale,Plasma,"1,000-10,000",yes,no,no,4,4,5,4,2,4,3
+r009,Population-scale,Plasma,">10,000",nice,no,no,2,4,4,5,1,4,5
+r010,Disease characterization,Plasma,"1,000-10,000",no,no,yes,4,4,2,3,2,1,3
+r011,Biomarker discovery,Serum,"100-1,000",nice,no,no,5,4,5,5,4,2,5
+r012,Population-scale,Serum,">10,000",nice,no,no,3,5,5,3,3,4,4
+r013,Drug target ID,Plasma,">10,000",nice,no,no,3,3,3,3,3,3,5
+r014,Biomarker discovery,Plasma,">10,000",nice,no,no,5,5,2,4,4,2,5
+r015,Population-scale,Plasma,">10,000",nice,systematic,no,3,3,3,3,3,3,1
+r016,Biomarker discovery,Plasma,"100-1,000",nice,no,no,3,3,3,3,3,3,1
+r017,Biomarker discovery,Plasma,"1,000-10,000",no,incidental,no,3,5,3,3,3,3,3
+r018,Biomarker discovery,Plasma,"1,000-10,000",no,no,no,3,5,3,3,3,3,3
+r019,Biomarker discovery,Multiple matrices,"1,000-10,000",no,no,yes,3,3,3,3,3,3,3
+r020,Population-scale,Plasma,">10,000",nice,no,no,3,4,4,4,3,4,4
+r021,Drug target ID,Plasma,">10,000",nice,no,no,4,4,4,4,4,4,4
+r022,Biomarker discovery,Multiple matrices,"1,000-10,000",no,no,no,3,5,3,3,3,3,3
+r023,Biomarker discovery,CSF,"1,000-10,000",no,no,no,3,5,3,3,3,3,3
+r024,Biomarker discovery,Plasma,"100-1,000",nice,no,no,3,3,3,3,3,3,3
+r025,Biomarker discovery,CSF,"100-1,000",nice,no,yes,5,4,4,5,4,4,2
+r026,Biomarker discovery,CSF,<100,nice,not_selected,yes,2,5,5,4,3,3,3
+r027,Biomarker validation,Cell culture,<100,nice,no,no,4,2,3,3,5,3,3
+r028,Biomarker discovery,Plasma,"1,000-10,000",nice,no,no,4,2,4,4,4,5,2
+r029,Population-scale,Plasma,">10,000",no,no,no,5,4,4,4,3,5,3
+r030,Population-scale,Plasma,">10,000",nice,no,yes,3,3,3,3,3,3,3
+r031,Population-scale,Plasma,">10,000",nice,no,no,5,5,3,3,3,5,4
+r032,Drug target ID,Tissue,"1,000-10,000",yes,systematic,no,3,3,3,3,3,3,2
+r033,Biomarker discovery,Multiple matrices,"1,000-10,000",no,no,no,3,3,5,3,4,3,3
+r034,Biomarker discovery,Multiple matrices,"1,000-10,000",no,no,no,3,3,5,4,5,3,3
+r035,Disease characterization,Multiple matrices,"1,000-10,000",no,no,no,3,4,3,4,5,3,5
+r036,Biomarker discovery,Multiple matrices,"1,000-10,000",no,no,no,3,4,5,3,5,3,3
+r037,Biomarker discovery,Multiple matrices,"1,000-10,000",no,no,no,3,4,5,4,5,3,3
+r038,Disease characterization,Multiple matrices,"1,000-10,000",no,no,no,3,4,3,4,5,3,5
+r039,Biomarker discovery,Multiple matrices,"1,000-10,000",no,no,no,3,3,5,3,5,3,3
+r040,Biomarker discovery,Multiple matrices,"1,000-10,000",no,no,no,3,4,5,4,5,3,3
+r041,Biomarker discovery,Multiple matrices,"1,000-10,000",no,no,no,3,5,5,4,5,3,3
+r042,Biomarker discovery,Multiple matrices,"1,000-10,000",no,no,no,3,4,5,4,5,3,3
+r043,Biomarker discovery,Plasma,"100-1,000",nice,incidental,no,4,3,4,5,4,2,1
+r044,Biomarker discovery,Plasma,"1,000-10,000",nice,no,no,3,3,3,3,3,3,3
+r045,Biomarker discovery,Plasma,"100-1,000",nice,no,no,3,5,3,3,3,3,3
+r046,Biomarker discovery,Plasma,"1,000-10,000",nice,no,no,4,3,3,4,3,3,3
+r047,Biomarker discovery,Plasma,">10,000",nice,no,no,3,4,3,3,3,4,3
+r048,Biomarker discovery,Multiple matrices,"1,000-10,000",no,no,no,3,3,5,3,5,3,3
+r049,Biomarker discovery,Multiple matrices,"1,000-10,000",no,no,no,3,3,5,4,5,3,3
+r050,Biomarker discovery,Multiple matrices,"1,000-10,000",no,no,no,3,3,5,5,5,3,3
+r051,Drug target ID,Plasma,<100,no,no,no,3,3,3,3,3,3,3
+r052,Biomarker validation,Serum,"100-1,000",yes,no,no,3,1,4,5,4,2,2
+r053,Disease characterization,Plasma,"100-1,000",nice,no,no,3,3,3,3,3,3,3
+r054,Disease characterization,Plasma,"100-1,000",no,no,no,3,3,3,3,3,3,3
+r055,Disease characterization,Plasma,"100-1,000",nice,no,no,3,3,3,3,3,3,3
+r056,Disease characterization,Plasma,"1,000-10,000",nice,no,no,4,4,3,4,4,4,1
+r057,Biomarker discovery,CSF,"1,000-10,000",no,no,no,5,5,1,4,3,3,3
+r058,Biomarker validation,Tissue,<100,nice,no,no,4,4,4,2,5,1,1
+r059,Disease characterization,Serum,<100,yes,no,no,1,5,5,5,5,1,1
+r060,Disease characterization,Tissue,<100,yes,no,no,1,4,4,4,5,2,2
+r061,Disease characterization,Tissue,<100,yes,no,no,1,5,5,4,5,1,1
+r062,Biomarker discovery,Cell culture,">10,000",nice,no,no,5,2,3,3,3,4,3
+r063,Biomarker discovery,Plasma,"1,000-10,000",no,no,no,3,3,3,3,3,3,3
+r064,Biomarker discovery,Plasma,"100-1,000",nice,not_selected,no,4,4,4,3,3,3,3
+r065,Disease characterization,Plasma,"1,000-10,000",nice,no,no,4,3,3,3,3,3,3

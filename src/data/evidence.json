@@ -1,0 +1,232 @@
+[
+  {
+    "id": "eldjarn-2023",
+    "shortCitation": "Eldjarn et al., 2023",
+    "fullCitation": "Eldjarn GH, et al. Large-scale plasma proteomics comparisons through genetics and disease associations. Nature. 2023.",
+    "year": 2023,
+    "journal": "Nature",
+    "platformsCompared": [
+      "olink-explore-ht",
+      "illumina-protein-prep"
+    ],
+    "sampleSize": "54,219 UKB-PPP (Olink) vs ~36,000 Icelanders (SomaScan); 1,514 measured on both",
+    "keyFindings": [
+      "Compared Olink Explore 3072 in UK Biobank against SomaScan v4 in Iceland, the largest head-to-head proteogenomic comparison to date",
+      "Olink demonstrated stronger cis-pQTL enrichment (~72%) compared to SomaScan (~43%)",
+      "Poor cross-platform correlation for overlapping protein targets",
+      "63% of SomaScan pQTL associations involved variants associated with >10 proteins vs 52% for Olink; 28% of SomaScan proteins with any pQTL had only such non-specific associations vs 8% on Olink",
+      "Platform-specific disease associations highlight complementary utility"
+    ],
+    "url": "https://doi.org/10.1038/s41586-023-06563-x",
+    "landmark": true
+  },
+  {
+    "id": "katz-2022",
+    "shortCitation": "Katz et al., 2022",
+    "fullCitation": "Katz DH, et al. Whole genome sequence analysis of protein measurement in the Jackson Heart Study and HERITAGE family study. Science Advances. 2022.",
+    "year": 2022,
+    "journal": "Science Advances",
+    "platformsCompared": [
+      "olink-explore-ht",
+      "illumina-protein-prep"
+    ],
+    "sampleSize": "~5,000 (JHS/HERITAGE)",
+    "keyFindings": [
+      "Head-to-head comparison of Olink vs SomaScan in two community cohorts",
+      "Modest cross-platform correlation for shared targets",
+      "Both platforms identify unique disease-relevant signals",
+      "Genetic instrument concordance varies substantially by protein"
+    ],
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9390994/",
+    "landmark": false
+  },
+  {
+    "id": "kirsher-alkahest-2025",
+    "shortCitation": "Kirsher/Ahadi et al., 2025",
+    "fullCitation": "Kirsher D, Ahadi S, et al. Benchmarking eight commercial high-plex proteomics assays on a common set of plasma samples. Communications Chemistry. 2025.",
+    "year": 2025,
+    "journal": "Communications Chemistry",
+    "platformsCompared": [
+      "olink-explore-ht",
+      "illumina-protein-prep",
+      "nulisa",
+      "seer-proteograph",
+      "biognosys-truediscovery"
+    ],
+    "sampleSize": "Common reference plasma set",
+    "keyFindings": [
+      "Most comprehensive head-to-head comparison across 8 commercial platforms",
+      "SomaScan achieved best precision (median CV ~5.3%)",
+      "Olink Explore HT median CV ~26.8%; Seer ~26.4%; Biognosys ~29.8%",
+      "Cross-platform correlation remains poor for most protein targets",
+      "Platform choice should be driven by study-specific priorities",
+      "Supplementary Data 8 (MS-HAP Depletion arm) provides the Atlas's Biognosys TrueDiscovery protein list, 3,575 proteins by primary UniProt accession, a matched-cohort depletion-workflow list used from v2.8 in place of the earlier PQ500 spectral-library list"
+    ],
+    "url": "https://www.nature.com/articles/s42004-025-01665-1",
+    "landmark": true
+  },
+  {
+    "id": "rooney-2023",
+    "shortCitation": "Rooney et al., 2023",
+    "fullCitation": "Rooney MR, et al. Comparison of proteomic measurements across platforms in the Atherosclerosis Risk in Communities (ARIC) study. Clinical Chemistry. 2023.",
+    "year": 2023,
+    "journal": "Clinical Chemistry",
+    "platformsCompared": [
+      "olink-explore-ht",
+      "illumina-protein-prep"
+    ],
+    "sampleSize": "~12,000 (ARIC cohort)",
+    "keyFindings": [
+      "Large-scale epidemiological comparison in ARIC",
+      "SomaScan v4 vs Olink Proseek head-to-head on same samples",
+      "Disease prediction performance varies by outcome and platform",
+      "Complementary rather than redundant information from each platform"
+    ],
+    "url": "https://pubmed.ncbi.nlm.nih.gov/36508319/",
+    "landmark": false
+  },
+  {
+    "id": "rooney-2024",
+    "shortCitation": "Rooney et al., 2024",
+    "fullCitation": "Rooney MR, et al. Comparison of SomaScan 11K and Olink Explore HT in the ARIC study. medRxiv/Clinical Chemistry. 2024.",
+    "year": 2024,
+    "journal": "medRxiv / Clinical Chemistry",
+    "platformsCompared": [
+      "olink-explore-ht",
+      "illumina-protein-prep"
+    ],
+    "sampleSize": "~12,000 (ARIC cohort, updated)",
+    "keyFindings": [
+      "Updated comparison with SomaScan 11K and Olink Explore HT",
+      "Expanded plex worsens cross-platform agreement",
+      "SomaScan 11K shows more off-target aptamer binding at higher plex",
+      "Both platforms improve disease prediction over clinical models alone"
+    ],
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11261933/",
+    "landmark": false
+  },
+  {
+    "id": "thrush-2022",
+    "shortCitation": "Thrush/Haslam et al., 2022",
+    "fullCitation": "Thrush KA, Haslam DE, et al. Stability and reproducibility comparison of Olink and SomaScan in the Nurses' Health Study. Proteomics. 2022.",
+    "year": 2022,
+    "journal": "Proteomics",
+    "platformsCompared": [
+      "olink-explore-ht",
+      "illumina-protein-prep"
+    ],
+    "sampleSize": "NHS cohort subset",
+    "keyFindings": [
+      "Focused comparison of analytical stability and reproducibility",
+      "Both platforms show acceptable technical reproducibility",
+      "Olink shows better stability across sample handling conditions",
+      "SomaScan more sensitive to pre-analytical variation"
+    ],
+    "url": "https://pubmed.ncbi.nlm.nih.gov/35598103/",
+    "landmark": false
+  },
+  {
+    "id": "pietzner-2025",
+    "shortCitation": "Pietzner et al., 2025",
+    "fullCitation": "Pietzner M, et al. Three-platform proteomics in the Genes & Health cohort. medRxiv. 2025.",
+    "year": 2025,
+    "journal": "medRxiv",
+    "platformsCompared": [
+      "seer-proteograph",
+      "illumina-protein-prep",
+      "olink-explore-ht"
+    ],
+    "sampleSize": "Genes & Health cohort (British Bangladeshi/Pakistani)",
+    "keyFindings": [
+      "First large-scale 3-platform comparison including Seer Proteograph",
+      "Seer detected up to 8,067 protein groups via MS-DIA",
+      "MS-based approach particularly strong for non-European ancestry populations",
+      "Seer uniquely detects protein-altering variants and resolves epitope effects",
+      "Complementary platform insights for diverse population proteomics"
+    ],
+    "url": "https://www.medrxiv.org/content/10.1101/2025.08.12.25333522v1",
+    "landmark": true
+  },
+  {
+    "id": "nulisa-2023",
+    "shortCitation": "NULISA foundational paper, 2023",
+    "fullCitation": "Alamar Biosciences. NULISA: a proteomic liquid biopsy platform with attomolar sensitivity and absolute quantification. Nature Communications. 2023.",
+    "year": 2023,
+    "journal": "Nature Communications",
+    "platformsCompared": [
+      "nulisa"
+    ],
+    "sampleSize": "Validation cohorts",
+    "keyFindings": [
+      "Demonstrated attomolar-level sensitivity (0.1 pg/mL)",
+      "Dual-capture and release mechanism reduces background noise",
+      "Strong performance for Alzheimer's disease biomarkers (p-tau217, Aβ42/40)",
+      "APOE genotyping achievable from same protein panel"
+    ],
+    "url": "https://doi.org/10.1038/s41467-023-42834-x",
+    "landmark": false
+  },
+  {
+    "id": "nelisa-2025",
+    "shortCitation": "nELISA foundational paper, 2025",
+    "fullCitation": "Nomic Bio. nELISA: a miniaturized, bead-based sandwich immunoassay for high-plex absolute protein quantification. Nature Methods. 2025.",
+    "year": 2025,
+    "journal": "Nature Methods",
+    "platformsCompared": [
+      "nomic-omni"
+    ],
+    "sampleSize": "Technical validation + cohorts",
+    "keyFindings": [
+      "First demonstration of absolute quantification at 1,000-plex",
+      "Pre-colocalized antibody pairs achieve 99.99% specificity",
+      "Throughput exceeds 1,000 samples/day",
+      "Cost structure enables population-scale studies at ~$50/sample",
+      "Measurements span 8 orders of magnitude dynamic range"
+    ],
+    "url": "https://www.nature.com/articles/s41592-025-02861-6",
+    "landmark": false
+  },
+  {
+    "id": "sissala-2025",
+    "shortCitation": "Sissala et al., 2025",
+    "fullCitation": "Sissala N, Babačić H, Leo IR, et al. Comparative evaluation of Olink Explore 3072 and mass spectrometry with peptide fractionation for plasma proteomics. Communications Chemistry. 2025;8:327.",
+    "year": 2025,
+    "journal": "Communications Chemistry",
+    "platformsCompared": [
+      "olink-explore-ht",
+      "seer-proteograph"
+    ],
+    "sampleSize": "88 plasma samples (lung cancer cohort, KUH Stockholm)",
+    "keyFindings": [
+      "Largest MS–Olink head-to-head to date by overlapping proteins (n=1,129 shared)",
+      "Median cross-platform Spearman correlation ρ=0.59 (IQR 0.33–0.75); rises to ρ=0.68 on high-quality subset",
+      "Platforms exhibit complementary coverage: Olink stronger at low-abundance targets; MS stronger at mid-to-high abundance",
+      "Tier 1 pQTL proteins (Eldjarn confidence tiers) showed higher MS–Olink agreement (ρ=0.71 vs ρ=0.50 for tier 3)",
+      "MS–Olink correlations were consistently higher than Olink–SomaScan correlations for matched proteins",
+      "Note: MS method is HiRIEF LC-MS/MS (DDA, TMT-labelled), not Seer Proteograph XT; Olink panel is Explore 3072, not HT"
+    ],
+    "url": "https://doi.org/10.1038/s42004-025-01753-2",
+    "landmark": false
+  },
+  {
+    "id": "precise-sg100k-2025",
+    "shortCitation": "PRECISE-SG100K preprint, 2025",
+    "fullCitation": "PRECISE-SG100K Consortium. Multi-platform proteomics in 100,000 Southeast Asian participants. Preprint. 2025.",
+    "year": 2025,
+    "journal": "Preprint",
+    "platformsCompared": [
+      "olink-explore-ht",
+      "illumina-protein-prep",
+      "seer-proteograph"
+    ],
+    "sampleSize": "100,000 (Southeast Asian cohort)",
+    "keyFindings": [
+      "Largest multi-ancestry proteomics study to date",
+      "Three-platform comparison in Southeast Asian populations",
+      "Population-specific protein associations identified",
+      "Cross-platform concordance varies by ancestry and protein class"
+    ],
+    "url": "https://www.biorxiv.org/content/10.1101/2025.10.24.682486v1.full.pdf",
+    "landmark": false
+  }
+]

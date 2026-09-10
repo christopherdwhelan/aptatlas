@@ -1,0 +1,2808 @@
+{
+  "meta": {
+    "title": "All Platforms, protein measurement catalog",
+    "scope": "Protein-measurement platforms only. Excludes EV/vesicle-capture chemistries, spatial/tissue imaging, non-proteomic comparators.",
+    "n_total": 46,
+    "n_ranked_services": 17,
+    "n_emerging": 8,
+    "n_deployable": 39,
+    "evaluation_levels": {
+      "1_deep_score": "Ten-axis Platform Comparison score (coverage, precision, specificity, sensitivity, cost, throughput, quant-type, matrix, evidence, pQTL). Reserved for platforms characterisable on ALL ten axes, the integrated tier.",
+      "2_integration_readiness": "Lighter three-input readiness score (maturity + validation + tier) for platforms that are deployable AND have an independent validation basis. These are ranked here.",
+      "3_emerging_not_scored": "Pre-commercial or platforms with no independent validation basis. Catalogued for awareness, but deliberately NOT scored or rank-ordered, assigning a number would imply a discrimination the evidence does not support."
+    },
+    "ranking_axis": "apt_readiness_rank_v1 = round(0.5*maturity + 0.3*validation + 0.2*(4-tier_number), 0.25); readiness_precise gives the unrounded value used as tiebreak. Applied to scoreable service_assay rows only. Readiness measures integration-readiness, NOT platform quality, a deeply-characterised open-MS service (Seer, Biognosys) ranks lower here because it lacks a fixed content list, yet is Integrated via the ten-axis comparison.",
+    "tiers": {
+      "T1": "Fixed published per-protein content list, directly comparable",
+      "T2": "Defined but narrow/custom panel, comparable per configuration",
+      "T3": "No fixed analyte list (open MS / de novo), reference, not panel-comparable"
+    },
+    "availability_note": "availability_status verified via targeted 2026 web search for flagship/at-risk products (Olink Explore 3072 retired; SomaScan 7K superseded-but-orderable).",
+    "excluded_adjacent": "Autoantibody-serology arrays (Sengenics i-Ome), single-cell ADT panels (Proteintech MultiPro), and fixed clinical LDTs (PromarkerD) were considered and excluded as out-of-scope adjacent modalities.",
+    "independence_gate": "A non-integrated platform is scored only if its MEASUREMENT CHEMISTRY has independent (non-vendor) peer-reviewed validation. Vendor posters, press, and spec sheets do not count. Platforms failing the gate (e.g. ProteinXI, novel MSD ImmunoLock NGS chemistry, vendor AACR poster only) are catalogued as Emerging with no score/rank. Integrated platforms are exempt (already established via the ten-axis comparison). The validation_basis field records each scored row's evidence. The gate was applied catalog-wide as a DISCLOSURE standard, not only an exclusion rule: the six APT-assessed platforms are exempt from exclusion because they clear inclusion on structural grounds (commercially deployable, T1 content-list-anchored, characterisable on all ten axes) and carry full ten-axis scores, but where an integrated platform's headline figure is vendor-stated (notably Nomic Omni 1000's ~1,000-plex coverage, independently validated only at ~191-plex) this is disclosed and is already reflected in a low evidence_depth score and is not silently exempted.",
+    "verification": "Ranked rows independently re-derived blind (verifiers saw only name+vendor) and diffed against the catalog. Per-cell grade in verification_matrix.csv: 10 green (peer-reviewed, high-confidence), 15 amber (chemistry independently validated but a product-specific figure vendor-stated), 0 red (no fabricated/unsourced citations). Corrections applied: 4 maturity downgrades (shipping≠established), Nautilus T3→T2 (shipping product is defined Tau panel), Portal maturity→0 + citation fixed to Sauciuc Nat Biotechnol 2023.",
+    "score_status_note": "score_status: 'APT-assessed' = the integrated set scored on all ten axes; 'preliminary' = readiness-only score for platforms not yet in the deep comparison; '' = emerging/enabling (no score).",
+    "n_targeted": 8,
+    "overview_note": "Plain-English 'About' overviews are generated from the catalog's own verified fields (chemistry, plex, matrix, quantitation, validation) plus textbook-level explanation of each assay class. No platform-specific number, date, or citation appears that is not in the verified record.",
+    "n_preliminary": 9,
+    "n_apt_assessed": 8,
+    "n_enabling": 11,
+    "n_retired": 2
+  },
+  "platforms": [
+    {
+      "rank": 3,
+      "platform": "Olink Explore HT",
+      "vendor": "Olink (Thermo Fisher Scientific)",
+      "integration_tier": "T1",
+      "integration_status": "Integrated",
+      "apt_integrated": true,
+      "maturity_score": 3,
+      "validation_score": 3.0,
+      "apt_readiness_rank_v1": null,
+      "availability_status": "generally_available",
+      "currently_deployable": true,
+      "replaced_by": null,
+      "source": "prior_census",
+      "key_citation": null,
+      "availability_source": "https://olink.com/products/olink-explore-ht",
+      "notes": null,
+      "entity_type": "service_assay",
+      "runs_on": null,
+      "ranked": true,
+      "tier_num": 1.0,
+      "scoreable": true,
+      "readiness_precise": 3.0,
+      "validation_basis": "independent peer-reviewed evidence",
+      "score_status": "APT-assessed",
+      "detail": {
+        "chemistry": "Proximity Extension Assay (PEA), dual-recognition DNA-coupled antibodies; NGS readout on Illumina NovaSeq or Ultima UG100 (semi-automated).",
+        "plex_or_depth": "5,400+ human proteins in a single panel.",
+        "matrix": "Plasma, serum, CSF; low sample input (~2-4 uL; Olink lists 4 uL for the Explore family, service labs cite ~2 uL for HT)",
+        "quantitation_type": "Relative (NPX); ~1 fg/mL detection floor, CV <5% for well-detected assays.",
+        "key_citation_short": "olink.com/products/olink-explore-ht; cross-platform precision vs SomaScan 11K, medRxiv 2024 DOI 10.1101/2024.07.11.24310161.",
+        "commercial_status_note": "Established/shipping; up to 344 samples/run, ~2,000 samples/week at service providers.",
+        "notes": "SPEC UPDATE to existing census entry (confirms 5,400+ proteins, 2 uL, NovaSeq readout). Median cross-platform correlation vs SomaScan 11K only ~0.14 over 4,443 overlapping assays, orthogonality caveat worth flagging for platform pairing.",
+        "cost_tier": "moderate",
+        "overview": {
+          "about": "Olink Explore HT is a proteomics service assay that measures over 5,400 human proteins simultaneously from a few microliters of plasma, serum, or CSF. It uses Proximity Extension Assay technology: pairs of antibodies coupled to DNA oligonucleotides bind a target protein, whose DNA oligonucleotides then hybridize and are extended by a DNA polymerase to extension into a reporter sequence. These reporters are sequenced on Illumina or Ultima platforms, generating protein abundance measurements. The platform delivers relative quantitation across thousands of proteins in a single run, enabling broad unbiased surveys of the plasma proteome.",
+          "best_for": "Large-scale exploratory studies seeking broad plasma protein signatures across many samples.",
+          "strengths": [
+            "Multiplexes 5,400+ proteins in one assay, reducing sample volume burden.",
+            "Achieves sub-femtomolar sensitivity with CVs below 5% for well-detected proteins.",
+            "Processes up to 344 samples per run at established service providers."
+          ],
+          "limitations": [
+            "Relative quantitation only; cannot anchor to absolute protein copy numbers.",
+            "Low median cross-platform correlation (0.14) with other large-plex panels suggests platform-specific bias.",
+            "Requires NGS infrastructure and bioinformatic processing, extending turnaround time."
+          ]
+        },
+        "publications": [
+          {
+            "label": "cross-platform precision vs SomaScan 11K, medRxiv 2024",
+            "doi": "10.1101/2024.07.11.24310161"
+          },
+          {
+            "label": "UKB-PPP: plasma proteomic associations with genetics and health in UK Biobank (Sun et al.), Nature 2023",
+            "doi": "10.1038/s41586-023-06592-6"
+          }
+        ],
+        "sample_volume": "~2 uL consumed in reaction; ~40 uL recommended (instrument dead volume + transfer losses)"
+      },
+      "verification_grade": "amber",
+      "verification_source_tier": "vendor_marketing",
+      "sub100_confirmed": false,
+      "readiness_note": "integrated"
+    },
+    {
+      "rank": 4,
+      "platform": "SomaScan 11K (v5.0) / Illumina SomaScan Discovery",
+      "vendor": "Illumina",
+      "integration_tier": "T1",
+      "integration_status": "Integrated",
+      "apt_integrated": true,
+      "maturity_score": 3,
+      "validation_score": 3.0,
+      "apt_readiness_rank_v1": null,
+      "availability_status": "generally_available",
+      "currently_deployable": true,
+      "replaced_by": null,
+      "source": "prior_census",
+      "key_citation": null,
+      "availability_source": "https://somalogic.com/somascan-11k-assay/ ; https://www.illumina.com/products/by-brand/somamer-proteomics.html",
+      "notes": null,
+      "entity_type": "service_assay",
+      "runs_on": null,
+      "ranked": true,
+      "tier_num": 1.0,
+      "scoreable": true,
+      "readiness_precise": 3.0,
+      "validation_basis": "independent peer-reviewed evidence",
+      "score_status": "APT-assessed",
+      "detail": {
+        "chemistry": "Modified DNA aptamer (SOMAmer) capture, hybridization microarray readout",
+        "plex_or_depth": "~11,000 SOMAmer measurements (~9,900 unique proteins)",
+        "matrix": "plasma, serum, CSF, aqueous humor, tissue homogenate, cell lysate (vendor-extended 2024)",
+        "sample_volume": "~55 uL plasma/serum",
+        "throughput": "hundreds/week; CLIA/CAP service lab",
+        "cost_tier": "high (~$500-900/sample tier)",
+        "quantitation_type": "relative (RFU); 10-log dynamic range claim (vendor)",
+        "proteoform_ptm": "none; aptamer binds one epitope/conformation, protein-altering variants confound",
+        "csf_performance": "Vendor claims 11K in CSF. Independent: 2,428 CSF measures on SomaScan 7k met a 12-category reproducibility metric in a memory-clinic cohort, >600 reproducing on Olink (Puerta 2024)",
+        "analytical_validation": "Independent: median CV ~5%, median split-sample r=0.85 across 10,778 assays (Rooney 2025). Vendor median CV ~5%",
+        "key_citation_doi": "10.1093/clinchem/hvaf030",
+        "key_citation_short": "Rooney 2025 Clin Chem",
+        "availability_note": "Current array-based readout, rebranded Illumina SomaScan Discovery after Illumina's 2026 acquisition of SomaLogic. Run at SomaLogic's CLIA lab and authorized service providers.",
+        "overview": {
+          "about": "SomaScan 11K is a fixed-panel proteomics platform that measures approximately 9,900 unique proteins in plasma, serum, CSF, and other biofluids using modified DNA aptamers (SOMAmer reagents). Each aptamer is a short DNA strand that binds to a specific protein target; the platform hybridizes these aptamers to a microarray and quantifies binding via fluorescent readout. The 11K panel offers broad protein coverage in a single assay with high throughput in a clinical laboratory setting, trading the flexibility of mass spectrometry for standardized, reproducible measurements across thousands of proteins simultaneously.",
+          "best_for": "Large cohort studies requiring consistent, reproducible measurement of ~9,900 proteins across hundreds of samples.",
+          "strengths": [
+            "Simultaneously quantifies ~9,900 proteins from a single 55 microliter sample",
+            "Median CV ~5% (vendor tech note) with high reproducibility (split-sample r=0.85)",
+            "Available as CLIA/CAP certified service with hundreds-per-week throughput"
+          ],
+          "limitations": [
+            "Relative quantitation only (RFU); no absolute protein concentration",
+            "Binds one epitope per protein; cannot distinguish proteoforms or PTM variants",
+            "High cost per sample; fixed panel limits discovery of unmeasured proteins"
+          ]
+        },
+        "assessment_scope_note": "APT assessed the SomaScan/SomaSeq SOMAmer content as a single entity. The ten-axis score derives mainly from SomaScan-generated evidence and is extended to SomaSeq on the basis of shared SOMAmer reagent content; readout-specific performance (array vs NGS) was not independently scored.",
+        "publications": [
+          {
+            "label": "Rooney 2025 Clin Chem",
+            "doi": "10.1093/clinchem/hvaf030"
+          }
+        ]
+      },
+      "verification_grade": "green",
+      "verification_source_tier": "peer_reviewed",
+      "sub100_confirmed": false,
+      "readiness_note": "integrated",
+      "combined_with": "SomaSeq"
+    },
+    {
+      "rank": null,
+      "platform": "SomaScan 7K (v4.1)",
+      "vendor": "Standard BioTools → Illumina",
+      "integration_tier": "T1",
+      "integration_status": "Retired",
+      "apt_integrated": false,
+      "maturity_score": 3,
+      "validation_score": 3.0,
+      "apt_readiness_rank_v1": null,
+      "availability_status": "superseded_retired",
+      "currently_deployable": false,
+      "replaced_by": "Illumina SomaScan Discovery (11K, array) or Illumina SomaSeq Discovery (NGS)",
+      "source": "prior_census",
+      "key_citation": null,
+      "availability_source": "https://somalogic.com/somascan-11k-assay/ (7K referenced only for 5K/7K→11K data bridging, not as a current menu item)",
+      "notes": null,
+      "entity_type": "service_assay",
+      "runs_on": null,
+      "ranked": false,
+      "tier_num": 1.0,
+      "scoreable": false,
+      "readiness_precise": null,
+      "validation_basis": "independent peer-reviewed evidence",
+      "score_status": "preliminary",
+      "detail": {
+        "chemistry": "SOMAmer aptamer capture, microarray readout",
+        "plex_or_depth": "~7,000 SOMAmer measurements (~6,400 unique proteins)",
+        "matrix": "plasma, serum, CSF (urine research-use, not vendor-validated)",
+        "sample_volume": "55 uL",
+        "throughput": "hundreds/week",
+        "cost_tier": "high",
+        "quantitation_type": "relative (RFU)",
+        "proteoform_ptm": "none",
+        "csf_performance": "PPMI CSF SomaScan5K vs MS effect-size correlation rho=0.42 (p=2.6e-10) across 375 shared proteins; vs Olink r=0.15 (Kumar 2025)",
+        "analytical_validation": "Independent: 7K median CV comparable to 11K (Candia 2025); all 7K SOMAmers carried into 11K",
+        "key_citation_doi": "10.1021/acs.jproteome.4c01114",
+        "key_citation_short": "Candia 2025 J Proteome Res",
+        "availability_note": "Superseded/legacy as of 2026: not a current SomaLogic/Illumina menu item. Referenced only for 5K/7K→11K data bridging. New projects route to Illumina SomaScan Discovery (11K, array-based readout) or Illumina SomaSeq Discovery (NGS, ~9,500 unique proteins). Retained in the catalog because most published PD/biomarker cohorts to date ran on 5K/7K, so it has reference value.",
+        "overview": {
+          "about": "SomaScan 7K is a multiplexed protein measurement platform that quantifies approximately 7,000 protein targets from small-volume plasma, serum, cerebrospinal fluid, or urine samples. The platform uses SOMAmer aptamers, short DNA sequences engineered to bind specific proteins with high specificity, captured on a microarray and read via fluorescence. Each sample produces relative quantitation (RFU values) across all targets in parallel. The 7K version measures roughly 6,400 unique proteins and has been retired in favor of the 11K platform, though analytical validation showed comparable median coefficient of variation between the two versions.",
+          "best_for": "Large cohort studies requiring broad protein profiling across plasma, serum, or CSF samples.",
+          "strengths": [
+            "Measures ~7,000 protein targets from 55 µL sample volume",
+            "Validated across multiple biological matrices including CSF",
+            "High-throughput capacity of hundreds of samples per week"
+          ],
+          "limitations": [
+            "Provides relative quantitation only (RFU), not absolute protein amounts",
+            "Platform retired; no longer commercially available",
+            "No proteoform or post-translational modification resolution"
+          ]
+        },
+        "publications": [
+          {
+            "label": "Candia 2025 J Proteome Res",
+            "doi": "10.1021/acs.jproteome.4c01114"
+          }
+        ]
+      },
+      "verification_grade": "green",
+      "verification_source_tier": "peer_reviewed",
+      "sub100_confirmed": false
+    },
+    {
+      "rank": null,
+      "platform": "Olink Explore 3072 (legacy)",
+      "vendor": "Olink (Thermo Fisher Scientific)",
+      "integration_tier": "T1",
+      "integration_status": "Retired",
+      "apt_integrated": false,
+      "maturity_score": 3,
+      "validation_score": 3.0,
+      "apt_readiness_rank_v1": null,
+      "availability_status": "superseded_retired",
+      "currently_deployable": false,
+      "replaced_by": "Olink Explore HT",
+      "source": "prior_census",
+      "key_citation": null,
+      "availability_source": "https://olink.com/Products/Olink-Explore-3072-384",
+      "notes": null,
+      "entity_type": "service_assay",
+      "runs_on": null,
+      "ranked": false,
+      "tier_num": 1.0,
+      "scoreable": false,
+      "readiness_precise": null,
+      "validation_basis": "independent peer-reviewed evidence",
+      "score_status": "preliminary",
+      "detail": {
+        "chemistry": "Dual-antibody PEA, NGS readout",
+        "plex_or_depth": "2,931-3,072 assays",
+        "matrix": "plasma, serum, CSF",
+        "sample_volume": "~6 uL (4x 384-plex panels)",
+        "throughput": "~1,000 samples/week",
+        "cost_tier": "high",
+        "quantitation_type": "relative (NPX)",
+        "proteoform_ptm": "none",
+        "csf_performance": "Used in PPMI CSF and plasma; in PPMI CSF, Olink Explore effect sizes showed NO significant correlation with MS effect sizes, and r=0.15 with SomaScan5K (Kumar 2025)",
+        "analytical_validation": "Independent: median CV 19.8% split plasma; 2,101 cis-pQTLs in UKB-PPP with 72% of assays supported by cis-pQTL evidence vs 43% SomaScan v4 (Eldjarn 2023)",
+        "key_citation_doi": "10.1038/s41586-023-06563-x",
+        "key_citation_short": "Eldjarn 2023 Nature",
+        "overview": {
+          "about": "The Olink Explore 3072 is a retired multiplex protein measurement platform that quantifies a large fixed panel of proteins in blood and cerebrospinal fluid using dual-antibody proximity extension assay (PEA) chemistry. PEA works by pairing antibodies that bind a target protein; when brought close together, they extend DNA strands that are then amplified and counted by next-generation sequencing, yielding relative abundance measurements. Its distinctive feature is a large fixed panel enabling broad proteomic surveys from minimal sample volume. Quantitation is relative, not absolute.",
+          "best_for": "Large-scale genetic association studies and biobank cohorts requiring broad protein coverage.",
+          "strengths": [
+            "Large fixed panel of ~3,000 assays from minimal sample input",
+            "Strong cis-pQTL support: 72% of assays validated in UK Biobank",
+            "High throughput capacity of approximately 1,000 samples per week"
+          ],
+          "limitations": [
+            "Retired platform with no ongoing support or new assay development",
+            "Relative quantitation only; cannot measure absolute protein amounts",
+            "CSF measurements show weak correlation with mass spectrometry effect sizes"
+          ]
+        },
+        "publications": [
+          {
+            "label": "Eldjarn 2023 Nature",
+            "doi": "10.1038/s41586-023-06563-x"
+          }
+        ]
+      },
+      "verification_grade": "green",
+      "verification_source_tier": "peer_reviewed",
+      "sub100_confirmed": false
+    },
+    {
+      "rank": 1,
+      "platform": "Alamar NULISAseq Neuro 220 Panel",
+      "vendor": "Alamar Biosciences",
+      "integration_tier": "T1",
+      "integration_status": "Integrated",
+      "apt_integrated": true,
+      "maturity_score": 3,
+      "validation_score": 3.0,
+      "apt_readiness_rank_v1": null,
+      "availability_status": "generally_available",
+      "currently_deployable": true,
+      "replaced_by": null,
+      "source": "prior_census",
+      "key_citation": null,
+      "availability_source": "https://alamarbio.com/products-and-services/nulisaseq-cns-disease-panel/",
+      "notes": null,
+      "entity_type": "service_assay",
+      "runs_on": null,
+      "ranked": true,
+      "tier_num": 1.0,
+      "scoreable": true,
+      "readiness_precise": 3.0,
+      "validation_basis": "independent peer-reviewed evidence",
+      "score_status": "APT-assessed",
+      "detail": {
+        "chemistry": "Nucleic-acid-linked immuno-sandwich assay (NULISA); dual capture-and-release background suppression; NGS readout on ARGO HT",
+        "plex_or_depth": "220 CNS and neurology targets (Neuro 220, launched March 2026; upgrade over the flagship 120-plex CNS Disease Panel).",
+        "matrix": "plasma, serum, CSF, EVs, tear fluid, DBS/microsampling",
+        "sample_volume": "25 uL input (~10 uL sample)",
+        "throughput": "automated ARGO HT; ~1 plate/run",
+        "cost_tier": "low-to-moderate",
+        "quantitation_type": "relative (NPQ); vendor claims single-digit attomolar sensitivity",
+        "proteoform_ptm": "limited - discrete phospho-epitope assays (p-tau181/217/231, brain-derived p-tau) but no untargeted PTM discovery",
+        "csf_performance": "~85% of targets detectable in CSF vs ~95% in plasma at 10 uL; median CV ~6.0%; CSF Ab42/40 and p-tau217 highly correlated with immunoassay and MS reference methods (Ibanez 2024)",
+        "analytical_validation": "Independent benchmarking vs validated CSF/plasma assays (Ibanez 2024, Alz Dement); plasma median CV 5.4%, CSF 9.1% (vendor conference data)",
+        "key_citation_doi": "10.1002/alz.14413",
+        "key_citation_short": "Ibanez 2024 Alzheimers Dement",
+        "commercial_status_note": "Relabeled from the 120-plex CNS Disease Panel to the current Neuro 220 (220 targets, launched March 2026), which is the panel now in use.",
+        "overview": {
+          "about": "The Alamar NULISAseq Neuro 220 Panel measures 220 proteins from the central nervous system and neurology using a nucleic-acid-linked immunosandwich assay. Each target protein is captured by antibodies, then tagged with short DNA barcodes and released into solution. These DNA barcodes are amplified and sequenced on an automated high-throughput instrument, generating counts proportional to protein abundance. The platform accepts minimal sample volume (10 microliters), works across multiple matrices including cerebrospinal fluid and blood, and includes discrete phosphorylated tau variants relevant to neurodegeneration. It provides relative quantitation with reported single-digit attomolar sensitivity.",
+          "best_for": "Biomarker discovery and validation studies in neurodegeneration and CNS disease cohorts.",
+          "strengths": [
+            "Measures 220 CNS targets including phospho-tau epitopes in 10 µL sample",
+            "Validated performance across plasma, CSF, and alternative matrices (EVs, tears, microsampling)",
+            "Median CVs ~5–6% in plasma, ~9% in CSF; high correlation with reference methods"
+          ],
+          "limitations": [
+            "Relative quantitation only; no absolute concentration values",
+            "Limited to discrete phospho-epitopes; no untargeted PTM discovery",
+            "Detectability in CSF ~85% of targets versus ~95% in plasma"
+          ]
+        },
+        "publications": [
+          {
+            "label": "Ibanez 2024 Alzheimers Dement",
+            "doi": "10.1002/alz.14413"
+          }
+        ]
+      },
+      "verification_grade": "green",
+      "verification_source_tier": "peer_reviewed",
+      "sub100_confirmed": false,
+      "readiness_note": "integrated",
+      "combined_with": "Inflammation 250"
+    },
+    {
+      "rank": 8,
+      "platform": "Targeted MRM/PRM panels (academic and CRO, incl. Inoviv)",
+      "vendor": "Academic core or CRO (e.g. Inoviv)",
+      "integration_tier": "T2",
+      "integration_status": "Targeted panel",
+      "apt_integrated": false,
+      "maturity_score": 3,
+      "validation_score": 3.0,
+      "apt_readiness_rank_v1": null,
+      "availability_status": "generally_available",
+      "currently_deployable": true,
+      "replaced_by": null,
+      "source": "prior_census",
+      "key_citation": null,
+      "availability_source": null,
+      "notes": null,
+      "entity_type": "service_assay",
+      "runs_on": "Triple-quad / Orbitrap MS",
+      "ranked": false,
+      "tier_num": 2.0,
+      "scoreable": true,
+      "readiness_precise": 2.8,
+      "validation_basis": null,
+      "score_status": "preliminary",
+      "detail": {
+        "chemistry": "Triple-quadrupole MRM or Orbitrap/QTOF PRM with stable-isotope-labelled peptide standards",
+        "plex_or_depth": "typically 10-100 proteins; scout-MRM methods scale to several hundred transitions",
+        "matrix": "plasma, serum, CSF, urine",
+        "sample_volume": "10-100 uL",
+        "throughput": "60-200 samples/day depending on gradient",
+        "cost_tier": "low-medium per sample once developed",
+        "quantitation_type": "ABSOLUTE (concentration units, CV typically <10-15%)",
+        "proteoform_ptm": "YES for pre-specified sites and sequence variants",
+        "csf_performance": "A 22-protein MS panel derived from CSF discovery was validated in an independent cohort with an isotope-labelled targeted MS assay in a clinically compatible format (Bader 2026)",
+        "analytical_validation": "Method-specific; Inoviv states GLP- and CLIA-certified manufacturing but publishes no platform specifications",
+        "key_citation_doi": "10.1016/j.cell.2026.01.017",
+        "key_citation_short": "Bader 2026 Cell",
+        "overview": {
+          "about": "Targeted MRM/PRM panels measure 10–100 proteins in a single sample using mass spectrometry. The assay works by converting proteins to peptides, then using a mass spectrometer to detect specific peptide fragments while comparing them to isotope-labeled standards, a quantitative reference that mirrors the target peptide exactly. This approach yields absolute protein concentrations (not just relative ranks) with tight reproducibility. The platform is distinctive for handling protein variants and post-translational modifications at predefined sites, and for working across diverse sample types including cerebrospinal fluid, plasma, and urine, useful for biomarker validation and clinical translation.",
+          "strengths": [
+            "Absolute quantitation with <10–15% coefficients of variation",
+            "Detects protein variants and post-translational modifications at specified sites",
+            "Works in multiple matrices including CSF, plasma, serum, and urine"
+          ],
+          "limitations": [
+            "Requires method development and optimization before deployment",
+            "Limited to pre-specified targets; no discovery of unexpected proteins",
+            "Sample volumes and throughput constrained by LC-MS instrument time"
+          ],
+          "best_for": "Biomarker validation and clinical translation studies requiring absolute quantitation."
+        },
+        "publications": [
+          {
+            "label": "Bader 2026 Cell",
+            "doi": "10.1016/j.cell.2026.01.017"
+          }
+        ]
+      },
+      "verification_grade": "amber",
+      "verification_source_tier": "peer_reviewed",
+      "sub100_confirmed": false
+    },
+    {
+      "rank": 6,
+      "platform": "Olink Target 48/96 and Flex (custom panels)",
+      "vendor": "Olink (Thermo Fisher Scientific)",
+      "integration_tier": "T2",
+      "integration_status": "Targeted panel",
+      "apt_integrated": false,
+      "maturity_score": 3,
+      "validation_score": 3.0,
+      "apt_readiness_rank_v1": null,
+      "availability_status": "generally_available",
+      "currently_deployable": true,
+      "replaced_by": null,
+      "source": "prior_census",
+      "key_citation": null,
+      "availability_source": null,
+      "notes": null,
+      "entity_type": "service_assay",
+      "runs_on": null,
+      "ranked": false,
+      "tier_num": 2.0,
+      "scoreable": true,
+      "readiness_precise": 2.8,
+      "validation_basis": null,
+      "score_status": "preliminary",
+      "detail": {
+        "chemistry": "PEA with qPCR readout",
+        "plex_or_depth": "45-92 per panel; Flex up to ~30 custom markers",
+        "matrix": "plasma, serum, CSF, DBS, EV preparations",
+        "sample_volume": "1 uL",
+        "throughput": "88 samples x 92 targets per microfluidic chip",
+        "cost_tier": "medium",
+        "quantitation_type": "Target 48 gives absolute concentration (pg/mL) against calibrators; Target 96 relative NPX",
+        "proteoform_ptm": "none",
+        "csf_performance": "Olink PEA panels used for large CSF discovery in PD: 26 and 39 differentially abundant CSF proteins in test and validation PD cohorts; midkine and DDC top hits (Paslawski 2023, n=192/88/36)",
+        "analytical_validation": "peer-reviewed use; Target 48 calibrated absolute quantitation",
+        "key_citation_doi": "10.1186/s40035-023-00374-w",
+        "key_citation_short": "Paslawski 2023 Transl Neurodegener",
+        "overview": {
+          "about": "Olink Target 48/96 and Flex are targeted protein panels measuring defined sets of 45-92 proteins (or up to ~30 custom markers with Flex) in plasma, serum, CSF, dried blood spots, or extracellular vesicle preparations, using just 1 microliter of sample. The core method, proximity extension assay (PEA), pairs two antibodies per target, each tagged with a short DNA strand; when both bind the same protein, the strands hybridize and are extended by a polymerase, generating a new DNA sequence quantified by real-time PCR. Because detection requires both antibodies binding simultaneously, background cross-reactivity is reduced. Target 48 yields absolute concentrations (pg/mL) via calibrators, while Target 96 gives relative NPX units. Panels have supported large CSF biomarker discovery work in Parkinson's disease.",
+          "strengths": [
+            "Absolute pg/mL quantitation available via Target 48 calibrators",
+            "Minimal sample volume required, just 1 microliter",
+            "Used in large peer-reviewed CSF Parkinson's discovery cohorts"
+          ],
+          "limitations": [
+            "Targeted panel limited to under 100 proteins",
+            "No proteoform or PTM resolution",
+            "Target 96 reports relative NPX, not absolute concentration"
+          ],
+          "best_for": "Best suited for hypothesis-driven biomarker studies needing precise, low-volume quantitation of a defined protein set."
+        },
+        "publications": [
+          {
+            "label": "Paslawski 2023 Transl Neurodegener",
+            "doi": "10.1186/s40035-023-00374-w"
+          }
+        ]
+      },
+      "verification_grade": "amber",
+      "verification_source_tier": "vendor_technical_doc",
+      "sub100_confirmed": true
+    },
+    {
+      "rank": 7,
+      "platform": "Quanterix Simoa (HD-X / SR-X singleplex and 2-6 plex)",
+      "vendor": "Quanterix",
+      "integration_tier": "T2",
+      "integration_status": "Targeted panel",
+      "apt_integrated": false,
+      "maturity_score": 3,
+      "validation_score": 3.0,
+      "apt_readiness_rank_v1": null,
+      "availability_status": "generally_available",
+      "currently_deployable": true,
+      "replaced_by": null,
+      "source": "prior_census",
+      "key_citation": null,
+      "availability_source": null,
+      "notes": null,
+      "entity_type": "service_assay",
+      "runs_on": null,
+      "ranked": false,
+      "tier_num": 2.0,
+      "scoreable": true,
+      "readiness_precise": 2.8,
+      "validation_basis": "independent peer-reviewed evidence",
+      "score_status": "preliminary",
+      "detail": {
+        "chemistry": "Single-molecule array digital ELISA (paramagnetic bead + femtolitre well arrays)",
+        "plex_or_depth": "1-6 analytes per assay (Neurology 4-Plex A/B/D/E)",
+        "matrix": "serum, EDTA plasma, CSF (all kit-validated)",
+        "sample_volume": "typically 25-100 uL diluted; assay-dependent",
+        "throughput": "~66-96 samples/run HD-X; low relative to NGS-readout platforms",
+        "cost_tier": "medium per analyte, high per protein at scale",
+        "quantitation_type": "ABSOLUTE (pg/mL against calibrator curve)",
+        "proteoform_ptm": "targeted phospho-epitopes (p-tau181/217/231) and pS129-alpha-synuclein assays; no discovery capability",
+        "csf_performance": "Kit-validated in CSF; datasheets specify CSF fLLOQ/ULOQ as 100x the plasma values for the 4-Plex E targets",
+        "analytical_validation": "Extensive peer-reviewed method-comparison literature; head-to-head p-tau217 benchmarking shows immunoassays reach AUC 0.91-0.96 for Ab-PET vs MS %p-tau217 highest (Warmenhoven 2025, n=998)",
+        "key_citation_doi": "10.1093/brain/awae346",
+        "key_citation_short": "Warmenhoven 2025 Brain",
+        "overview": {
+          "about": "Quanterix Simoa is a targeted immunoassay platform that measures specific proteins and protein modifications in serum, plasma, and cerebrospinal fluid. It uses single-molecule digital ELISA: magnetic beads coated with capture antibodies are distributed into femtolitre wells, where each bead-bound protein is detected and counted individually.Absolute quantitation still uses a calibrator/standard curve; the single-molecule digital regime improves sensitivity and precision at very low concentrations. The platform is configured for 1–6 analytes per run, with specialized assays for neurological biomarkers like phosphorylated tau variants and alpha-synuclein. It delivers absolute quantitation across validated matrices.",
+          "best_for": "Biomarker studies in neurodegenerative disease requiring multi-site CSF and plasma sampling.",
+          "strengths": [
+            "Measures phospho-epitopes (p-tau181/217/231, pS129-alpha-synuclein) with clinical validation",
+            "CSF-validated with specified limits of detection; serum/plasma compatibility",
+            "Digital single-molecule detection avoids standard-curve artifacts"
+          ],
+          "limitations": [
+            "Low throughput (66–96 samples per run) relative to high-plex platforms",
+            "Targeted assays only; no discovery of novel biomarkers",
+            "CSF detection limits 100-fold higher than plasma for same biomarkers"
+          ]
+        },
+        "publications": [
+          {
+            "label": "Warmenhoven 2025 Brain",
+            "doi": "10.1093/brain/awae346"
+          }
+        ]
+      },
+      "verification_grade": "green",
+      "verification_source_tier": "peer_reviewed",
+      "sub100_confirmed": true
+    },
+    {
+      "rank": 5,
+      "platform": "Luminex xMAP / INTELLIFLEX bead immunoassay",
+      "vendor": "Luminex/DiaSorin",
+      "integration_tier": "T2",
+      "integration_status": "Targeted panel",
+      "apt_integrated": false,
+      "maturity_score": 3,
+      "validation_score": 3.0,
+      "apt_readiness_rank_v1": null,
+      "availability_status": "generally_available",
+      "currently_deployable": true,
+      "replaced_by": null,
+      "source": "prior_census",
+      "key_citation": null,
+      "availability_source": null,
+      "notes": null,
+      "entity_type": "service_assay",
+      "runs_on": null,
+      "ranked": false,
+      "tier_num": 2.0,
+      "scoreable": true,
+      "readiness_precise": 2.8,
+      "validation_basis": "independent peer-reviewed evidence",
+      "score_status": "preliminary",
+      "detail": {
+        "chemistry": "Spectrally barcoded polystyrene microspheres, sandwich immunoassay, flow readout",
+        "plex_or_depth": "Practical protein panels 10–50 analytes (rarely toward ~80); the \"up to 500 spectral regions\" figure is the bead-system ceiling, not realized for antibody-pair sandwich immunoassays due to cross-reactivity.",
+        "matrix": "serum, plasma, CSF, culture supernatant",
+        "sample_volume": "~25 uL per well (typical MILLIPLEX protocol)",
+        "throughput": "96-well plate read in ~20 min; up to 144,000 tests/hour instrument-limited",
+        "cost_tier": "low",
+        "quantitation_type": "ABSOLUTE (pg/mL against standard curves)",
+        "proteoform_ptm": "none",
+        "csf_performance": "Long-standing CSF use; sensitivity for low-abundance CNS analytes is the limiting factor vs Simoa/NULISA",
+        "analytical_validation": "Vendor: LLOQ down to 0.01 pg/mL (INTELLIFLEX system spec). Independent: in a five-platform cytokine comparison including PD serum/plasma, bead-array platforms underperformed digital ELISA on detectability for IL-1b/IL-6/TNF/IFN-g (Lasseter 2020, n=13 PTSD/14 PD/5 HC)",
+        "key_citation_doi": "10.1016/j.cytox.2020.100027",
+        "key_citation_short": "Lasseter 2020 Cytokine X",
+        "overview": {
+          "about": "Luminex xMAP/INTELLIFLEX is a bead-based sandwich immunoassay platform that measures absolute concentrations of a defined panel of proteins in serum, plasma, CSF, or culture supernatant. Each protein target is captured by antibody-coated polystyrene microspheres carrying a unique internal spectral barcode; a flow-based reader identifies each bead's color code and measures a fluorescent reporter antibody bound in the sandwich, converting signal to pg/mL via standard curves, similar in principle to ELISA but run on many bead colors simultaneously. Practical panels run 10-50 analytes, well below the bead system's spectral ceiling, because antibody cross-reactivity limits true multiplexing. It is a mature, low-cost, high-throughput workhorse, though sensitivity for low-abundance CNS analytes trails newer digital immunoassay platforms.",
+          "strengths": [
+            "Low cost with fast 96-well throughput (~20 min)",
+            "Absolute quantitation in pg/mL via standard curves",
+            "Long-standing validated use across serum, plasma, CSF"
+          ],
+          "limitations": [
+            "Lower sensitivity than digital ELISA for low-abundance cytokines",
+            "Practical multiplexing well below spectral bead ceiling",
+            "No proteoform or PTM resolution"
+          ],
+          "best_for": "Routine, cost-sensitive targeted cytokine or biomarker panels needing absolute concentrations at moderate multiplexing."
+        },
+        "publications": [
+          {
+            "label": "Lasseter 2020 Cytokine X",
+            "doi": "10.1016/j.cytox.2020.100027"
+          }
+        ]
+      },
+      "verification_grade": "amber",
+      "verification_source_tier": "vendor_technical_doc",
+      "sub100_confirmed": true
+    },
+    {
+      "rank": 10,
+      "platform": "Ella Automated Immunoassay System with Simple Plex assays (RUO; Ella CE-IVD variant)",
+      "vendor": "Bio-Techne (ProteinSimple / R&D Systems)",
+      "integration_tier": "T2",
+      "integration_status": "Targeted panel",
+      "apt_integrated": false,
+      "maturity_score": 3,
+      "validation_score": 2.5,
+      "apt_readiness_rank_v1": null,
+      "availability_status": "generally_available",
+      "currently_deployable": true,
+      "replaced_by": null,
+      "source": "expansion_search",
+      "key_citation": "Bio-Techne product pages (bio-techne.com/instruments/simple-plex; bio-techne.com/applications/immunoassays/multiplex-immunoassays).",
+      "availability_source": "inferred: established commercial product (search lane found established; not in the 15-item spot-check)",
+      "notes": "New to catalog (targeted low-plex automated immunoassay comparator). Strength = absolute quant, speed (<90 min), minimal sample; weakness = low multiplexing vs high-plex discovery platforms.",
+      "entity_type": "service_assay",
+      "runs_on": null,
+      "ranked": false,
+      "tier_num": 2.0,
+      "scoreable": true,
+      "readiness_precise": 2.65,
+      "validation_basis": null,
+      "score_status": "preliminary",
+      "detail": {
+        "chemistry": "Microfluidic sandwich immunoassay (automated ELISA) in a cartridge with glass nanoreactors (GNRs) giving built-in triplicate; targets separated into parallel channels to avoid cross-reactivity; factory-calibrated standard curves.",
+        "plex_or_depth": "Low-plex: up to 8 analytes per multiplex cartridge (single-plex, 2/3/4-analyte, and up to 5-8-plex formats); menu of 350-450+ validated analytes across human/mouse/rat/NHP; custom (48-digoxigenin) open cartridge.",
+        "matrix": "Serum, plasma, cell/tissue lysate, other biofluids (as little as 2.5-25 uL, triplicate).",
+        "quantitation_type": "Absolute (pg/mL) against factory calibration; sub-pg/mL sensitivity; high reproducibility. CE-IVD (Class A) variant available in EU.",
+        "key_citation_short": "Bio-Techne product pages (bio-techne.com/instruments/simple-plex; bio-techne.com/applications/immunoassays/multiplex-immunoassays).",
+        "commercial_status_note": "Established/shipping; RUO with a CE-IVD instrument variant (600-100-CE) in select EU markets.",
+        "notes": "New to catalog (targeted low-plex automated immunoassay comparator). Strength = absolute quant, speed (<90 min), minimal sample; weakness = low multiplexing vs high-plex discovery platforms.",
+        "overview": {
+          "about": "Ella is an automated immunoassay platform that measures the absolute concentration of specific proteins in liquid samples like serum, plasma, or cell lysate. It works using a sandwich immunoassay: capture antibodies bind a target protein, and a second labeled antibody binds it from another side, producing a signal proportional to how much protein is present. Ella automates this process inside a microfluidic cartridge containing tiny glass nanoreactors, which run each sample in built-in triplicate and keep different target antibodies in separate channels to avoid cross-reactivity. Results are read against factory-calibrated standard curves, giving absolute concentrations in under 90 minutes from very small sample volumes.",
+          "strengths": [
+            "Absolute quantitation in pg/mL with sub-pg/mL sensitivity",
+            "Fast turnaround, under 90 minutes per run",
+            "Minimal sample volume with built-in triplicate measurement"
+          ],
+          "limitations": [
+            "Low multiplexing, up to 8 analytes per cartridge",
+            "Fewer targets per run than high-plex discovery platforms",
+            "Targets fixed to validated menu or custom cartridge design"
+          ],
+          "best_for": "Targeted, high-confidence quantification of a small protein panel across many samples, such as biomarker verification studies."
+        },
+        "publications": [
+          {
+            "label": "Bio-Techne product pages (bio-techne.com/instruments/simple-plex; bio-techne.com/applications/immunoassays/multiplex-immunoassays).",
+            "doi": null
+          }
+        ]
+      },
+      "verification_grade": "amber",
+      "verification_source_tier": "vendor_technical_doc",
+      "sub100_confirmed": true
+    },
+    {
+      "rank": 11,
+      "platform": "MRM Proteomics PeptiQuant Plus / BAK270 targeted MRM kits & services",
+      "vendor": "MRM Proteomics Inc. (UVic-Genome BC Proteomics Centre / Borchers group)",
+      "integration_tier": "T2",
+      "integration_status": "Integration-ready",
+      "apt_integrated": false,
+      "maturity_score": 3,
+      "validation_score": 2.5,
+      "apt_readiness_rank_v1": 2.75,
+      "availability_status": "generally_available",
+      "currently_deployable": true,
+      "replaced_by": null,
+      "source": "expansion_search",
+      "key_citation": "Vendor: https://mrmproteomics.com/product-category/human-plasma-kits/ ; CPTAC Assay Portal https://assays.cancer.gov (Tier II characterization)",
+      "availability_source": "inferred: established commercial product (search lane found established; not in the 15-item spot-check)",
+      "notes": "The clearest content-list-comparable (T2) targeted MS offering: absolute, standards-traceable quant with a fixed protein list, unlike open discovery MS. Turnkey kit AND CRO service.",
+      "entity_type": "service_assay",
+      "runs_on": "Triple-quad MS",
+      "ranked": true,
+      "tier_num": 2.0,
+      "scoreable": true,
+      "readiness_precise": 2.65,
+      "validation_basis": null,
+      "score_status": "preliminary",
+      "detail": {
+        "chemistry": "Targeted MRM (SRM) LC-MS/MS on triple quadrupole with paired heavy/light stable-isotope-labeled (SIS) internal standard peptides for every target protein",
+        "plex_or_depth": "Fixed content panels: 125-protein and 270-protein (BAK270) human plasma kits; mouse and other kits. Unit: fixed list of proteins/peptides",
+        "matrix": "Human plasma (also serum, CSF, mouse plasma/heart, urine via related assays)",
+        "quantitation_type": "Absolute quantitation (traceable to SIS peptide standards); characterized to CPTAC Tier II guidelines",
+        "key_citation_short": "Vendor: https://mrmproteomics.com/product-category/human-plasma-kits/ ; CPTAC Assay Portal https://assays.cancer.gov (Tier II characterization)",
+        "commercial_status_note": "Launched/established; 270-plex (BAK270) now available. Distinct from Inoviv (already in census)",
+        "notes": "The clearest content-list-comparable (T2) targeted MS offering: absolute, standards-traceable quant with a fixed protein list, unlike open discovery MS. Turnkey kit AND CRO service.",
+        "overview": {
+          "about": "MRM Proteomics PeptiQuant Plus delivers absolute quantitation of 125 or 270 human plasma proteins via targeted mass spectrometry. The method isolates and measures specific peptides derived from your proteins of interest using LC-MS/MS on a triple-quadrupole instrument. Each target peptide is paired with a heavy stable-isotope-labeled internal standard, allowing direct quantitation traceable to calibrated standards. Unlike discovery proteomics, this platform measures a defined protein list with high accuracy and reproducibility, following CPTAC Tier II standards for accuracy and traceability.",
+          "strengths": [
+            "Absolute quantitation with traceable SIS standards",
+            "Fixed 125- or 270-protein panels enable direct comparisons",
+            "Available as turnkey kit or managed CRO service"
+          ],
+          "limitations": [
+            "Restricted to pre-defined protein list; no discovery of unexpected targets",
+            "Requires triple-quadrupole MS; not available on all labs' instruments",
+            "Plasma-optimized; extension to other matrices requires separate assay development"
+          ],
+          "best_for": "Biomarker validation studies and clinical trials requiring absolute quantitation of predefined protein panels."
+        },
+        "publications": [
+          {
+            "label": "Vendor: https://mrmproteomics.com/product-category/human-plasma-kits/ ; CPTAC Assay Portal https://assays.cancer.gov (Tier II characterization)",
+            "doi": null
+          }
+        ]
+      },
+      "verification_grade": "green",
+      "verification_source_tier": "peer_reviewed",
+      "sub100_confirmed": false
+    },
+    {
+      "rank": 9,
+      "platform": "CellCarta / Caprion targeted MRM & PRM MS biomarker services (incl. Precision Assays immuno-MRM panels)",
+      "vendor": "CellCarta (formerly Caprion Biosciences); immuno-MRM panels via Precision Assays (Paulovich lab, Fred Hutch) acquisition",
+      "integration_tier": "T2",
+      "integration_status": "Integration-ready",
+      "apt_integrated": false,
+      "maturity_score": 3,
+      "validation_score": 2.5,
+      "apt_readiness_rank_v1": 2.75,
+      "availability_status": "generally_available",
+      "currently_deployable": true,
+      "replaced_by": null,
+      "source": "expansion_search",
+      "key_citation": "Vendor: https://cellcarta.com/mass-spectrometry-based-biomarker-services/ ; Precision Assays immuno-MRM acquisition (2025): https://cellcarta.com/science-hub/precision-assays/",
+      "availability_source": "inferred: established commercial product (search lane found established; not in the 15-item spot-check)",
+      "notes": "Represents the regulated targeted-MS CRO tier (verification/validation for clinical trials). Broader MS-CRO ecosystem (Sapient >12K targeted assays, MS Bioworks, Charles River, Crown Bio, academic cores e.g. TGen IMS-SR) noted in coverage_note, not as separate records.",
+      "entity_type": "service_assay",
+      "runs_on": "Triple-quad / Orbitrap MS",
+      "ranked": true,
+      "tier_num": 2.0,
+      "scoreable": true,
+      "readiness_precise": 2.65,
+      "validation_basis": null,
+      "score_status": "preliminary",
+      "detail": {
+        "chemistry": "Targeted LC-MS/MS MRM and PRM on triple-quad / QTRAP; custom and off-the-shelf panels, incl. antibody-enrichment immuno-MRM; also label-free discovery MS (CellCarta/gel-free platform)",
+        "plex_or_depth": "MRM custom panels up to ~350 proteins (relative quant); down to single/few-protein absolute quant for clinical use. Unit: targeted proteins (defined panel)",
+        "matrix": "Plasma, serum, CSF, urine, cells, fresh/frozen and FFPE tissue, sputum, vitreous/aqueous humor",
+        "quantitation_type": "Relative (multiplex screening) to absolute (single/few proteins) with SIS standards; GCLP and CAP/CLIA validation levels available",
+        "key_citation_short": "Vendor: https://cellcarta.com/mass-spectrometry-based-biomarker-services/ ; Precision Assays immuno-MRM acquisition (2025): https://cellcarta.com/science-hub/precision-assays/",
+        "commercial_status_note": "Launched/established; expanded off-the-shelf immuno-MRM panels via 2025 Precision Assays acquisition",
+        "notes": "Represents the regulated targeted-MS CRO tier (verification/validation for clinical trials). Broader MS-CRO ecosystem (Sapient >12K targeted assays, MS Bioworks, Charles River, Crown Bio, academic cores e.g. TGen IMS-SR) noted in coverage_note, not as separate records.",
+        "overview": {
+          "about": "CellCarta/Caprion offers targeted mass spectrometry biomarker quantitation using MRM and PRM on triple-quad instruments. The platform measures defined protein panels by fragmenting peptides from the target proteins and detecting specific fragment ions, enabling multiplexed relative quantitation across hundreds of proteins or precise absolute quantitation of single targets using synthetic standards. Antibody-enrichment immuno-MRM panels expand sensitivity for low-abundance biomarkers. The service supports multiple matrices and offers regulated validation pathways (GCLP/CAP-CLIA) for clinical trial use.",
+          "best_for": "Clinical trial biomarker verification and regulated multiplex protein screening in diverse biological matrices.",
+          "strengths": [
+            "Multiplexed measurement of custom protein panels up to ~350 targets",
+            "Absolute quantitation with SIS standards for clinical-grade precision",
+            "Multi-matrix flexibility and regulated validation for trials"
+          ],
+          "limitations": [
+            "Requires a priori target selection; not discovery-first",
+            "Panel expansion demands assay development and revalidation",
+            "Tissue analysis limited by peptide extraction and analysis depth"
+          ]
+        },
+        "publications": [
+          {
+            "label": "Vendor: https://cellcarta.com/mass-spectrometry-based-biomarker-services/ ; Precision Assays immuno-MRM acquisition (2025): https://cellcarta.com/science-hub/precision-assays/",
+            "doi": null
+          }
+        ]
+      },
+      "verification_grade": "amber",
+      "verification_source_tier": "vendor_marketing",
+      "sub100_confirmed": false
+    },
+    {
+      "rank": 12,
+      "platform": "Seer Proteograph (XT / ONE nanoparticle corona enrichment)",
+      "vendor": "Seer",
+      "integration_tier": "T3",
+      "integration_status": "Integrated",
+      "apt_integrated": true,
+      "maturity_score": 3,
+      "validation_score": 3.0,
+      "apt_readiness_rank_v1": null,
+      "availability_status": "generally_available",
+      "currently_deployable": true,
+      "replaced_by": "Proteograph XT superseded by Proteograph ONE Assay / SP200 (XT still in use)",
+      "source": "prior_census",
+      "key_citation": null,
+      "availability_source": "https://seer.bio/products/proteograph-product-suite/",
+      "notes": null,
+      "entity_type": "service_assay",
+      "runs_on": "Orbitrap Astral / Astral Zoom (or timsTOF)",
+      "ranked": true,
+      "tier_num": 3.0,
+      "scoreable": true,
+      "readiness_precise": 2.6,
+      "validation_basis": null,
+      "score_status": "APT-assessed",
+      "detail": {
+        "chemistry": "Engineered multi-nanoparticle protein-corona enrichment (NPA/NPB) + on-bead digest + bottom-up DIA-MS (open discovery)",
+        "plex_or_depth": "~8,511 protein groups/sample (independent, Pietzner et al.); up to 10,698 protein groups (Seer PDC, April 2026)",
+        "matrix": "plasma, serum",
+        "quantitation_type": "label-free relative (open DIA-MS)",
+        "cost_tier": "moderate",
+        "overview": {
+          "about": "The Seer Proteograph is a mass spectrometry platform that measures thousands of proteins in a single plasma or serum sample without a fixed protein list. It works by coating engineered nanoparticles with patient proteins, creating a 'corona' that enriches for a broad spectrum of targets across abundance ranges. Proteins are then digested on the particle surface and analyzed by data-independent acquisition mass spectrometry, which systematically fragments all ions in defined windows to build a comprehensive protein map. This open-discovery approach does not target a predetermined analyte list. It enables unbiased detection of approximately ~8,500 protein groups per sample.",
+          "best_for": "Unbiased, proteome-wide biomarker discovery in plasma or serum cohorts.",
+          "strengths": [
+            "Detects several thousand protein groups per sample (~8,500 independent; up to 10,698 vendor) without predefined panels",
+            "Covers wide abundance range through nanoparticle enrichment",
+            "Applicable to both plasma and serum matrices"
+          ],
+          "limitations": [
+            "Provides label-free relative quantitation, not absolute protein amounts",
+            "Requires access to Orbitrap Astral or timsTOF instrumentation",
+            "Discovery format means proteins vary across samples"
+          ]
+        },
+        "proteoform_ptm": "Not delivered natively; PTMs and proteoforms can be mined from the DIA data but are not a standard readout",
+        "sample_volume": "~100-200 uL plasma/serum (MS workflow)",
+        "publications": [
+          {
+            "label": "Nanoparticle-enriched MS proteomics in British South Asians, pQTLs and disease risk, Nature Genetics 2026",
+            "doi": "10.1038/s41588-026-02697-6"
+          }
+        ]
+      },
+      "verification_grade": "green",
+      "verification_source_tier": "peer_reviewed",
+      "sub100_confirmed": false,
+      "readiness_note": "integrated"
+    },
+    {
+      "rank": 13,
+      "platform": "Illumina SomaSeq Discovery (formerly Illumina Protein Prep)",
+      "vendor": "Illumina",
+      "integration_tier": "T1",
+      "integration_status": "Integrated",
+      "apt_integrated": true,
+      "maturity_score": 3,
+      "validation_score": 1.5,
+      "apt_readiness_rank_v1": null,
+      "availability_status": "generally_available",
+      "currently_deployable": true,
+      "replaced_by": null,
+      "source": "prior_census",
+      "key_citation": null,
+      "availability_source": "https://www.illumina.com/products/by-type/sequencing-kits/library-prep-kits/protein-prep.html",
+      "notes": null,
+      "entity_type": "service_assay",
+      "runs_on": "Illumina NGS (NovaSeq)",
+      "ranked": true,
+      "tier_num": 1.0,
+      "scoreable": true,
+      "readiness_precise": 2.55,
+      "validation_basis": "chemistry independently validated (aptamer/SomaScan lineage); product-specific CV vendor-stated",
+      "score_status": "APT-assessed",
+      "detail": {
+        "chemistry": "SOMAmer capture converted to barcoded sequencing libraries; NovaSeq readout",
+        "plex_or_depth": "~9,500 unique human proteins",
+        "matrix": "plasma, serum (vendor-validated); CSF not listed",
+        "sample_volume": "~55 uL plasma/serum",
+        "throughput": "sample-to-result <2.5 days, ~4 h hands-on (vendor); automated on SomaSeq Automation System",
+        "cost_tier": "moderate (positioned to fall with sequencing scale)",
+        "quantitation_type": "relative",
+        "proteoform_ptm": "none",
+        "csf_performance": "no CSF validation published or claimed - vendor materials specify plasma/serum",
+        "analytical_validation": "vendor-stated ~5.5% CV in blood, >10-log dynamic range; no independent evaluation retrieved",
+        "key_citation_doi": null,
+        "key_citation_short": "Illumina product documentation (illumina.com, SomaSeq Discovery)",
+        "availability_note": "Current NGS-based readout (Illumina SomaSeq Discovery): SOMAmer reagents + sequencing-by-synthesis, ~9,500 unique human proteins. Distinct product from the array-based SomaScan Discovery.",
+        "overview": {
+          "about": "SomaSeq Discovery is a multiplexed protein measurement platform that quantifies approximately 9,500 human proteins in blood samples. It uses SOMAmer reagents, short, single-stranded DNA aptamers that fold to bind specific proteins, to capture targets from the sample. Each captured protein is tagged with a DNA barcode, converted into a sequencing library, and read on an Illumina NovaSeq instrument. The barcode abundance reflects protein abundance, enabling relative quantitation across many proteins simultaneously. The platform emphasizes throughput and scalability: samples move from blood to results in under 2.5 days with ~4 hours of hands-on work, and running costs are expected to decrease as sequencing prices drop.",
+          "best_for": "Large-scale cohort studies requiring broad plasma or serum protein profiles with high throughput.",
+          "strengths": [
+            "Measures ~9,500 proteins in parallel from small blood volumes",
+            "Automates sample-to-result workflow in <2.5 days",
+            "Offers >10-log quantitative dynamic range"
+          ],
+          "limitations": [
+            "Validated only in plasma and serum; no cerebrospinal fluid data",
+            "Provides relative quantitation only, not absolute protein amounts",
+            "CV ~5.5% in blood; lacks independent analytical evaluation"
+          ]
+        },
+        "assessment_scope_note": "APT assessed the SomaScan/SomaSeq SOMAmer content as a single entity. The ten-axis score derives mainly from SomaScan-generated evidence and is extended to SomaSeq on the basis of shared SOMAmer reagent content; readout-specific performance (array vs NGS) was not independently scored.",
+        "publications": [
+          {
+            "label": "Illumina product documentation (illumina.com, SomaSeq Discovery)",
+            "doi": null
+          }
+        ]
+      },
+      "verification_grade": "amber",
+      "verification_source_tier": "vendor_technical_doc",
+      "sub100_confirmed": false,
+      "readiness_note": "integrated",
+      "combined_with": "SomaScan"
+    },
+    {
+      "rank": 14,
+      "platform": "Nomic nELISA / Omni 1000",
+      "vendor": "Nomic Bio",
+      "integration_tier": "T1",
+      "integration_status": "Integrated",
+      "apt_integrated": true,
+      "maturity_score": 2,
+      "validation_score": 3.0,
+      "apt_readiness_rank_v1": null,
+      "availability_status": "generally_available",
+      "currently_deployable": true,
+      "replaced_by": null,
+      "source": "prior_census",
+      "key_citation": null,
+      "availability_source": "https://www.nomic.bio/omni-1000",
+      "notes": null,
+      "entity_type": "service_assay",
+      "runs_on": null,
+      "ranked": true,
+      "tier_num": 1.0,
+      "scoreable": true,
+      "readiness_precise": 2.5,
+      "validation_basis": "independent peer-reviewed evidence",
+      "score_status": "APT-assessed",
+      "detail": {
+        "chemistry": "Miniaturised bead-based sandwich ELISA; antibody pairs pre-assembled on spectrally barcoded beads; toehold-mediated strand-displacement detection; flow-cytometric readout",
+        "plex_or_depth": "191-plex inflammation panel published; Omni 1000 = 1,000 assays (vendor)",
+        "matrix": "plasma, serum (commercial); cell-culture supernatant / secretome (published)",
+        "sample_volume": "70 uL (plasma/serum); 50 uL (cell culture supernatant)",
+        "throughput": "~10,000 samples/week claimed in the source publication; >1,000 samples/day (vendor)",
+        "cost_tier": "low (vendor markets a '$50 proteome')",
+        "quantitation_type": "ABSOLUTE (pg/mL against standard curves) - a genuine differentiator among high-plex platforms",
+        "proteoform_ptm": "none for discovery; vendor states compatibility with modification-specific assay modalities",
+        "csf_performance": "no CSF data published or claimed",
+        "analytical_validation": "Peer-reviewed: sub-pg/mL sensitivity across seven orders of magnitude, 191-plex applied to 7,392 PBMC samples generating ~1.4M measurements (Dagher 2025 Nat Methods). Omni 1000 scale-up is vendor-stated only",
+        "key_citation_doi": "10.1038/s41592-025-02861-6",
+        "key_citation_short": "nELISA chemistry: Nature Methods 2025, DOI 10.1038/s41592-025-02861-6 (Omni 1000 1,000-plex figure is vendor)",
+        "coverage_evidence_note": "Omni 1000 headline plex (~1,000 proteins) is vendor-stated; independent peer-reviewed validation of the nELISA chemistry is at ~191-plex scale (Nature Methods 2025, DOI 10.1038/s41592-025-02861-6). This thin coverage evidence is already reflected in the deep-evaluation scores (evidence_depth=1, proteome_coverage=2).",
+        "overview": {
+          "about": "Nomic nELISA is a miniaturised sandwich immunoassay that measures up to 1,000 proteins simultaneously in a single sample. Antibody pairs are pre-attached to spectrally barcoded beads; when target proteins bind, a DNA strand-displacement reaction (triggered by toehold-mediated hybridization) generates a fluorescent signal read by flow cytometry. The platform reports absolute protein quantities in pg/mL from standard curves, a distinction among high-plex assays. A 191-protein inflammation panel has been validated across thousands of samples; the vendor claims the full 1,000-assay capacity at scale.",
+          "best_for": "Large-scale inflammatory or secreted protein studies requiring quantitative, high-plex data.",
+          "strengths": [
+            "Measures absolute protein abundance, not relative intensity",
+            "Miniaturised format enables high throughput (>1,000 samples/day)",
+            "Sub-picogram/mL sensitivity across wide dynamic range"
+          ],
+          "limitations": [
+            "Omni 1000 scale and performance are vendor-claimed, not peer-reviewed",
+            "No published CSF performance or sample-type expansion beyond supernatant and plasma",
+            "Detects canonical proteins only; no PTM or proteoform resolution"
+          ]
+        },
+        "publications": [
+          {
+            "label": "nELISA chemistry: Nature Methods 2025, (Omni 1000 1,000-plex figure is vendor)",
+            "doi": "10.1038/s41592-025-02861-6"
+          }
+        ]
+      },
+      "verification_grade": "amber",
+      "verification_source_tier": "peer_reviewed",
+      "sub100_confirmed": false,
+      "readiness_note": "integrated"
+    },
+    {
+      "rank": 15,
+      "platform": "Biognosys TrueSignature (targeted PRM panels)",
+      "vendor": "Biognosys",
+      "integration_tier": "T2",
+      "integration_status": "Targeted panel",
+      "apt_integrated": false,
+      "maturity_score": 3,
+      "validation_score": 1.5,
+      "apt_readiness_rank_v1": null,
+      "availability_status": "generally_available",
+      "currently_deployable": true,
+      "replaced_by": null,
+      "source": "prior_census",
+      "key_citation": null,
+      "availability_source": "https://biognosys.com/news/biognosys-unveils-enhanced-plasma-proteomics-services-for-deep-and-high-throughput-biomarker-discovery/",
+      "notes": null,
+      "entity_type": "service_assay",
+      "runs_on": "Bruker timsTOF (targeted PRM)",
+      "ranked": false,
+      "tier_num": 2.0,
+      "scoreable": true,
+      "readiness_precise": 2.35,
+      "validation_basis": "targeted PRM-MS method independently validated; product-specific performance vendor-stated",
+      "score_status": "preliminary",
+      "detail": {
+        "chemistry": "Targeted MS by PRM (prm-PASEF on Bruker timsTOF) and SureQuant (on Thermo Orbitrap), with stable-isotope-labelled standards",
+        "plex_or_depth": "Single proteins to multiplex panels, up to ~800 proteins (\"hyperplex\"), vendor-stated. PQ500 reference kit (~804 SIS peptides, ~582 proteins (\"500+\"/\"almost 600\")) is a distinct product",
+        "matrix": "plasma, serum, CSF, tissue",
+        "sample_volume": "unknown; typically 10-50 uL",
+        "throughput": "clinical-trial scale; automated prep",
+        "cost_tier": "medium-high",
+        "quantitation_type": "ABSOLUTE (fmol/uL against isotope-labelled standards)",
+        "proteoform_ptm": "YES for pre-specified sites - proteotypic peptide selection resolves mutations, truncations and isoforms without antibodies",
+        "csf_performance": "CSF supported as a matrix; the analogous approach is validated in CSF by the MS field",
+        "analytical_validation": "GLP-certified, GCP-compliant, deployed in clinical trials (vendor)",
+        "key_citation_doi": "10.1038/s41467-024-48961-3",
+        "key_citation_short": "Hallqvist 2024 Nat Commun",
+        "overview": {
+          "about": "Biognosys TrueSignature is a targeted mass spectrometry service that measures from single proteins up to several hundred (vendor-stated up to ~800) per custom panel in absolute quantities (fmol/µL). The method uses parallel reaction monitoring, a mass spec technique that isolates and detects proteotypic peptides, unique sequences that identify each protein, spiked with isotope-labelled internal standards to establish exact concentrations. Unlike antibody-based assays, it resolves protein variants, mutations, and truncations by the peptide sequence itself, enabling detection of specific proteoforms without prior knowledge of all isoforms. The assay runs on Thermo Orbitrap (SureQuant) or Bruker timsTOF (PRM), supports plasma, serum, CSF, and tissue matrices, and is GLP-certified and deployed in clinical trials.",
+          "best_for": "Clinical trials and biomarker studies requiring absolute protein quantitation and isoform resolution.",
+          "strengths": [
+            "Absolute quantitation with isotope-labelled standards; clinical-trial grade validation",
+            "Resolves proteoforms and variants without antibodies via peptide specificity",
+            "Supports multiple matrices including CSF; scalable custom panels"
+          ],
+          "limitations": [
+            "Limited to pre-specified proteins and proteolytic sites per panel",
+            "Sample volume requirements typically 10–50 µL; matrix complexity can affect detectability",
+            "Higher cost tier; requires custom method development per protein target"
+          ]
+        },
+        "publications": [
+          {
+            "label": "Hallqvist 2024 Nat Commun",
+            "doi": "10.1038/s41467-024-48961-3"
+          }
+        ]
+      },
+      "verification_grade": "amber",
+      "verification_source_tier": "vendor_marketing",
+      "sub100_confirmed": false
+    },
+    {
+      "rank": 16,
+      "platform": "Alamar NULISAqPCR single-plex (e.g. p-tau217)",
+      "vendor": "Alamar Biosciences",
+      "integration_tier": "T2",
+      "integration_status": "Targeted panel",
+      "apt_integrated": false,
+      "maturity_score": 2,
+      "validation_score": 3.0,
+      "apt_readiness_rank_v1": null,
+      "availability_status": "generally_available",
+      "currently_deployable": true,
+      "replaced_by": null,
+      "source": "prior_census",
+      "key_citation": null,
+      "availability_source": null,
+      "notes": null,
+      "entity_type": "service_assay",
+      "runs_on": null,
+      "ranked": false,
+      "tier_num": 2.0,
+      "scoreable": true,
+      "readiness_precise": 2.3,
+      "validation_basis": null,
+      "score_status": "preliminary",
+      "detail": {
+        "chemistry": "NULISA with qPCR readout",
+        "plex_or_depth": "1 (targeted)",
+        "matrix": "plasma, serum, CSF",
+        "sample_volume": "~10 uL",
+        "throughput": "plate-based",
+        "cost_tier": "low-medium",
+        "quantitation_type": "relative with calibrators",
+        "proteoform_ptm": "phospho-epitope specific (p-tau217)",
+        "csf_performance": "p-tau217 CSF measures correlate highly across immunoassay, MS and NULISA (Ibanez 2024)",
+        "analytical_validation": "peer-reviewed benchmarking exists for the analyte class",
+        "key_citation_doi": "10.1002/alz.14413",
+        "key_citation_short": "Ibanez 2024 Alzheimers Dement",
+        "overview": {
+          "about": "Alamar NULISAqPCR is a single-protein immunoassay that measures phospho-tau217 (p-tau217) in plasma, serum, or cerebrospinal fluid using ~10 microliters of sample. The assay works by binding target protein to magnetic beads coated with capture antibodies, then detecting the bound protein via quantitative PCR after enzymatic labeling. This combines the specificity of antibody recognition with the sensitivity and precision of qPCR. The platform is configured for one analyte at a time and quantifies protein amounts relative to calibrator standards, making it suitable for focused biomarker studies where high throughput is less critical than cost-effective, targeted measurement.",
+          "best_for": "Focused biomarker studies measuring p-tau217 across biofluids with cost and sample constraints.",
+          "strengths": [
+            "Phospho-epitope specific for p-tau217 with validated CSF performance",
+            "Low sample volume requirement (~10 microliters)",
+            "Cost-effective relative to high-plex alternatives"
+          ],
+          "limitations": [
+            "Single-plex only; cannot multiplex other proteins in one reaction",
+            "Plate-based throughput scales modestly for large cohorts",
+            "Relative quantitation requires calibrator material"
+          ]
+        },
+        "publications": [
+          {
+            "label": "Ibanez 2024 Alzheimers Dement",
+            "doi": "10.1002/alz.14413"
+          }
+        ]
+      },
+      "verification_grade": "amber",
+      "verification_source_tier": "vendor_marketing",
+      "sub100_confirmed": true
+    },
+    {
+      "rank": 2,
+      "platform": "Alamar NULISAseq Inflammation Panel 250 (IP250)",
+      "vendor": "Alamar Biosciences",
+      "integration_tier": "T1",
+      "integration_status": "Integrated",
+      "apt_integrated": true,
+      "maturity_score": 3,
+      "validation_score": 3.0,
+      "apt_readiness_rank_v1": null,
+      "availability_status": "generally_available",
+      "currently_deployable": true,
+      "replaced_by": null,
+      "source": "expansion_search",
+      "key_citation": "Alamar 'Development of NULISAseq Inflammation Panel 250' (alamarbio.com/development-of-nulisaseq-inflammation-panel-250); core method: NULISA platform, BioSpace/Alamar 2023.",
+      "availability_source": "https://alamarbio.com/products-and-services/nulisaseq-cns-disease-panel/",
+      "notes": "New vs census, which listed only the Alamar CNS Disease Panel 120 and single-plex qPCR. IP250 is the relative-quant inflammation flagship; the AQ variant (below) adds absolute quant.",
+      "entity_type": "service_assay",
+      "runs_on": null,
+      "ranked": true,
+      "tier_num": 1.0,
+      "scoreable": true,
+      "readiness_precise": 3.0,
+      "validation_basis": "NULISA chemistry independently validated (Ibanez 2024); panel-specific detectability vendor-stated",
+      "score_status": "APT-assessed",
+      "detail": {
+        "chemistry": "Proximity-ligation / sequential immunocomplex capture-and-release (NULISA) with dual DNA-barcoded antibodies; NGS readout on ARGO / ARGO HT system.",
+        "plex_or_depth": "250 targets (200 cytokines/chemokines and their receptors + 50 other inflammation/immune proteins).",
+        "matrix": "Plasma, serum (10 uL sample / 25 uL input).",
+        "quantitation_type": "Relative (NPQ / normalized counts); wide dynamic range without dilution. Median intra- and inter-plate CV <15%; 97.6% target detectability.",
+        "key_citation_short": "Alamar 'Development of NULISAseq Inflammation Panel 250' (alamarbio.com/development-of-nulisaseq-inflammation-panel-250); core method: NULISA platform, BioSpace/Alamar 2023.",
+        "commercial_status_note": "Shipping (expanded from the original 200-plex inflammation panel).",
+        "notes": "New vs census, which listed only the Alamar CNS Disease Panel 120 and single-plex qPCR. IP250 is the relative-quant inflammation flagship; the AQ variant (below) adds absolute quant.",
+        "cost_tier": "low-to-moderate",
+        "overview": {
+          "about": "The NULISAseq Inflammation Panel 250 is a high-plex immunoassay measuring 250 inflammation and immune proteins, chiefly cytokines, chemokines, and their receptors, from small plasma or serum samples. It uses proximity-ligation chemistry: dual DNA-barcoded antibodies bind target proteins, triggering a DNA ligation step that creates unique molecular barcodes for each target. These barcodes are then sequenced on an NGS platform, yielding relative quantitation across a wide dynamic range. The 250-target breadth and small sample requirement distinguish it for comprehensive immune profiling without dilution.",
+          "best_for": "Studies requiring comprehensive inflammatory and immune marker profiling from limited sample volume.",
+          "strengths": [
+            "250-target multiplexing in a single assay from 10 µL sample",
+            "Wide dynamic range without dilution; median CV <15%",
+            "High target detectability (97.6%) with relative quantitation"
+          ],
+          "limitations": [
+            "Provides relative quantitation only; absolute quantitation requires separate AQ variant",
+            "Sequencing dependence adds instrument and reagent complexity versus immunoassay alternatives"
+          ]
+        },
+        "publications": [
+          {
+            "label": "Alamar 'Development of NULISAseq Inflammation Panel 250' (alamarbio.com/development-of-nulisaseq-inflammation-panel-250); core method: NULISA platform, BioSpace/Alamar 2023.",
+            "doi": null
+          }
+        ],
+        "sample_volume": "25 uL input (~10 uL sample)"
+      },
+      "verification_grade": "amber",
+      "verification_source_tier": "vendor_technical_doc",
+      "sub100_confirmed": false,
+      "readiness_note": "integrated",
+      "combined_with": "Neuro 220"
+    },
+    {
+      "rank": 18,
+      "platform": "Alamar NULISAseq Inflammation Panel AQ (absolute quantification)",
+      "vendor": "Alamar Biosciences",
+      "integration_tier": "T1",
+      "integration_status": "Integration-ready",
+      "apt_integrated": false,
+      "maturity_score": 2,
+      "validation_score": 2.0,
+      "apt_readiness_rank_v1": 2.25,
+      "availability_status": "generally_available",
+      "currently_deployable": true,
+      "replaced_by": null,
+      "source": "expansion_search",
+      "key_citation": "PRNewswire, 'Alamar Biosciences Unveils NULISAseq Inflammation Panel AQ', 22 Jan 2025 (prnewswire.com/news-releases/...302357452.html); alamarbio.com/inflamAQ.",
+      "availability_source": "https://alamarbio.com/products-and-services/nulisaseq-cns-disease-panel/",
+      "notes": "New vs census. Distinct product generation from IP250 (adds absolute quant on >150 of the analytes without per-analyte multipoint curves).",
+      "entity_type": "service_assay",
+      "runs_on": null,
+      "ranked": true,
+      "tier_num": 1.0,
+      "scoreable": true,
+      "readiness_precise": 2.2,
+      "validation_basis": "NULISA chemistry independently validated (Ibanez 2024); panel-specific detectability vendor-stated",
+      "score_status": "preliminary",
+      "detail": {
+        "chemistry": "NULISA (sequential immunocomplex capture-and-release, dual DNA-barcoded antibodies) + NGS readout; single-calibrator proprietary algorithm to derive absolute concentrations.",
+        "plex_or_depth": ">150 analytes (subset of inflammation panel enabled for absolute quant).",
+        "matrix": "Plasma, serum (10 uL / 25 uL input).",
+        "quantitation_type": "Absolute (pg/mL) via single-calibrator algorithm, described by vendor as the largest absolute-quantification panel available.",
+        "key_citation_short": "PRNewswire, 'Alamar Biosciences Unveils NULISAseq Inflammation Panel AQ', 22 Jan 2025 (prnewswire.com/news-releases/...302357452.html); alamarbio.com/inflamAQ.",
+        "commercial_status_note": "Launched 22 January 2025; RUO.",
+        "notes": "New vs census. Distinct product generation from IP250 (adds absolute quant on >150 of the analytes without per-analyte multipoint curves).",
+        "overview": {
+          "about": "NULISAseq Inflammation Panel AQ is a high-plex protein measurement platform that quantifies over 150 inflammatory analytes in plasma or serum at absolute concentrations (pg/mL). The assay uses dual DNA-barcoded antibody pairs to capture proteins, then releases and sequences the DNA barcodes to count protein molecules. A single-calibrator algorithm converts barcode counts to absolute quantities without requiring per-analyte calibration curves, enabling rapid quantification of a large analyte set simultaneously.",
+          "best_for": "Large-scale inflammatory biomarker studies requiring absolute quantification across many analytes.",
+          "strengths": [
+            "Measures >150 inflammation markers in absolute units from minimal sample",
+            "Single-calibrator approach simplifies absolute quantification across large panels",
+            "Enables high-throughput protein profiling with NGS readout"
+          ],
+          "limitations": [
+            "Launched recently (January 2025); clinical validation data still emerging",
+            "10–25 µL input requirement may constrain multiplexed downstream analyses",
+            "Proprietary calibration algorithm limits transparency into concentration derivation"
+          ]
+        },
+        "publications": [
+          {
+            "label": "PRNewswire, 'Alamar Biosciences Unveils NULISAseq Inflammation Panel AQ', 22 Jan 2025 (prnewswire.com/news-releases/...302357452.html); alamarbio.com/inflamAQ.",
+            "doi": null
+          }
+        ]
+      },
+      "verification_grade": "amber",
+      "verification_source_tier": "vendor_technical_doc",
+      "sub100_confirmed": false
+    },
+    {
+      "rank": 17,
+      "platform": "Alamar NULISAseq Immune 340 Panel",
+      "vendor": "Alamar Biosciences",
+      "integration_tier": "T1",
+      "integration_status": "Integration-ready",
+      "apt_integrated": false,
+      "maturity_score": 2,
+      "validation_score": 2.0,
+      "apt_readiness_rank_v1": 2.25,
+      "availability_status": "generally_available",
+      "currently_deployable": true,
+      "replaced_by": null,
+      "source": "expansion_search",
+      "key_citation": "GlobeNewswire, 'Alamar Biosciences Launches NULISAseq Immune 340 Panel', 28 Jul 2026 (globenewswire.com/news-release/2026/07/28/3334730); datasheet alamarbio.com (Datasheet-NULISAseq-Immune-340-Panel.pdf).",
+      "availability_source": "https://alamarbio.com/products-and-services/nulisaseq-cns-disease-panel/",
+      "notes": "New vs census. Newest/largest Alamar affinity panel; supersedes IP250 in breadth. Detectability assessed on 426 EDTA plasma samples per datasheet.",
+      "entity_type": "service_assay",
+      "runs_on": null,
+      "ranked": true,
+      "tier_num": 1.0,
+      "scoreable": true,
+      "readiness_precise": 2.2,
+      "validation_basis": "NULISA chemistry independently validated (Ibanez 2024); panel-specific detectability vendor-stated",
+      "score_status": "preliminary",
+      "detail": {
+        "chemistry": "NULISA (sequential immunocomplex capture-and-release) + NGS readout on ARGO/ARGO HT.",
+        "plex_or_depth": "~340 immune-related proteins across 35 immune categories (all major checkpoints, full IL-17 family, 7 type I/III interferons, 30-member TNF superfamily, 6 complement components, 31 chemokines, cell-death proteins).",
+        "matrix": "Plasma, serum (as little as 25 uL).",
+        "quantitation_type": "Relative (attomolar sensitivity, broad dynamic range); median intra-/inter-plate CV <10%, >90% dilutional linearity (RSQ>0.9), >90% detectability, cross-reactivity <1%.",
+        "key_citation_short": "GlobeNewswire, 'Alamar Biosciences Launches NULISAseq Immune 340 Panel', 28 Jul 2026 (globenewswire.com/news-release/2026/07/28/3334730); datasheet alamarbio.com (Datasheet-NULISAseq-Immune-340-Panel.pdf).",
+        "commercial_status_note": "Launched 28 July 2026; RUO. Broadest Alamar immune panel to date (expands on IP250).",
+        "notes": "New vs census. Newest/largest Alamar affinity panel; supersedes IP250 in breadth. Detectability assessed on 426 EDTA plasma samples per datasheet.",
+        "overview": {
+          "about": "NULISAseq Immune 340 Panel is a service assay from Alamar Biosciences that measures roughly 340 immune-related proteins in plasma or serum, spanning 35 immune categories including checkpoints, interferons, chemokines, and complement components. It uses NULISA chemistry: proteins are captured by paired antibodies in sequential steps, unbound material is washed away, and the remaining immunocomplexes are tagged and converted into DNA barcodes that are counted by next-generation sequencing (NGS) instead of a fluorescent or electrical signal. This sequential capture-and-release process reduces background noise, giving very high sensitivity. The platform reports relative quantitation with attomolar-level sensitivity, needs only small sample volumes, and is Alamar's broadest immune-focused panel to date.",
+          "strengths": [
+            "Attomolar sensitivity with broad dynamic range",
+            "Low intra-/inter-plate CV, typically under 10%",
+            "Small sample volume requirement, as little as 25 µL"
+          ],
+          "limitations": [
+            "Relative, not absolute, protein quantitation",
+            "Research-use-only status, not for clinical diagnosis",
+            "Fixed panel content limits discovery beyond listed proteins"
+          ],
+          "best_for": "Suits large immune-profiling studies needing broad checkpoint, cytokine, and complement coverage from limited plasma volume."
+        },
+        "publications": [
+          {
+            "label": "GlobeNewswire, 'Alamar Biosciences Launches NULISAseq Immune 340 Panel', 28 Jul 2026 (globenewswire.com/news-release/2026/07/28/3334730); datasheet alamarbio.com (Datasheet-NULISAseq-Immune-340-Panel.pdf).",
+            "doi": null
+          }
+        ]
+      },
+      "verification_grade": "amber",
+      "verification_source_tier": "vendor_marketing",
+      "sub100_confirmed": false
+    },
+    {
+      "rank": 19,
+      "platform": "Biognosys TrueDiscovery (P2 plasma enrichment, HRM DIA service)",
+      "vendor": "Biognosys",
+      "integration_tier": "T3",
+      "integration_status": "Integrated",
+      "apt_integrated": true,
+      "maturity_score": 3,
+      "validation_score": 1.5,
+      "apt_readiness_rank_v1": null,
+      "availability_status": "generally_available",
+      "currently_deployable": true,
+      "replaced_by": null,
+      "source": "prior_census",
+      "key_citation": null,
+      "availability_source": "https://biognosys.com/news/biognosys-unveils-enhanced-plasma-proteomics-services-for-deep-and-high-throughput-biomarker-discovery/",
+      "notes": null,
+      "entity_type": "service_assay",
+      "runs_on": "Orbitrap Astral / timsTOF (HRM-DIA)",
+      "ranked": true,
+      "tier_num": 3.0,
+      "scoreable": true,
+      "readiness_precise": 2.15,
+      "validation_basis": "HRM-DIA method independently benchmarked (Beimers 2025); product ops vendor-stated",
+      "score_status": "APT-assessed",
+      "detail": {
+        "chemistry": "Two front-ends feeding HRM/DIA-MS: bead-based depletion of abundant plasma proteins, or P2 nanoparticle enrichment; measured on Orbitrap or timsTOF HT",
+        "plex_or_depth": "~4,000-4,200 protein groups single-shot with bead-based depletion; up to ~7,000 protein groups single-shot with P2 nanoparticle enrichment",
+        "matrix": "plasma, serum, CSF, tissue, cells",
+        "sample_volume": "~200 uL plasma (P2 enrichment); 50 uL for NULISA targeted add-on",
+        "throughput": "1 h injection-to-injection on timsTOF workflows (vendor)",
+        "cost_tier": "moderate (CRO service pricing)",
+        "quantitation_type": "relative; absolute via PQ500 or TrueSignature",
+        "proteoform_ptm": "Not delivered natively; PTMs and proteoforms can be mined from the DIA data but are not a standard readout",
+        "csf_performance": "CSF offered as a matrix; no independent CSF depth figure published",
+        "analytical_validation": "GLP-certified and GCP-compliant operations (vendor); no independent head-to-head retrieved",
+        "key_citation_doi": null,
+        "key_citation_short": "Biognosys product documentation (biognosys.com)",
+        "overview": {
+          "about": "Biognosys TrueDiscovery is a mass spectrometry service that measures thousands of proteins per plasma sample using data-independent acquisition (DIA). It offers two sample front-ends: bead-based depletion of abundant plasma proteins, and a P2 nanoparticle enrichment workflow. DIA works by fragmenting all peptides in defined mass windows, then matching the spectra against a library to identify and quantify proteins without prior targeting. Depletion reaches about 4,000 to 4,200 protein groups in a single injection, and P2 enrichment reaches up to about 7,000, on Orbitrap or timsTOF HT instruments. It accepts plasma, serum, CSF, tissue, and cell samples and offers relative and absolute quantitation.",
+          "best_for": "Biomarker discovery and PTM profiling in plasma or tissue where depth and proteoform resolution are required.",
+          "strengths": [
+            "~4,000-4,200 protein groups per injection with depletion; up to ~7,000 with P2 enrichment",
+            "Proteoform and PTM information accessible by mining the bottom-up DIA data",
+            "GLP-certified, GCP-compliant service operations"
+          ],
+          "limitations": [
+            "Sample volume not publicly specified; service-dependent availability",
+            "CSF depth not independently benchmarked"
+          ]
+        },
+        "publications": [
+          {
+            "label": "Biognosys product documentation (biognosys.com)",
+            "doi": null
+          }
+        ]
+      },
+      "verification_grade": "amber",
+      "verification_source_tier": "vendor_marketing",
+      "sub100_confirmed": false,
+      "readiness_note": "integrated"
+    },
+    {
+      "rank": 20,
+      "platform": "Olink Reveal",
+      "vendor": "Olink (Thermo Fisher Scientific)",
+      "integration_tier": "T1",
+      "integration_status": "Integration-ready",
+      "apt_integrated": false,
+      "maturity_score": 2,
+      "validation_score": 1.5,
+      "apt_readiness_rank_v1": 2.0,
+      "availability_status": "generally_available",
+      "currently_deployable": true,
+      "replaced_by": null,
+      "source": "prior_census",
+      "key_citation": null,
+      "availability_source": "https://www.thermofisher.com/order/catalog/product/96200",
+      "notes": null,
+      "entity_type": "service_assay",
+      "runs_on": null,
+      "ranked": true,
+      "tier_num": 1.0,
+      "scoreable": true,
+      "readiness_precise": 2.05,
+      "validation_basis": "PEA+NGS chemistry independently validated; Reveal-specific numbers vendor-stated",
+      "score_status": "preliminary",
+      "detail": {
+        "chemistry": "Proximity Extension Assay (PEA), dual-recognition DNA-coupled antibodies; NGS readout via a library-prep kit that runs on a lab's existing Illumina NGS (manual or automated).",
+        "plex_or_depth": ">1,000 proteins (robustly detectable, high proportion of cis-pQTLs; content skewed to actionable/druggable inflammation & immune proteins).",
+        "matrix": "Plasma, serum & more (4 uL).",
+        "quantitation_type": "Relative (NPX, log2); fg-mg/mL range.",
+        "key_citation_short": "PEA+NGS; PMC12501989 (Reveal ~1,034-target curated content; T1)",
+        "commercial_status_note": "Shipping; positioned as low-cost (~$98/sample reagent kit) 'NGS-based proteomics for every lab'.",
+        "notes": "SPEC UPDATE to existing census entry: concrete numbers now confirmed, >1,000 proteins, 4 uL, ~$98/sample, runs on customer's own NGS. Sits between Target (focused) and Explore HT (>5,400) in the Olink ladder.",
+        "overview": {
+          "about": "Olink Reveal is a proximity extension assay that measures over 1,000 proteins in plasma, serum, and other matrices from 4 µL samples. Paired DNA-labeled antibodies bind target proteins, bringing their attached DNA strands into proximity; enzymatic extension creates a unique sequence for each protein, which is then counted by next-generation sequencing on the user's own Illumina instrument. The platform delivers relative quantitation (NPX scale) across a broad set of inflammation and immune proteins at low reagent cost, positioned for labs seeking multiplexed proteomics without specialized hardware.",
+          "best_for": "Studies profiling inflammatory and immune proteins across many samples with existing NGS infrastructure.",
+          "strengths": [
+            "Measures >1,000 proteins with high cis-pQTL detection in small (4 µL) samples",
+            "Runs on customer's existing Illumina sequencer; low per-sample reagent cost",
+            "Content weighted toward actionable inflammation and immune targets"
+          ],
+          "limitations": [
+            "Relative quantitation only (NPX); absolute concentration conversion requires calibration",
+            "Proximity-based detection can be affected by protein-protein interactions or crowding",
+            "Content is fixed; no de novo discovery of unmeasured proteins in the sample"
+          ]
+        },
+        "publications": [
+          {
+            "label": "PEA+NGS; PMC12501989 (Reveal ~1,034-target curated content; T1)",
+            "doi": null
+          }
+        ]
+      },
+      "verification_grade": "green",
+      "verification_source_tier": "peer_reviewed",
+      "sub100_confirmed": false
+    },
+    {
+      "rank": 22,
+      "platform": "Quantum-Si Platinum / Platinum Pro (next-gen protein sequencing)",
+      "vendor": "Quantum-Si",
+      "integration_tier": "T3",
+      "integration_status": "Profiled / reference",
+      "apt_integrated": false,
+      "maturity_score": 2,
+      "validation_score": 1.0,
+      "apt_readiness_rank_v1": 1.5,
+      "availability_status": "generally_available",
+      "currently_deployable": true,
+      "replaced_by": "Original Platinum superseded by Platinum Pro; Proteus expected end of 2026",
+      "source": "prior_census",
+      "key_citation": null,
+      "availability_source": "https://www.quantum-si.com/products/platinum-pro/",
+      "notes": null,
+      "entity_type": "service_assay",
+      "runs_on": null,
+      "ranked": true,
+      "tier_num": 3.0,
+      "scoreable": true,
+      "readiness_precise": 1.5,
+      "validation_basis": "independent peer-reviewed evidence",
+      "score_status": "preliminary",
+      "detail": {
+        "chemistry": "Single-molecule peptide sequencing on a semiconductor chip: cycles of fluorophore-labelled N-terminal amino-acid recognizer binding plus aminopeptidase cleavage; kinetic signatures",
+        "plex_or_depth": "peptide-level; benchtop scale. Vendor roadmap (Proteus) targets ~6-7 million peptides (vendor, \"tens of millions\" at launch) per experiment",
+        "matrix": "purified proteins, recombinant standards, whole blood (haemoglobin variants); NOT demonstrated for untargeted plasma or CSF",
+        "sample_volume": "unknown",
+        "throughput": "low - single-sample benchtop runs",
+        "cost_tier": "low instrument cost, low throughput",
+        "quantitation_type": "counts of single molecules; not calibrated concentration",
+        "proteoform_ptm": "YES - discriminates paralogue-, transcript- and PTM-level proteoform variation; detected a phospho-CDNF peptide at <1 in 1,000 (vendor investor materials)",
+        "csf_performance": "none",
+        "analytical_validation": "Peer-reviewed proof-of-concept on defined proteins: tropomyosin proteoform discrimination where TPM1/TPM2 share 85% identity (Sittipongpittaya 2025); complementarity with individual-ion MS gave 52% combined sequence coverage of IL-6 (Skinner 2025, preprint)",
+        "key_citation_doi": "10.1021/acs.jproteome.4c00978",
+        "key_citation_short": "Sittipongpittaya 2025 J Proteome Res",
+        "overview": {
+          "about": "Quantum-Si Platinum is a single-molecule protein sequencing platform that reads amino acid sequences directly from protein molecules on a semiconductor chip. It works by cycling through rounds of fluorophore-labelled amino acid recognition followed by enzymatic cleavage, capturing kinetic signatures to build sequence information. The platform's key distinction is its ability to resolve proteoforms, detecting protein variants that differ by single amino acids, post-translational modifications, or transcript isoforms, even when paralogue proteins share 85% sequence identity. It operates as a benchtop instrument with low throughput, and it reports counts of individual peptide molecules, not calibrated concentrations.",
+          "best_for": "Targeted proteoform discovery in well-defined or enriched protein samples.",
+          "strengths": [
+            "Distinguishes proteoforms and PTMs at single-molecule resolution",
+            "Low instrument cost and low per-sample cost",
+            "Detects rare variants at <1-in-1000 frequencies"
+          ],
+          "limitations": [
+            "Demonstrated only on purified proteins and whole blood; not validated for untargeted plasma",
+            "Low throughput; single-sample benchtop runs",
+            "Reports molecule counts, not quantified concentrations"
+          ]
+        },
+        "publications": [
+          {
+            "label": "Sittipongpittaya 2025 J Proteome Res",
+            "doi": "10.1021/acs.jproteome.4c00978"
+          }
+        ]
+      },
+      "verification_grade": "green",
+      "verification_source_tier": "peer_reviewed",
+      "sub100_confirmed": false
+    },
+    {
+      "rank": 23,
+      "platform": "Nautilus Voyager (single-molecule iterative mapping)",
+      "vendor": "Nautilus Biotechnology",
+      "integration_tier": "T2",
+      "integration_status": "Profiled / reference",
+      "apt_integrated": false,
+      "maturity_score": 1,
+      "validation_score": 1.5,
+      "apt_readiness_rank_v1": 1.25,
+      "availability_status": "early_access",
+      "currently_deployable": true,
+      "replaced_by": null,
+      "source": "prior_census",
+      "key_citation": null,
+      "availability_source": "https://investors.nautilus.bio/news-releases/news-release-details/nautilus-biotechnology-unveils-voyager-platform-enabling-single",
+      "notes": null,
+      "entity_type": "service_assay",
+      "runs_on": null,
+      "ranked": true,
+      "tier_num": 2.0,
+      "scoreable": true,
+      "readiness_precise": 1.35,
+      "validation_basis": "independent peer-reviewed validation: Nature Methods 2026 (tau proteoforms, DOI 10.1038/s41592-026-03188-6)",
+      "score_status": "preliminary",
+      "detail": {
+        "chemistry": "Intact proteins immobilised on a single-molecule array, probed by iterative cycles of multi-affinity reagents; ML decoding",
+        "plex_or_depth": "vendor: up to 10 billion intact proteins/proteoforms per run; first assay quantifies up to 768 full-length tau proteoform groups",
+        "matrix": "brain tissue demonstrated (Buck Institute field evaluation); biofluid capability not demonstrated publicly",
+        "sample_volume": "unknown",
+        "throughput": "unknown",
+        "cost_tier": "unknown (fee-for-service in early access)",
+        "quantitation_type": "proteoform-group counts; quantitation claims vendor-stated",
+        "proteoform_ptm": "YES - explicitly designed to map combinatorial PTM patterns on individual molecules",
+        "csf_performance": "no CSF data published or claimed",
+        "analytical_validation": "Independent peer-reviewed: Nature Methods 2026 tau proteoform mapping (0.1% sensitivity, CV<5.5%), human AD tissue, DOI 10.1038/s41592-026-03188-6. Shipping product = defined 12-antibody Tau Proteoforms Assay (early-access).",
+        "key_citation_doi": null,
+        "key_citation_short": "Nautilus Biotechnology press releases, Jan and Feb 2026",
+        "overview": {
+          "about": "Nautilus Voyager is a single-molecule protein imaging platform that maps intact proteins and their post-translational modifications on an arrayed surface. Individual protein molecules are immobilized and probed iteratively with multiple affinity reagents; machine learning decodes the binding patterns to identify distinct proteoforms. The platform can quantify up to 10 billion protein molecules per run and is explicitly designed to resolve combinatorial PTM patterns on single molecules, enabling detailed proteoform-group profiling without prior separation or mass measurement.",
+          "best_for": "Deep proteoform mapping studies in solid tissue with focus on PTM combinatorics.",
+          "strengths": [
+            "Maps combinatorial PTM patterns on individual molecules with 0.1% sensitivity",
+            "Quantifies billions of intact proteins per run in tissue",
+            "Low CVs (<5.5%) in tau proteoform detection"
+          ],
+          "limitations": [
+            "Brain tissue only; biofluid capability not publicly demonstrated",
+            "Early-access product with limited published analytical data",
+            "Sample volumes and per-sample costs unknown"
+          ]
+        },
+        "publications": [
+          {
+            "label": "Nautilus Biotechnology press releases, Jan and Feb 2026",
+            "doi": null
+          }
+        ]
+      },
+      "verification_grade": "green",
+      "verification_source_tier": "peer_reviewed",
+      "sub100_confirmed": false
+    },
+    {
+      "rank": 24,
+      "platform": "Portal Biotech nanopore protein sequencing",
+      "vendor": "Portal Biotech",
+      "integration_tier": "T3",
+      "integration_status": "Profiled / reference",
+      "apt_integrated": false,
+      "maturity_score": 0,
+      "validation_score": 1.0,
+      "apt_readiness_rank_v1": 0.5,
+      "availability_status": "early_access",
+      "currently_deployable": true,
+      "replaced_by": null,
+      "source": "prior_census",
+      "key_citation": null,
+      "availability_source": null,
+      "notes": null,
+      "entity_type": "service_assay",
+      "runs_on": null,
+      "ranked": true,
+      "tier_num": 3.0,
+      "scoreable": true,
+      "readiness_precise": 0.5,
+      "validation_basis": "independent peer-reviewed evidence",
+      "score_status": "preliminary",
+      "detail": {
+        "chemistry": "Electro-osmotic-flow-driven translocation of full-length proteins through engineered biological nanopores (Maglia-lab origin), with machine-learning decoding of the ionic-current signal",
+        "plex_or_depth": "single-molecule; no proteome-scale figure exists",
+        "matrix": "synthetic and recombinant protein strands only",
+        "sample_volume": null,
+        "throughput": "research-scale",
+        "cost_tier": "unknown",
+        "quantitation_type": "single-molecule reads; not quantitative in a biofluid sense",
+        "proteoform_ptm": "YES in principle - single-amino-acid sensitivity on strands hundreds of residues long, with phosphorylation mapping demonstrated",
+        "csf_performance": "none",
+        "analytical_validation": "Foundational science: Sauciuc et al. Nat Biotechnol 2023 (10.1038/s41587-023-01954-x, Maglia lab). Portal has NO own peer-reviewed platform paper; pre-commercial.",
+        "key_citation_doi": "10.1038/s41587-023-01954-x",
+        "key_citation_short": "Sauciuc et al., Nature Biotechnology 2023, DOI 10.1038/s41587-023-01954-x (Maglia lab; Portal has no own peer-reviewed platform paper)",
+        "overview": {
+          "about": "Portal Biotech is developing a single-molecule protein sequencing platform that reads intact proteins as they pass through an engineered biological nanopore. An electro-osmotic flow drives the protein through the pore, and the ionic-current signal produced as different amino acids pass is decoded by machine learning to infer sequence and modifications. The technology originates from the Maglia laboratory at the University of Groningen. It is pre-commercial, and published evidence to date is proof-of-concept, not a released product.",
+          "best_for": "Research into proteoform structure and site-specific modifications in recombinant proteins.",
+          "strengths": [
+            "Single-amino-acid sensitivity with phosphorylation mapping demonstrated",
+            "Proteoform and PTM resolution on intact protein strands",
+            "Research-stage single-molecule readout capability"
+          ],
+          "limitations": [
+            "Restricted to synthetic and recombinant proteins only",
+            "No biofluid performance or clinical matrix validation",
+            "Pre-commercial; lacks platform-specific peer-reviewed publication"
+          ]
+        },
+        "publications": [
+          {
+            "label": "Sauciuc et al., Nature Biotechnology 2023, (Maglia lab; Portal has no own peer-reviewed platform paper)",
+            "doi": "10.1038/s41587-023-01954-x"
+          }
+        ]
+      },
+      "verification_grade": "amber",
+      "verification_source_tier": "peer_reviewed",
+      "sub100_confirmed": false
+    },
+    {
+      "rank": null,
+      "platform": "ProteinXI Human Discovery 400 Panel",
+      "vendor": "ProteinXI (a division of Meso Scale Diagnostics, LLC / MSD)",
+      "integration_tier": "T1",
+      "integration_status": "Emerging, not yet scored",
+      "apt_integrated": false,
+      "maturity_score": 1,
+      "validation_score": 0.0,
+      "apt_readiness_rank_v1": 1.0,
+      "availability_status": "early_access",
+      "currently_deployable": true,
+      "replaced_by": null,
+      "source": "expansion_search",
+      "key_citation": "AACR Annual Meeting 2026 Abstract 7684, Cancer Res 2026;86(7_Suppl):7684 (aacrjournals.org/cancerres/article/86/7_Supplement/7684); MSD scientific poster 'Absolute quantification of 400 plasma proteins using a novel NGS-based immunoassay' (mesoscale.com); ProteinXI AACR vendor brochure (file: ProteinXI_AACR_Brochure_20MAY2026.pdf).",
+      "availability_source": "https://aacrjournals.org/cancerres/article/86/7_Supplement/7684/781956/Abstract-7684-Absolute-quantification-of-400",
+      "notes": "PRIORITY known miss recovered. Distinguish assay count (~400) vs quantifiable proteins (~392). Key differentiator vs Olink/SomaScan: absolute quantitation + direct reagent bridge to MSD ECL for validation. Site/pre-analytical batch effects noted in the poster (platelet-degranulation markers).",
+      "entity_type": "service_assay",
+      "runs_on": "MSD ECL reader",
+      "ranked": false,
+      "tier_num": 1.0,
+      "scoreable": false,
+      "readiness_precise": 1.1,
+      "validation_basis": null,
+      "score_status": null,
+      "detail": {
+        "chemistry": "NGS-based sandwich immunoassay with proprietary ImmunoLock chemistry: DNA-barcoded capture+detection antibody pairs form an ImmunoLock complex only with correct antibody combinations; complexes are sequenced by NGS and only valid sequences are counted (three-level specificity). Unified reagents/standards with MSD electrochemiluminescence (ECL, U-PLEX/V-PLEX) for concordant transition to focused validation panels.",
+        "plex_or_depth": "~400 assays (MSD ImmunoLock, NGS readout)",
+        "matrix": "Plasma (validated; 20 uL sample input). Human biofluids.",
+        "quantitation_type": "Absolute (pg/mL), traceable to MSD calibrators/standards; ~12 logs dynamic range claimed, attomolar/fg-mL sensitivity; analytically validated precision <8.6% (median intraplate CV ~6.8%, IQR 3.1-13.3%; interplate ~10.3%, inter-run ~11.7%).",
+        "key_citation_short": "AACR Annual Meeting 2026 Abstract 7684, Cancer Res 2026;86(7_Suppl):7684 (aacrjournals.org/cancerres/article/86/7_Supplement/7684); MSD scientific poster 'Absolute quantification of 400 plasma proteins using a novel NGS-based immunoassay' (mesoscale.com); ProteinXI AACR vendor brochure (file: ProteinXI_AACR_Brochure_20MAY2026.pdf).",
+        "commercial_status_note": "Launched at AACR April 2026; Research Use Only; a collaboration between ProteinXI and MSD. Instrument-free workflow ('proteomics on your existing genomics platform', NGS readout).",
+        "notes": "PRIORITY known miss recovered. Distinguish assay count (~400) vs quantifiable proteins (~392). Key differentiator vs Olink/SomaScan: absolute quantitation + direct reagent bridge to MSD ECL for validation. Site/pre-analytical batch effects noted in the poster (platelet-degranulation markers).",
+        "analytical_validation": "Vendor AACR 2026 poster only; no independent peer-reviewed validation, fails independence gate, catalogued as Emerging.",
+        "overview": {
+          "about": "The ProteinXI Human Discovery 400 Panel is a service assay measuring about 400 proteins in human plasma. It uses a sandwich immunoassay: one antibody captures a target protein, a second antibody detects it, and a signal appears only when both bind correctly. Here, both antibodies carry DNA barcodes, and correctly matched pairs form an 'ImmunoLock' complex; these complexes are read out by DNA sequencing instead of a chemical signal, letting hundreds of proteins be counted in one run with an added layer of specificity checking. Results are reported as absolute concentrations traceable to calibrators, and the same antibody reagents work on MSD's electrochemiluminescence readers, so proteins flagged in discovery can be re-measured on that separate, more established platform for confirmation.",
+          "strengths": [
+            "Absolute quantitation (pg/mL) traceable to calibrators",
+            "Direct reagent bridge to MSD ECL validation panels",
+            "Three-level specificity check via barcoded antibody pairs"
+          ],
+          "limitations": [
+            "Vendor-only validation; no independent peer review yet",
+            "Emerging status, not yet analytically scored",
+            "Site and pre-analytical batch effects noted for platelet markers"
+          ],
+          "best_for": "Suits early discovery studies needing broad plasma protein screening with a path to targeted validation."
+        },
+        "publications": [
+          {
+            "label": "AACR Annual Meeting 2026 Abstract 7684, Cancer Res 2026;86(7_Suppl):7684 (aacrjournals.org/cancerres/article/86/7_Supplement/7684); MSD scientific poster 'Absolute quantification of 400 plasma proteins using a novel NGS-based immunoassay' (mesoscale.com); ProteinXI AACR vendor brochure (file: ProteinXI_AACR_Brochure_20MAY2026.pdf).",
+            "doi": null
+          }
+        ]
+      },
+      "sub100_confirmed": false
+    },
+    {
+      "rank": null,
+      "platform": "Glyphic Biotechnologies de novo protein sequencing",
+      "vendor": "Glyphic Bio",
+      "integration_tier": "T3",
+      "integration_status": "Emerging, not yet scored",
+      "apt_integrated": false,
+      "maturity_score": 1,
+      "validation_score": 0.0,
+      "apt_readiness_rank_v1": 0.75,
+      "availability_status": "early_access",
+      "currently_deployable": true,
+      "replaced_by": null,
+      "source": "prior_census",
+      "key_citation": null,
+      "availability_source": null,
+      "notes": null,
+      "entity_type": "service_assay",
+      "runs_on": null,
+      "ranked": false,
+      "tier_num": 3.0,
+      "scoreable": false,
+      "readiness_precise": 0.7,
+      "validation_basis": null,
+      "score_status": null,
+      "detail": {
+        "chemistry": "Single-molecule Edman-type degradation with engineered N-terminal amino-acid binders (amino-acid-specific binders with a \"ClickP\" linker) and chemical/biological sensors",
+        "plex_or_depth": "no public figure",
+        "matrix": "none demonstrated publicly",
+        "sample_volume": "unknown",
+        "throughput": "unknown",
+        "cost_tier": "unknown",
+        "quantitation_type": "unknown",
+        "proteoform_ptm": "claimed - company states discrimination of all 20 amino acids and PTMs",
+        "csf_performance": "none",
+        "analytical_validation": "NONE for the platform. The only peer-reviewed anchor is upstream reagent engineering: ClpS variants engineered for selective N-terminal amino-acid binding (Tullman 2019)",
+        "key_citation_doi": null,
+        "key_citation_short": "Glyphic Biotechnologies company materials (glyphic.bio); ClpS engineering anchor Tullman 2019",
+        "overview": {
+          "about": "Glyphic's platform performs de novo protein sequencing, reading amino-acid sequences directly from protein molecules without prior knowledge of their identity. It works by repeatedly removing one amino acid at a time from a protein's N-terminus (the starting end) using an Edman-type degradation process, identifying each removed residue with engineered protein binders derived from ClpS, a natural bacterial recognition protein. After each removal step, chemical or biological sensors report which of the 20 amino acids was released. The company claims the platform can distinguish all 20 standard amino acids and detect post-translational modifications, though this has not been independently validated.",
+          "strengths": [
+            "Open discovery approach with no predetermined protein list",
+            "Targets both standard amino acids and post-translational modifications",
+            "Engineered binders provide selective N-terminal recognition"
+          ],
+          "limitations": [
+            "No peer-reviewed analytical validation data published",
+            "Practical performance metrics (throughput, cost, sample input) undisclosed",
+            "Single-molecule Edman degradation has inherent sequencing depth constraints"
+          ],
+          "best_for": "Exploratory studies requiring unbiased protein identification without a reference database."
+        },
+        "publications": [
+          {
+            "label": "Glyphic Biotechnologies company materials (glyphic.bio); ClpS engineering anchor Tullman 2019",
+            "doi": null
+          }
+        ]
+      },
+      "sub100_confirmed": false
+    },
+    {
+      "rank": null,
+      "platform": "Pumpkinseed deSIPHR nanophotonic single-molecule readout",
+      "vendor": "Pumpkinseed Bio",
+      "integration_tier": "T3",
+      "integration_status": "Emerging, not yet scored",
+      "apt_integrated": false,
+      "maturity_score": 1,
+      "validation_score": 0.0,
+      "apt_readiness_rank_v1": 0.75,
+      "availability_status": "early_access",
+      "currently_deployable": true,
+      "replaced_by": null,
+      "source": "prior_census",
+      "key_citation": null,
+      "availability_source": null,
+      "notes": null,
+      "entity_type": "service_assay",
+      "runs_on": null,
+      "ranked": false,
+      "tier_num": 3.0,
+      "scoreable": false,
+      "readiness_precise": 0.7,
+      "validation_basis": null,
+      "score_status": null,
+      "detail": {
+        "chemistry": "Nanophotonic chip reading protein identity, sequence and modification state by Raman spectroscopy; company states >100 billion sensors per wafer",
+        "plex_or_depth": "no published figure",
+        "matrix": "none demonstrated publicly",
+        "sample_volume": "unknown",
+        "throughput": "unknown",
+        "cost_tier": "unknown",
+        "quantitation_type": "unknown",
+        "proteoform_ptm": "claimed - direct de novo readout of modification state without fragmentation",
+        "csf_performance": "none",
+        "analytical_validation": "NONE peer-reviewed for the platform; $20M Series A announced, stated to be scaling from peptide to full-length protein sequencing",
+        "key_citation_doi": null,
+        "key_citation_short": "Pumpkinseed company materials (pumpkinseed.bio)",
+        "overview": {
+          "about": "Pumpkinseed deSIPHR is an emerging nanophotonic platform that identifies individual proteins and their chemical modifications using Raman spectroscopy on a chip-based sensor array. The measurement principle relies on shining light onto protein molecules bound to nanophotonic structures; the scattered light's characteristic spectrum encodes the protein's identity and modification state. The platform's distinctive claim is direct, label-free reading of protein sequence and post-translational modifications without fragmentation, potentially bypassing the mass spectrometry step entirely. Currently transitioning from peptide toward full-length protein capability.",
+          "strengths": [
+            "Direct modification state readout without chemical fragmentation",
+            "Extremely high sensor density (>100 billion per wafer)",
+            "Label-free single-molecule detection principle"
+          ],
+          "limitations": [
+            "No peer-reviewed analytical validation published",
+            "Multiplexing depth and sample throughput undisclosed",
+            "Matrix performance and quantitation method unknown"
+          ],
+          "best_for": "Early-stage discovery projects exploring label-free protein modification readout in controlled settings."
+        },
+        "publications": [
+          {
+            "label": "Pumpkinseed company materials (pumpkinseed.bio)",
+            "doi": null
+          }
+        ]
+      },
+      "sub100_confirmed": false
+    },
+    {
+      "rank": null,
+      "platform": "Range Biotechnologies translational quantification platform",
+      "vendor": "Range Bio",
+      "integration_tier": "T3",
+      "integration_status": "Targeted panel",
+      "apt_integrated": false,
+      "maturity_score": 1,
+      "validation_score": 0.0,
+      "apt_readiness_rank_v1": null,
+      "availability_status": "early_access",
+      "currently_deployable": true,
+      "replaced_by": null,
+      "source": "prior_census",
+      "key_citation": null,
+      "availability_source": null,
+      "notes": null,
+      "entity_type": "service_assay",
+      "runs_on": null,
+      "ranked": false,
+      "tier_num": 3.0,
+      "scoreable": false,
+      "readiness_precise": null,
+      "validation_basis": null,
+      "score_status": "preliminary",
+      "detail": {
+        "chemistry": "Not publicly specified - company describes combining synthetic biology, genomics and machine learning for targeted multiplexed quantification",
+        "plex_or_depth": "no public figure",
+        "matrix": "blood implied; not specified",
+        "sample_volume": "unknown",
+        "throughput": "unknown",
+        "cost_tier": "unknown",
+        "quantitation_type": "targeted absolute quantification (company positioning)",
+        "proteoform_ptm": "unknown",
+        "csf_performance": "none",
+        "analytical_validation": "NONE - no peer-reviewed platform description or specification located",
+        "key_citation_doi": null,
+        "key_citation_short": "Range Biotechnologies company materials (range.bio)",
+        "overview": {
+          "about": "Range Biotechnologies offers a targeted protein quantification service that measures a limited set of proteins in blood samples. The platform combines synthetic biology, genomics, and machine learning to achieve absolute protein quantification. Range appears to customize measurements toward the proteins of interest in each individual study, positioning itself as a flexible alternative to standard multiplex immunoassay platforms.",
+          "best_for": "Exploratory biomarker studies where protein selection is study-specific, not standardized.",
+          "strengths": [
+            "Targeted customization without fixed protein panel constraints",
+            "Absolute quantification positioning for biomarker discovery",
+            "Integrates computational modeling with wet-lab measurement"
+          ],
+          "limitations": [
+            "No published analytical validation or peer-reviewed platform description",
+            "Chemistry and exact measurement principle not publicly disclosed",
+            "Performance benchmarks against standard assays unavailable"
+          ]
+        },
+        "publications": [
+          {
+            "label": "Range Biotechnologies company materials (range.bio)",
+            "doi": null
+          }
+        ]
+      },
+      "sub100_confirmed": false
+    },
+    {
+      "rank": null,
+      "platform": "Erisyon Fluorosequencing",
+      "vendor": "Erisyon, Inc. (Houston, TX; UT Austin / Marcotte lab technology)",
+      "integration_tier": "T3",
+      "integration_status": "Emerging, not yet scored",
+      "apt_integrated": false,
+      "maturity_score": 0,
+      "validation_score": 0.0,
+      "apt_readiness_rank_v1": 0.25,
+      "availability_status": "pre_commercial",
+      "currently_deployable": false,
+      "replaced_by": null,
+      "source": "expansion_search",
+      "key_citation": "Erisyon MJFF grant $188,720, PRNewswire 14 May 2020 (single-molecule protein sequencing, alpha-synuclein PD biomarkers); GenomeWeb 2020",
+      "availability_source": null,
+      "notes": "NEW vs census. Fluorosequencing is the UT-Austin technology (Swaminathan/Marcotte) that also underpins the broader field. Notable: MJFF Parkinson's grant makes this the NGPS company with the clearest (if early) PD tie.",
+      "entity_type": "service_assay",
+      "runs_on": null,
+      "ranked": false,
+      "tier_num": 3.0,
+      "scoreable": false,
+      "readiness_precise": 0.2,
+      "validation_basis": null,
+      "score_status": null,
+      "detail": {
+        "chemistry": "Single-molecule fluorosequencing, immobilized peptides, iterative Edman-type N-terminal removal with fluorescent labeling of specific amino-acid types and imaging across cycles; massively parallel; digital molecule counting",
+        "plex_or_depth": "No fixed analyte list; de novo/ID. Vendor/investor claim: up to ~1 billion peptides sequenced in parallel; single-molecule sensitivity with absolute (digital) quantification.",
+        "matrix": "Research samples / heterogeneous mixtures; oncology biomarker programs (NSCLC). No validated biofluid panel.",
+        "quantitation_type": "Absolute quantification claimed via digital single-molecule counting (vendor claim); relative for complex mixtures.",
+        "key_citation_short": "https://www.globenewswire.com/news-release/2025/01/07/3005337/0/en/Erisyon-Awarded-2-2M-Grant-... (CPRIT, Jan 2025); bioRxiv 2025.07.10.664057 (EM protein abundance inference in fluorosequencing); MJFF grant PRNewswire May 14 2020",
+        "commercial_status_note": "Pre-commercial / instrument in development; no launch announced (per C&EN Jun 2025, Erisyon has not announced a launch). Grant-funded diagnostic programs ongoing.",
+        "notes": "NEW vs census. Fluorosequencing is the UT-Austin technology (Swaminathan/Marcotte) that also underpins the broader field. Notable: MJFF Parkinson's grant makes this the NGPS company with the clearest (if early) PD tie.",
+        "overview": {
+          "about": "Erisyon Fluorosequencing is a single-molecule peptide sequencing platform that images thousands of peptides in parallel on a solid surface. It works by iteratively removing amino acids from the peptide N-terminus, labeling specific amino-acid types with fluorescent dyes, and imaging the positions of labeled molecules across sequential cycles to read out sequences. Because each peptide is counted individually, the platform can deliver absolute quantification and de novo sequence identification without a predefined analyte list. The instrument is currently in development; diagnostic programs are underway but no commercial launch has been announced.",
+          "best_for": "Early-stage biomarker discovery in heterogeneous samples where unbiased peptide identification and absolute quantitation are prioritized over clinical throughput.",
+          "strengths": [
+            "Massive parallel capacity enables large-scale peptide discovery and absolute digital quantification",
+            "De novo sequencing without fixed-panel constraints suits heterogeneous biomarker discovery",
+            "Single-molecule sensitivity and counting underpin unambiguous protein abundance"
+          ],
+          "limitations": [
+            "Instrument pre-commercial; no validated clinical biofluid protocols or performance benchmarks yet",
+            "Complexity of fluorescence imaging and cycle engineering limits throughput per sample compared to some LC-MS approaches",
+            "Immobilized peptide format may not capture all native protein complexities or PTM information"
+          ]
+        },
+        "publications": [
+          {
+            "label": "https://www.globenewswire.com/news-release/2025/01/07/3005337/0/en/Erisyon-Awarded-2-2M-Grant-... (CPRIT, Jan 2025); bioRxiv 2025.07.10.664057 (EM protein abundance inference in fluorosequencing); MJFF grant PRNewswire May 14 2020",
+            "doi": null
+          },
+          {
+            "label": "Erisyon MJFF grant $188,720, PRNewswire 14 May 2020 (single-molecule protein sequencing, alpha-synuclein PD biomarkers); GenomeWeb 2020",
+            "doi": null
+          }
+        ]
+      },
+      "sub100_confirmed": false
+    },
+    {
+      "rank": null,
+      "platform": "Encodia ProteoCode (reverse-translation / DNA-barcoded peptide sequencing)",
+      "vendor": "Encodia, Inc. (San Diego, CA)",
+      "integration_tier": "T3",
+      "integration_status": "Emerging, not yet scored",
+      "apt_integrated": false,
+      "maturity_score": 0,
+      "validation_score": 0.0,
+      "apt_readiness_rank_v1": 0.25,
+      "availability_status": "pre_commercial",
+      "currently_deployable": false,
+      "replaced_by": null,
+      "source": "expansion_search",
+      "key_citation": "https://www.genomeweb.com/business-news/protein-sequencing-firm-encodia-ceases-operations (ceased operations, filed ABC Nov 7 2025)",
+      "availability_source": null,
+      "notes": "NEW vs census, but include primarily to mark it as defunct so the catalog does not later list it as an active option. Founded 2015 by Illumina/454 veterans (Mark Chee, Kevin Gunderson, Michael Weiner); $75M Series C (2021). ProteoCode = tag-and-NGS approach akin to Encodia's own IP; distinct from other lanes.",
+      "entity_type": "service_assay",
+      "runs_on": null,
+      "ranked": false,
+      "tier_num": 3.0,
+      "scoreable": false,
+      "readiness_precise": 0.2,
+      "validation_basis": null,
+      "score_status": null,
+      "detail": {
+        "chemistry": "'Reverse translation', N-terminal amino-acid recognizers carrying DNA barcodes ligate a DNA record of each residue as peptides are degraded; readout by next-generation DNA sequencing",
+        "plex_or_depth": "No fixed analyte list; NGS-scale readout of DNA-encoded peptide sequences. No verified plex/read metric published (company published no primary research on its chemistry).",
+        "matrix": "Research; oncology (NSCLC immunotherapy stratification, preclinical). No validated commercial panel.",
+        "quantitation_type": "Digital counting via NGS; relative. Not established absolute.",
+        "key_citation_short": "https://www.genomeweb.com/business-news/protein-sequencing-firm-encodia-ceases-operations (ceased operations, filed ABC Nov 7 2025)",
+        "commercial_status_note": "DISCONTINUED. Encodia ceased operations and made an assignment for benefit of creditors (Nov 2025); auctioning lab equipment. Never commercially launched a product.",
+        "notes": "NEW vs census, but include primarily to mark it as defunct so the catalog does not later list it as an active option. Founded 2015 by Illumina/454 veterans (Mark Chee, Kevin Gunderson, Michael Weiner); $75M Series C (2021). ProteoCode = tag-and-NGS approach akin to Encodia's own IP; distinct from other lanes.",
+        "overview": {
+          "about": "Encodia ProteoCode was a protein sequencing platform that aimed to read peptides one amino acid at a time and convert that information into DNA, so it could be read out on standard next-generation DNA sequencers. In principle, the peptide is degraded from its end residue by residue; each time a residue is exposed, a recognizer molecule matches it and attaches a DNA barcode encoding that amino acid's identity. Stringing these barcodes together creates a DNA 'record' of the peptide's sequence, which sequencing then decodes at high throughput. What made this platform distinctive was its 'reverse translation' concept, converting protein sequence into DNA for readout, developed by Illumina/454 veterans. The company shut down in November 2025 without ever launching a commercial product.",
+          "strengths": [
+            "Leverages mature, high-throughput DNA sequencing infrastructure",
+            "Open discovery design, no fixed analyte list",
+            "Digital counting readout via NGS"
+          ],
+          "limitations": [
+            "Discontinued; company ceased operations, no commercial product",
+            "No published primary research on chemistry performance",
+            "Quantitation relative only, not established as absolute"
+          ],
+          "best_for": "Not applicable for new studies; historical interest only, as the platform is defunct."
+        },
+        "publications": [
+          {
+            "label": "https://www.genomeweb.com/business-news/protein-sequencing-firm-encodia-ceases-operations (ceased operations, filed ABC Nov 7 2025)",
+            "doi": null
+          }
+        ]
+      },
+      "sub100_confirmed": false
+    },
+    {
+      "rank": null,
+      "platform": "Prisma Bio (optical protein sequencing; 'Universal Recognizer')",
+      "vendor": "Prisma Bio / Prisma Tx (founded 2021)",
+      "integration_tier": "T3",
+      "integration_status": "Emerging, not yet scored",
+      "apt_integrated": false,
+      "maturity_score": 0,
+      "validation_score": 0.0,
+      "apt_readiness_rank_v1": 0.25,
+      "availability_status": "pre_commercial",
+      "currently_deployable": false,
+      "replaced_by": null,
+      "source": "expansion_search",
+      "key_citation": "https://www.prisma-tx.com/ ; foundational bioRxiv referenced by ASeq newsletter (Oct 2025). DOI not verified, vendor/preprint only.",
+      "availability_source": null,
+      "notes": "NEW vs census. Distinct optical chemistry (single universal N-terminal dye + spectral fingerprinting) and in-situ capability differentiate it from Quantum-Si/Erisyon fluorosequencing. Specs unverified; treat all claims as vendor.",
+      "entity_type": "service_assay",
+      "runs_on": null,
+      "ranked": false,
+      "tier_num": 3.0,
+      "scoreable": false,
+      "readiness_precise": 0.2,
+      "validation_basis": null,
+      "score_status": null,
+      "detail": {
+        "chemistry": "Optical single-molecule sequencing: a single small-molecule dye ('Universal Recognizer', ) binds the N-terminal amino acid and emits an amino-acid/PTM-specific fluorescent (spectral) fingerprint; light-based cyclic readout; works on surfaces or in situ within cells",
+        "plex_or_depth": "No fixed analyte list; de novo, proteome-scale single-molecule ID/quant. No verified plex/read-length number published.",
+        "matrix": "Surfaces and in-cell/in situ proteomics (vendor). No validated biofluid panel.",
+        "quantitation_type": "Identification + relative quantification at single-molecule level. Not absolute.",
+        "key_citation_short": "https://www.prisma-tx.com/ ; foundational bioRxiv referenced by ASeq newsletter (Oct 2025). DOI not verified, vendor/preprint only.",
+        "commercial_status_note": "Pre-commercial (stealth-ish). Founded 2021; no product launch or funding round confirmed publicly.",
+        "notes": "NEW vs census. Distinct optical chemistry (single universal N-terminal dye + spectral fingerprinting) and in-situ capability differentiate it from Quantum-Si/Erisyon fluorosequencing. Specs unverified; treat all claims as vendor.",
+        "overview": {
+          "about": "Prisma Bio's Universal Recognizer is an optical single-molecule protein sequencing platform that identifies and relatively quantifies proteins de novo at the proteome scale. A small-molecule fluorescent dye binds each N-terminal amino acid and emits a spectral fingerprint characteristic of that amino acid and its post-translational modifications. Cyclic light-based readout decodes the sequence. The platform works on surfaces and within intact cells or tissues, enabling in situ proteomics without prior extraction, a capability distinct from other optical sequencing methods.",
+          "best_for": "Spatial proteomics and in-cell discovery studies where intact tissue context and unbiased protein identification are priorities.",
+          "strengths": [
+            "Enables in situ proteomics within cells and tissues without extraction",
+            "Open discovery, no fixed protein list required",
+            "Single-molecule quantification and identification from same measurement"
+          ],
+          "limitations": [
+            "Pre-commercial; specifications and performance metrics unverified",
+            "Provides relative quantification only, not absolute protein amounts",
+            "No validated biofluid panel; matrices limited to surfaces and cellular samples"
+          ]
+        },
+        "publications": [
+          {
+            "label": "foundational bioRxiv referenced by ASeq newsletter (Oct 2025). not verified, vendor/preprint only.",
+            "doi": null
+          }
+        ]
+      },
+      "sub100_confirmed": false
+    },
+    {
+      "rank": null,
+      "platform": "Primary Bioscience nanopore protein sequencer",
+      "vendor": "Primary Bioscience (Seattle, WA; CoMotion Labs / UW incubator)",
+      "integration_tier": "T3",
+      "integration_status": "Emerging, not yet scored",
+      "apt_integrated": false,
+      "maturity_score": 0,
+      "validation_score": 0.0,
+      "apt_readiness_rank_v1": 0.25,
+      "availability_status": "pre_commercial",
+      "currently_deployable": false,
+      "replaced_by": null,
+      "source": "expansion_search",
+      "key_citation": "https://biotechmetro.com/primary-bioscience-single-molecule-protein-sequencing/ (Apr 2026, CoMotion Labs coverage)",
+      "availability_source": null,
+      "notes": "NEW vs census. Early-stage nanopore entrant; founder/CEO Stacy Anderson. Included for completeness; specs are aspirational, no peer review.",
+      "entity_type": "service_assay",
+      "runs_on": null,
+      "ranked": false,
+      "tier_num": 3.0,
+      "scoreable": false,
+      "readiness_precise": 0.2,
+      "validation_basis": null,
+      "score_status": null,
+      "detail": {
+        "chemistry": "Nanopore-based single-molecule protein sensing (controlled translocation of proteins through nanopores; electrical readout) aimed at unbiased whole-sample proteome coverage",
+        "plex_or_depth": "No fixed analyte list; designed to sequence every protein in a sample incl. single-residue substitutions, splice variants, PTMs. No verified metrics.",
+        "matrix": "Blood-based multi-cancer early detection is the stated application; matrices not yet validated.",
+        "quantitation_type": "Identification / de novo; quantitation not specified. Relative expected.",
+        "key_citation_short": "https://biotechmetro.com/primary-bioscience-single-molecule-protein-sequencing/ (Apr 2026, CoMotion Labs coverage)",
+        "commercial_status_note": "Pre-commercial / very early (incubator stage, generating early data). No instrument or funding round of note.",
+        "notes": "NEW vs census. Early-stage nanopore entrant; founder/CEO Stacy Anderson. Included for completeness; specs are aspirational, no peer review.",
+        "overview": {
+          "about": "Primary Bioscience's nanopore protein sequencer detects and identifies proteins by threading them through nanopores and recording electrical signals as each molecule translocates. Unlike antibody or mass spec methods that measure predefined analytes, this platform aims to sequence every protein in a sample, capturing single-amino-acid variants, splice isoforms, and post-translational modifications. The approach is still pre-commercial and early-stage; quantitation methods and matrix validation are not yet established.",
+          "best_for": "Exploratory proteomics studies requiring unbiased detection of protein variants and modifications.",
+          "strengths": [
+            "Unbiased whole-proteome coverage without fixed analyte lists",
+            "Single-residue resolution for variants and PTMs",
+            "De novo identification without prior sequence knowledge"
+          ],
+          "limitations": [
+            "Pre-commercial; no validated instruments or peer-reviewed performance data",
+            "Quantitation approach not yet specified",
+            "Blood-based application claimed but matrices not yet validated"
+          ]
+        },
+        "publications": [
+          {
+            "label": "https://biotechmetro.com/primary-bioscience-single-molecule-protein-sequencing/ (Apr 2026, CoMotion Labs coverage)",
+            "doi": null
+          }
+        ]
+      },
+      "sub100_confirmed": false
+    },
+    {
+      "rank": null,
+      "platform": "UNOMR interface nanopore (iNP) / serial nanopore",
+      "vendor": "UNOMR AG (Zurich; ETH Zurich spinout, founded 2023/2025)",
+      "integration_tier": "T3",
+      "integration_status": "Emerging, not yet scored",
+      "apt_integrated": false,
+      "maturity_score": 0,
+      "validation_score": 0.0,
+      "apt_readiness_rank_v1": 0.25,
+      "availability_status": "pre_commercial",
+      "currently_deployable": false,
+      "replaced_by": null,
+      "source": "expansion_search",
+      "key_citation": "https://unomr.com/ ; https://www.venturekick.ch/unomr (CHF 150k Venture Kick, Apr 2025)",
+      "availability_source": null,
+      "notes": "NEW vs census. Very early; near-term product is single-molecule glycosylation/PTM analysis, not proteome-scale sequencing. Included for completeness of the emerging nanopore field.",
+      "entity_type": "service_assay",
+      "runs_on": null,
+      "ranked": false,
+      "tier_num": 3.0,
+      "scoreable": false,
+      "readiness_precise": 0.2,
+      "validation_basis": null,
+      "score_status": null,
+      "detail": {
+        "chemistry": "Serial 'interface nanopore' (iNP) silicon-chip single-molecule sensor; initial focus on protein glycosylation occupancy / PTM detection on single molecules (path toward full sequencing)",
+        "plex_or_depth": "No fixed analyte list; single-molecule PTM/glycosylation readout initially, not full de novo sequencing yet. No verified plex/read metric.",
+        "matrix": "Research (pharma QC, biotherapeutic characterization, food); small sample inputs. No validated biofluid panel.",
+        "quantitation_type": "Single-molecule detection of modifications; relative. Not absolute.",
+        "key_citation_short": "https://unomr.com/ ; https://www.venturekick.ch/unomr (CHF 150k Venture Kick, Apr 2025)",
+        "commercial_status_note": "Pre-commercial / pre-seed. ~CHF 260k raised (grants/accelerator); founded from 6 yr ETH doctoral research; company formalized ~summer 2025. No product.",
+        "notes": "NEW vs census. Very early; near-term product is single-molecule glycosylation/PTM analysis, not proteome-scale sequencing. Included for completeness of the emerging nanopore field.",
+        "overview": {
+          "about": "UNOMR's interface nanopore (iNP) is a silicon-chip single-molecule sensor measuring protein post-translational modifications, particularly glycosylation occupancy, one molecule at a time. The platform detects chemical signatures as individual proteins pass through nanopores, tiny pores in a silicon membrane that register changes in electrical current when a modified amino acid transits. Unlike fixed-panel assays, iNP reads whatever modifications are present on your sample without a predefined list. The platform is very early stage, emerging from ETH Zurich doctoral research and recently formalized; current focus is PTM characterization on single molecules, not full proteome sequencing.",
+          "best_for": "Biotherapeutic and PTM characterization in early R&D and QC workflows.",
+          "strengths": [
+            "Single-molecule resolution of modification occupancy without prior knowledge",
+            "Small sample requirements; no validated biofluid panel needed yet",
+            "Open discovery approach; no fixed analyte constraints"
+          ],
+          "limitations": [
+            "Pre-commercial; no validated product or clinical/biofluid matrix",
+            "Relative quantitation only; not absolute protein abundance",
+            "Near-term scope is PTM detection, not full-scale proteome sequencing"
+          ]
+        },
+        "publications": [
+          {
+            "label": "https://www.venturekick.ch/unomr (CHF 150k Venture Kick, Apr 2025)",
+            "doi": null
+          }
+        ]
+      },
+      "sub100_confirmed": false
+    },
+    {
+      "rank": null,
+      "platform": "Phosphopeptide (PTM) enrichment + Orbitrap Astral or timsTOF",
+      "vendor": "Various (academic / kit)",
+      "integration_tier": "T3",
+      "integration_status": "Enabling sample-prep (not ranked)",
+      "apt_integrated": false,
+      "maturity_score": 3,
+      "validation_score": 3.0,
+      "apt_readiness_rank_v1": null,
+      "availability_status": "generally_available",
+      "currently_deployable": true,
+      "replaced_by": "Orbitrap Astral complemented by higher-end Astral Zoom (both sold)",
+      "source": "prior_census",
+      "key_citation": null,
+      "availability_source": "https://www.businesswire.com/news/home/20250602594570/en",
+      "notes": null,
+      "entity_type": "sample_prep_chemistry",
+      "runs_on": null,
+      "ranked": false,
+      "tier_num": 3.0,
+      "scoreable": false,
+      "readiness_precise": null,
+      "validation_basis": null,
+      "score_status": null,
+      "detail": {
+        "overview": {
+          "about": "This platform combines phosphopeptide enrichment chemistry with high-resolution mass spectrometry (Orbitrap Astral or timsTOF) to identify and quantify phosphorylated proteins in complex samples. Phosphorylation is a reversible chemical modification that regulates protein function; the enrichment step isolates phosphopeptides from the bulk proteome before mass spectrometry analysis, improving detection sensitivity. The platform enables unbiased discovery across the phosphoproteome without a predefined target list, making it suitable for hypothesis-generating studies of cell signaling and post-translational modification dynamics.",
+          "strengths": [
+            "Open discovery without fixed protein targets",
+            "Detects dynamic phosphorylation-dependent signaling",
+            "High-resolution MS resolves complex PTM patterns"
+          ],
+          "limitations": [
+            "Phosphorylation is transient; sample handling affects stoichiometry",
+            "Enrichment may introduce bias toward abundant phosphosites",
+            "Requires specialized sample preparation and instrumentation"
+          ],
+          "best_for": "Unbiased mapping of phosphorylation changes across conditions or cell states."
+        }
+      },
+      "sub100_confirmed": false
+    },
+    {
+      "rank": null,
+      "platform": "Orbitrap Astral / Astral Zoom (neat or enriched plasma DIA)",
+      "vendor": "Thermo Fisher",
+      "integration_tier": "T3",
+      "integration_status": "Enabling instrument (not ranked)",
+      "apt_integrated": false,
+      "maturity_score": 3,
+      "validation_score": 3.0,
+      "apt_readiness_rank_v1": null,
+      "availability_status": "generally_available",
+      "currently_deployable": true,
+      "replaced_by": "Orbitrap Astral complemented by higher-end Astral Zoom (both sold)",
+      "source": "prior_census",
+      "key_citation": null,
+      "availability_source": "https://www.businesswire.com/news/home/20250602594570/en",
+      "notes": null,
+      "entity_type": "instrument_line",
+      "runs_on": null,
+      "ranked": false,
+      "tier_num": 3.0,
+      "scoreable": false,
+      "readiness_precise": null,
+      "validation_basis": null,
+      "score_status": null,
+      "detail": {
+        "chemistry": "Orbitrap + asymmetric-track lossless (Astral) analyser; narrow-window DIA",
+        "plex_or_depth": "PLASMA: ~4,500 proteins/sample with Mag-Net enrichment at 100 samples/day (Jarvinen 2025); neat plasma far lower. CSF: 2,317-protein combined CSF proteome, ~2x the timsTOF Pro 2 detection (Chatanaka 2026). Cells/tissue >10,000 proteins in a 24-min gradient",
+        "matrix": "plasma, serum, CSF, brain tissue, cells",
+        "sample_volume": "<100 uL plasma (Mag-Net); ~10-50 uL CSF typical",
+        "throughput": "24-100 samples/day depending on gradient; 100 SPD with 11.5-min gradients",
+        "cost_tier": "capital-heavy instrument; consumable cost 'a few dollars per sample' for automated Mag-Net (Jarvinen 2025)",
+        "quantitation_type": "relative label-free; absolute with spiked isotope-labelled standards",
+        "proteoform_ptm": "YES - ~30,000 human phosphosites in 30 min; 81,120 unique phosphosites in 12 h (Lancaster 2024)",
+        "csf_performance": "Detected roughly twice as many CSF proteins as timsTOF Pro 2 on the same samples; reproducibility 74-92%; combined literature CSF proteome 5,861 proteins with 558 unique to the Astral dataset (Chatanaka 2026)",
+        "analytical_validation": "Peer-reviewed instrument benchmarking incl. ion-calibration framework; prototype Astral Zoom sampled ~30% more ions per peptide (Hsu 2025, preprint)",
+        "key_citation_doi": "10.1515/dx-2025-0175",
+        "key_citation_short": "Chatanaka 2026 Diagnosis",
+        "overview": {
+          "about": "The Orbitrap Astral is a mass spectrometry platform that measures proteins in biological samples using data-independent acquisition (DIA) and a specialized Orbitrap analyzer. In DIA, the instrument systematically fragments all peptides within narrow mass windows, not just selected ones, then matches the fragment patterns to a protein database to identify and quantify proteins. The Astral's asymmetric-track lossless analyzer enables high sensitivity and resolution across a wide mass range. It detects thousands of proteins from plasma (up to 4,500 with enrichment), cerebrospinal fluid, and tissue in single runs, and can quantify phosphorylation sites and other modifications across tens of thousands of sites per experiment.",
+          "best_for": "Large-scale phosphoproteomics and discovery proteomics in plasma and tissue with deep protein identification.",
+          "strengths": [
+            "Detects ~4,500 proteins in enriched plasma; 2x more CSF proteins than comparable instruments",
+            "Maps thousands of phosphosites and proteoforms in hours; 81,120 unique phosphosites in 12 h",
+            "Supports multiple matrices and quantitation modes; <100 µL plasma sufficient"
+          ],
+          "limitations": [
+            "Neat plasma yields far fewer proteins than enriched samples; capital and consumable cost substantial",
+            "DIA requires high-quality samples and compatible spectral libraries for accurate protein identification",
+            "Throughput varies by gradient length; longer experiments per sample than some competing platforms"
+          ]
+        },
+        "publications": [
+          {
+            "label": "Chatanaka 2026 Diagnosis",
+            "doi": "10.1515/dx-2025-0175"
+          }
+        ]
+      },
+      "sub100_confirmed": false
+    },
+    {
+      "rank": null,
+      "platform": "Top-down / intact-proteoform MS (incl. individual-ion MS)",
+      "vendor": "N/A, academic / reference method",
+      "integration_tier": "T3",
+      "integration_status": "Enabling instrument (not ranked)",
+      "apt_integrated": false,
+      "maturity_score": 3,
+      "validation_score": 3.0,
+      "apt_readiness_rank_v1": null,
+      "availability_status": "generally_available",
+      "currently_deployable": true,
+      "replaced_by": null,
+      "source": "prior_census",
+      "key_citation": null,
+      "availability_source": null,
+      "notes": null,
+      "entity_type": "instrument_line",
+      "runs_on": null,
+      "ranked": false,
+      "tier_num": 3.0,
+      "scoreable": false,
+      "readiness_precise": null,
+      "validation_basis": null,
+      "score_status": null,
+      "detail": {
+        "chemistry": "Intact protein MS without digestion; charge-detection / individual-ion MS for large proteoforms",
+        "plex_or_depth": "Targeted at the proteoform level: 2,841 proteoforms from 114 proteins in nanoparticle-enriched plasma; alpha-synuclein proteoform profiling from brain tissue",
+        "matrix": "brain tissue, plasma (enriched), CSF (limited)",
+        "sample_volume": "high - typically mg of tissue or mL-scale plasma with enrichment",
+        "throughput": "low - tens of samples",
+        "cost_tier": "high per sample; specialist labs only",
+        "quantitation_type": "relative with intact-protein standards; can be made absolute",
+        "proteoform_ptm": "YES - this is the only class that measures combinatorial PTMs on the intact molecule",
+        "csf_performance": "limited; not a cohort-scale CSF method today",
+        "analytical_validation": "Method papers with dilution-series validation (Kellie 2014)",
+        "key_citation_doi": "10.1038/srep05797",
+        "key_citation_short": "Kellie 2014 Sci Rep (anchor)",
+        "overview": {
+          "about": "Top-down intact-protein mass spectrometry measures proteins without digestion, preserving their full structures and all chemical modifications together. Ions are detected individually, either by measuring the mass-to-charge ratio of multiply charged proteins or by resolving single ions directly, so each molecule's complete modification state becomes visible as a distinct proteoform. This is the only approach that directly captures combinatorial post-translational modifications on the intact protein, enabling discovery of variant forms that peptide-level methods would obscure. Applications include profiling thousands of proteoforms in enriched plasma and mapping alpha-synuclein variants in brain tissue.",
+          "best_for": "Deep proteoform discovery in small cohorts with sufficient sample material.",
+          "strengths": [
+            "Only method measuring combinatorial PTMs on intact proteins",
+            "Discovers thousands of proteoforms in single analysis",
+            "Validates findings with dilution-series standards"
+          ],
+          "limitations": [
+            "Requires mg tissue quantities or mL plasma volumes",
+            "Low throughput; tens of samples per study",
+            "Specialist instrumentation; high cost per sample"
+          ]
+        },
+        "publications": [
+          {
+            "label": "Kellie 2014 Sci Rep (anchor)",
+            "doi": "10.1038/srep05797"
+          }
+        ]
+      },
+      "sub100_confirmed": false
+    },
+    {
+      "rank": null,
+      "platform": "Bruker timsTOF (Pro 2 / HT / Ultra 2) with Evosep One",
+      "vendor": "Bruker",
+      "integration_tier": "T3",
+      "integration_status": "Enabling instrument (not ranked)",
+      "apt_integrated": false,
+      "maturity_score": 3,
+      "validation_score": 3.0,
+      "apt_readiness_rank_v1": null,
+      "availability_status": "generally_available",
+      "currently_deployable": true,
+      "replaced_by": null,
+      "source": "prior_census",
+      "key_citation": null,
+      "availability_source": null,
+      "notes": null,
+      "entity_type": "instrument_line",
+      "runs_on": null,
+      "ranked": false,
+      "tier_num": 3.0,
+      "scoreable": false,
+      "readiness_precise": null,
+      "validation_basis": null,
+      "score_status": null,
+      "detail": {
+        "chemistry": "Trapped ion mobility + QTOF, dia-PASEF; Evosep low-dispersion LC",
+        "plex_or_depth": "PLASMA: up to ~4,200 proteins/sample with Mag-Net/ENRICHplus/EasySep/EXONET on a 44-min gradient, >7-fold over neat plasma (Jarvinen 2025); ~4,000 protein groups single-shot depleted plasma, up to ~7,000 with P2 enrichment, in Biognosys workflows (vendor). CSF: about half the Astral depth on matched samples (Chatanaka 2026). Cells: ~8,000 protein groups at 100 samples/day",
+        "matrix": "plasma, serum, CSF, tissue, single cells",
+        "sample_volume": "~10-100 uL plasma depending on enrichment",
+        "throughput": "60-500 samples/day (Evosep methods); 100 SPD routine with 11.5-min gradients",
+        "cost_tier": "capital-heavy; low per-sample consumable",
+        "quantitation_type": "relative label-free; absolute with standards",
+        "proteoform_ptm": "YES - phospho- and glyco-PASEF workflows; automated phosphopeptide enrichment integrated into 192-sample/6 h prep (Kverneland 2024)",
+        "csf_performance": "Detected about half as many CSF proteins as Orbitrap Astral in a matched comparison (Chatanaka 2026)",
+        "analytical_validation": "Peer-reviewed workflow validation; ~8,000 proteins and ~130,000 precursors reproducibly from 192 automated preps (Kverneland 2024)",
+        "key_citation_doi": "10.1021/acs.jproteome.5c00420",
+        "key_citation_short": "Jarvinen 2025 J Proteome Res",
+        "overview": {
+          "about": "The Bruker timsTOF is a mass spectrometry platform that measures thousands of proteins in a single sample by separating them in space and time before ionization. It couples trapped ion mobility (which sorts ions by shape and charge) with a quadrupole time-of-flight detector, then applies data-independent acquisition with mobility-aware selection (dia-PASEF) to systematically fragment peptides across the full sample. Paired with Evosep low-dispersion liquid chromatography, it achieves high protein depth across diverse matrices: ~4,200 proteins in enriched plasma, ~8,000 in cells, and half Astral depth in cerebrospinal fluid. It supports phospho- and glycoprotein workflows with automated sample preparation.",
+          "best_for": "Large-scale plasma and cell studies requiring moderate depth and high sample throughput.",
+          "strengths": [
+            "Detects 4,200+ proteins in plasma with enrichment on short gradients",
+            "Automated phospho/glyco enrichment integrated into 192-sample/6 h prep",
+            "High throughput: 100–500 samples/day depending on gradient length"
+          ],
+          "limitations": [
+            "CSF protein detection about half that of Orbitrap Astral on matched samples",
+            "Ion mobility-based separation adds instrumental complexity",
+            "Capital-intensive instrument with substantial upfront cost"
+          ]
+        },
+        "publications": [
+          {
+            "label": "Jarvinen 2025 J Proteome Res",
+            "doi": "10.1021/acs.jproteome.5c00420"
+          }
+        ]
+      },
+      "sub100_confirmed": false
+    },
+    {
+      "rank": null,
+      "platform": "Depletion / neat-plasma bottom-up MS (baseline comparator)",
+      "vendor": "N/A, academic / reference method",
+      "integration_tier": "T3",
+      "integration_status": "Enabling instrument (not ranked)",
+      "apt_integrated": false,
+      "maturity_score": 3,
+      "validation_score": 3.0,
+      "apt_readiness_rank_v1": null,
+      "availability_status": "generally_available",
+      "currently_deployable": true,
+      "replaced_by": null,
+      "source": "prior_census",
+      "key_citation": null,
+      "availability_source": null,
+      "notes": null,
+      "entity_type": "instrument_line",
+      "runs_on": null,
+      "ranked": false,
+      "tier_num": 3.0,
+      "scoreable": false,
+      "readiness_precise": null,
+      "validation_basis": null,
+      "score_status": null,
+      "detail": {
+        "chemistry": "Abundant-protein depletion or direct digestion of neat plasma; DIA LC-MS",
+        "plex_or_depth": "PLASMA: ~500-2,200 proteins depending on method (Beimers 2025); ~900 proteins neat, ~2,800 ENRICHplus, ~2,300 Mag-Net, ~4,000 Seer, ~4,500 EV-centrifugation in an independent comparison (Roger 2025)",
+        "matrix": "plasma, serum, CSF",
+        "sample_volume": "10-100 uL",
+        "throughput": "60+ samples/day for depletion workflows",
+        "cost_tier": "lowest (~$2.5/sample for the depletion step in one published method)",
+        "quantitation_type": "relative label-free",
+        "proteoform_ptm": "YES indirectly (peptide-level MS)",
+        "csf_performance": "Neat CSF is far more tractable than neat plasma - CSF lacks the same 22-protein dominance, which is why CSF MS reaches 1,500-2,300 proteins/sample without enrichment (Bader 2026, Chatanaka 2026)",
+        "analytical_validation": "Peer-reviewed head-to-head; PreOmics and acid depletion showed >20% median CV, worse than neat, Mag-Net, Seer and Olink (Beimers 2025)",
+        "key_citation_doi": "10.1016/j.jprot.2025.105519",
+        "key_citation_short": "Roger 2025 J Proteomics",
+        "overview": {
+          "about": "Depletion/neat-plasma bottom-up MS is a discovery proteomics approach that measures protein abundance in plasma, serum, or cerebrospinal fluid using liquid chromatography and tandem mass spectrometry. Workflow: either remove the ~14 most abundant proteins (extended combinations reach ~20) (albumin, immunoglobulins, etc.) to reveal lower-abundance targets, or analyze neat plasma directly without depletion. The mass spectrometer breaks proteins into peptides, separates them by liquid chromatography, and identifies and quantifies each peptide by mass. This platform measures hundreds to thousands of proteins per sample depending on method, with no fixed protein list, making it suited to open discovery. Cerebrospinal fluid yields better coverage than plasma because it naturally lacks plasma's protein dominance.",
+          "best_for": "Hypothesis-generating studies in plasma/serum/CSF where protein discovery and cost-efficiency matter more than fixed-list quantitation.",
+          "strengths": [
+            "Lowest cost per sample (low per-sample chemistry cost (specific figure unverified)",
+            "Discovers thousands of proteins without a pre-set panel",
+            "CSF analysis achieves 1,500+ proteins without enrichment"
+          ],
+          "limitations": [
+            "Neat plasma and depletion methods show >20% median CV (higher variability)",
+            "Plasma depth heavily method-dependent; neat plasma covers ~900 proteins",
+            "Requires technical expertise in LC-MS and bioinformatics"
+          ]
+        },
+        "publications": [
+          {
+            "label": "Roger 2025 J Proteomics",
+            "doi": "10.1016/j.jprot.2025.105519"
+          }
+        ]
+      },
+      "sub100_confirmed": false
+    },
+    {
+      "rank": null,
+      "platform": "High-throughput CSF MS resource workflow (5,000-sample scale)",
+      "vendor": "N/A, academic core",
+      "integration_tier": "T3",
+      "integration_status": "Enabling instrument (not ranked)",
+      "apt_integrated": false,
+      "maturity_score": 3,
+      "validation_score": 3.0,
+      "apt_readiness_rank_v1": null,
+      "availability_status": "generally_available",
+      "currently_deployable": true,
+      "replaced_by": null,
+      "source": "prior_census",
+      "key_citation": null,
+      "availability_source": null,
+      "notes": null,
+      "entity_type": "instrument_line",
+      "runs_on": null,
+      "ranked": false,
+      "tier_num": 3.0,
+      "scoreable": false,
+      "readiness_precise": null,
+      "validation_basis": null,
+      "score_status": null,
+      "detail": {
+        "chemistry": "High-throughput DIA-MS on neat CSF, plus an improved workflow and a PRM validation assay",
+        "plex_or_depth": "CSF: ~1,500 proteins/sample across 5,000 individuals; ~2,100 proteins/sample with the improved technology",
+        "matrix": "CSF",
+        "sample_volume": "unknown; neat CSF, typically tens of uL",
+        "throughput": "cohort-scale - 5,000 individuals completed",
+        "cost_tier": "medium",
+        "quantitation_type": "relative discovery + absolute isotope-labelled targeted validation",
+        "proteoform_ptm": "YES in principle (peptide-level DIA)",
+        "csf_performance": "The largest CSF MS resource published: 5,000 individuals across neurological disorders; a 22-protein panel separated MS from related inflammatory disease and outperformed established markers in difficult cases",
+        "analytical_validation": "Peer-reviewed in Cell; discovery-to-targeted validation completed in an independent cohort",
+        "key_citation_doi": "10.1016/j.cell.2026.01.017",
+        "key_citation_short": "Bader 2026 Cell",
+        "overview": {
+          "about": "This platform is a mass spectrometry workflow that directly measures proteins in cerebrospinal fluid (CSF) without depleting or enriching for specific targets. It uses data-independent acquisition (DIA) mass spectrometry: CSF proteins are digested into peptides, ionized, and systematically fragmented across the full mass range so nearly all detectable peptides are recorded, then matched against reference spectral libraries to identify and quantify proteins, unlike targeted methods that only look for pre-selected molecules. Its distinctiveness lies in scale: this workflow produced the largest published CSF MS resource, profiling about 1,500 proteins per sample across 5,000 individuals with neurological disorders, later improved to roughly 2,100 proteins per sample, backed by a targeted PRM validation assay using isotope-labeled standards confirmed in an independent cohort.",
+          "strengths": [
+            "Largest published CSF MS resource, 5,000 individuals profiled",
+            "22-protein panel outperformed established markers in difficult cases",
+            "Discovery findings validated with targeted PRM in independent cohort"
+          ],
+          "limitations": [
+            "Neat CSF sampling requires an invasive lumbar puncture",
+            "Depth (~1,500-2,100 proteins) below affinity-based multiplex platforms",
+            "Open-discovery workflow, not a fixed commercial panel"
+          ],
+          "best_for": "Best suited for large-scale discovery and biomarker validation studies in CSF for neurological disease cohorts."
+        },
+        "publications": [
+          {
+            "label": "Bader 2026 Cell",
+            "doi": "10.1016/j.cell.2026.01.017"
+          }
+        ]
+      },
+      "sub100_confirmed": false
+    },
+    {
+      "rank": null,
+      "platform": "SCIEX ZenoTOF 8600 high-throughput DIA",
+      "vendor": "SCIEX (Danaher)",
+      "integration_tier": "T3",
+      "integration_status": "Enabling instrument (not ranked)",
+      "apt_integrated": false,
+      "maturity_score": 3,
+      "validation_score": 1.5,
+      "apt_readiness_rank_v1": null,
+      "availability_status": "generally_available",
+      "currently_deployable": true,
+      "replaced_by": null,
+      "source": "prior_census",
+      "key_citation": null,
+      "availability_source": "https://sciex.com/about-us/press-releases/2025/zenotof-8600-system-press-release-5-dot-27-dot-25",
+      "notes": null,
+      "entity_type": "instrument_line",
+      "runs_on": null,
+      "ranked": false,
+      "tier_num": 3.0,
+      "scoreable": false,
+      "readiness_precise": null,
+      "validation_basis": null,
+      "score_status": null,
+      "detail": {
+        "chemistry": "QTOF with Zeno trap pulsing; ZT Scan DIA 2.0; Evosep One separation",
+        "plex_or_depth": "4,000 protein groups and ~26,000 precursors from 5 ng human cell digest at 500 samples/day (vendor tech note). No plasma or CSF depth figures published",
+        "matrix": "cells demonstrated; biofluids claimed",
+        "sample_volume": "unknown for plasma/CSF",
+        "throughput": "up to 500 samples/day (vendor)",
+        "cost_tier": "capital-heavy",
+        "quantitation_type": "relative label-free; absolute with standards",
+        "proteoform_ptm": "YES in principle (EAD fragmentation is well suited to labile PTMs)",
+        "csf_performance": "no CSF benchmark published or retrieved",
+        "analytical_validation": "vendor tech notes; independent evaluations name it alongside Astral and timsTOF HT as a current-generation option (Maxwell 2026) but do not benchmark it in plasma",
+        "key_citation_doi": "10.1021/acsmeasuresciau.5c00166",
+        "key_citation_short": "Maxwell 2026 ACS Meas Sci Au",
+        "overview": {
+          "about": "The SCIEX ZenoTOF 8600 is a high-throughput mass spectrometry platform that identifies and quantifies proteins from small cell samples. It couples a quadrupole time-of-flight (QTOF) mass analyzer with a Zeno trap that accumulates ions in short pulses, improving sensitivity. The instrument uses data-independent acquisition (DIA) to systematically fragment all precursor ions in defined mass windows, enabling detection of ~4,000 protein groups from 5 ng of human cell digest. Coupled to the Evosep One separation system, it processes up to 500 samples per day. The platform measures relative protein abundance through label-free quantitation and can support absolute quantitation with internal standards.",
+          "best_for": "Large-scale cell-based proteomics studies requiring fast turnaround and comprehensive protein coverage.",
+          "strengths": [
+            "High sample throughput: 500 samples/day",
+            "Detects thousands of proteins from minimal input (5 ng)",
+            "Captures labile post-translational modifications via EAD fragmentation"
+          ],
+          "limitations": [
+            "No published depth benchmarks in plasma or CSF",
+            "Sample volume requirements for biofluids not specified",
+            "Validation data limited to vendor tech notes and informal peer comparison"
+          ]
+        },
+        "publications": [
+          {
+            "label": "Maxwell 2026 ACS Meas Sci Au",
+            "doi": "10.1021/acsmeasuresciau.5c00166"
+          }
+        ]
+      },
+      "sub100_confirmed": false
+    },
+    {
+      "rank": null,
+      "platform": "Thermo Scientific Stellar MS (targeted PRM/MSn instrument line)",
+      "vendor": "Thermo Fisher Scientific",
+      "integration_tier": "T3",
+      "integration_status": "Enabling instrument (not ranked)",
+      "apt_integrated": false,
+      "maturity_score": 2,
+      "validation_score": 2.0,
+      "apt_readiness_rank_v1": null,
+      "availability_status": "generally_available",
+      "currently_deployable": true,
+      "replaced_by": "Orbitrap Astral complemented by higher-end Astral Zoom (both sold)",
+      "source": "expansion_search",
+      "key_citation": "Vendor: https://www.thermofisher.com/order/catalog/product/B51003515 ; peer eval: Mol Cell Proteomics 2025 (ScienceDirect S1535947625001495; data MassIVE MSV000095051) [accession vendor/unverified]",
+      "availability_source": "https://www.businesswire.com/news/home/20250602594570/en",
+      "notes": "Fills the 'targeted verification instrument' gap between discovery MS and clinical assays; ~10x quant sensitivity and ~5x more compounds vs prior triple-quad/ion-trap workflows (vendor claim). Content-list-comparable only at the level of the custom PRM panel a lab builds.",
+      "entity_type": "instrument_line",
+      "runs_on": null,
+      "ranked": false,
+      "tier_num": 3.0,
+      "scoreable": false,
+      "readiness_precise": null,
+      "validation_basis": null,
+      "score_status": null,
+      "detail": {
+        "chemistry": "Targeted LC-MS/MS: hybrid quadrupole + dual-pressure linear ion trap; PRM/MSn quantitation, PRM Conductor method building; runs on Vanquish Neo LC",
+        "plex_or_depth": "Highly multiplexed targeted panels (user-defined peptide targets; ~140 Hz, PRM assays scale to hundreds of peptides). Unit: targeted peptides/proteins, not fixed content list",
+        "matrix": "Plasma (and serum, CSF, tissue, cell lysate), positioned for plasma biomarker verification",
+        "quantitation_type": "Relative to absolute, supports absolute quant with stable-isotope-labeled internal standards (e.g. 15N-labeled protein standards)",
+        "key_citation_short": "Vendor: https://www.thermofisher.com/order/catalog/product/B51003515 ; peer eval: Mol Cell Proteomics 2025 (ScienceDirect S1535947625001495; data MassIVE MSV000095051)",
+        "commercial_status_note": "Launched (2024); shipping as of 2026. Complements Orbitrap Astral (discovery) as the verification instrument",
+        "notes": "Fills the 'targeted verification instrument' gap between discovery MS and clinical assays; ~10x quant sensitivity and ~5x more compounds vs prior triple-quad/ion-trap workflows (vendor claim). Content-list-comparable only at the level of the custom PRM panel a lab builds.",
+        "overview": {
+          "about": "Thermo Scientific Stellar MS is a targeted mass spectrometry instrument line that measures specific, user-chosen sets of peptides (and the proteins they come from) in samples like plasma, serum, CSF, tissue, or cell lysate. It works by first separating peptides with liquid chromatography, then using a hybrid quadrupole plus dual-pressure linear ion trap to select and repeatedly fragment chosen target peptides (a method called PRM/MSn), reading out characteristic fragment signals to confirm identity and measure abundance. What distinguishes this platform is that it isn't tied to a fixed protein list: labs build custom PRM panels (aided by PRM Conductor software) that can scale to hundreds of peptides, run on a Vanquish Neo LC front end, and support quantitation from relative comparisons up to absolute concentrations using stable-isotope-labeled standards.",
+          "strengths": [
+            "Scales to hundreds of user-defined target peptides",
+            "Supports absolute quantitation via isotope-labeled standards",
+            "Works across plasma, serum, CSF, tissue, cell lysate"
+          ],
+          "limitations": [
+            "No fixed content list; each panel is custom-built",
+            "Targeted design requires pre-selecting analytes of interest",
+            "Cross-lab comparability limited to shared custom panels"
+          ],
+          "best_for": "Best suited for verifying and quantifying candidate biomarkers via custom targeted peptide panels, especially in plasma."
+        },
+        "publications": [
+          {
+            "label": "Vendor: https://www.thermofisher.com/order/catalog/product/B51003515 ; peer eval: Mol Cell Proteomics 2025 (ScienceDirect S1535947625001495; data MassIVE MSV000095051)",
+            "doi": null
+          }
+        ]
+      },
+      "sub100_confirmed": false
+    },
+    {
+      "rank": null,
+      "platform": "Thermo Scientific Orbitrap Ascend Tribrid (BioPharma / Multi-Omics / Structural Biology editions)",
+      "vendor": "Thermo Fisher Scientific",
+      "integration_tier": "T3",
+      "integration_status": "Enabling instrument (not ranked)",
+      "apt_integrated": false,
+      "maturity_score": 2,
+      "validation_score": 2.0,
+      "apt_readiness_rank_v1": null,
+      "availability_status": "generally_available",
+      "currently_deployable": true,
+      "replaced_by": "Orbitrap Astral complemented by higher-end Astral Zoom (both sold)",
+      "source": "expansion_search",
+      "key_citation": "Thermo Fisher ASMS 2024 launch coverage: https://www.chromatographyonline.com/view/thermo-fisher-scientific-launches-new-mass-spec-at-asms",
+      "availability_source": "https://www.businesswire.com/news/home/20250602594570/en",
+      "notes": "Distinct instrument line from Astral (already in census): Tribrid architecture favored for deep PTM/immunopeptidomics and structural biology; listed for completeness of the Thermo discovery portfolio.",
+      "entity_type": "instrument_line",
+      "runs_on": null,
+      "ranked": false,
+      "tier_num": 3.0,
+      "scoreable": false,
+      "readiness_precise": null,
+      "validation_basis": null,
+      "score_status": null,
+      "detail": {
+        "chemistry": "Tribrid (quadrupole-Orbitrap-linear ion trap) DDA/DIA bottom-up + PTM/immunopeptidomics; native-MS option on newer editions",
+        "plex_or_depth": "Open discovery MS; deep proteome / PTM depth (unit: protein groups, instrument-and-gradient dependent). No fixed analyte list",
+        "matrix": "Cell lysate, tissue, plasma/serum, CSF, enriched PTM samples",
+        "quantitation_type": "Relative (label-free / TMT); semi-quant",
+        "key_citation_short": "Thermo Fisher ASMS 2024 launch coverage: https://www.chromatographyonline.com/view/thermo-fisher-scientific-launches-new-mass-spec-at-asms",
+        "commercial_status_note": "Launched (2024); shipping 2026. Deep-discovery/PTM complement to Astral in the Thermo line",
+        "notes": "Distinct instrument line from Astral (already in census): Tribrid architecture favored for deep PTM/immunopeptidomics and structural biology; listed for completeness of the Thermo discovery portfolio.",
+        "overview": {
+          "about": "The Thermo Scientific Orbitrap Ascend Tribrid is a high-resolution mass spectrometer that identifies and measures proteins in complex biological samples without a predefined target list. It combines three ion-analysis components: a quadrupole (which selects ions of interest), an Orbitrap (which measures mass with high accuracy), and a linear ion trap (which fragments ions to reveal sequence information). This architecture enables deep discovery of low-abundance proteins and their post-translational modifications like phosphorylation and glycosylation. The instrument is particularly suited to in-depth characterization of protein chemistry in cells, tissues, and body fluids.",
+          "best_for": "Deep proteome surveys and systematic mapping of protein modifications in complex tissues or cell populations.",
+          "strengths": [
+            "Open discovery without fixed protein panels; detects rare modifications",
+            "Hybrid ion-analysis design enables both high mass accuracy and fast peptide sequencing",
+            "Accommodates diverse sample types and enrichment strategies for PTM depth"
+          ],
+          "limitations": [
+            "Requires relative quantitation; not inherently multiplexed across many samples",
+            "Discovery depth depends on instrument time and chromatography gradient",
+            "Post-translational modification detection demands enrichment or targeted methods"
+          ]
+        },
+        "publications": [
+          {
+            "label": "Thermo Fisher ASMS 2024 launch coverage: https://www.chromatographyonline.com/view/thermo-fisher-scientific-launches-new-mass-spec-at-asms",
+            "doi": null
+          }
+        ]
+      },
+      "sub100_confirmed": false
+    },
+    {
+      "rank": null,
+      "platform": "PreOmics ENRICH-iST / ENRICHplus (plasma/serum enrichment sample-prep for LC-MS)",
+      "vendor": "PreOmics GmbH (a Bruker company)",
+      "integration_tier": "T3",
+      "integration_status": "Enabling sample-prep (not ranked)",
+      "apt_integrated": false,
+      "maturity_score": 1,
+      "validation_score": 1.0,
+      "apt_readiness_rank_v1": null,
+      "availability_status": "superseded_still_orderable",
+      "currently_deployable": true,
+      "replaced_by": "ENRICHplus being phased out in favor of P2-iST (a residual early-access page persists); ENRICH-iST remains GA",
+      "source": "expansion_search",
+      "key_citation": "Bruker/PreOmics press release (ASMS 2023): https://ir.bruker.com/press-releases/press-release-details/2023/PreOmics-Introduces-New-ENRICH-iST-Kits...; and https://www.preomics.com/products/enrich-ist",
+      "availability_source": "https://www.preomics.com/products/enrich-ist",
+      "notes": "Enrichment-service/sample-prep chemistry explicitly in-lane; a lower-cost alternative to nanoparticle-corona (Seer) and immunodepletion. Pairs with timsTOF HT + Biognosys Spectronaut. | ENRICHplus early-access only (ENRICH-iST shipping).",
+      "entity_type": "sample_prep_chemistry",
+      "runs_on": null,
+      "ranked": false,
+      "tier_num": 3.0,
+      "scoreable": false,
+      "readiness_precise": null,
+      "validation_basis": null,
+      "score_status": null,
+      "detail": {
+        "chemistry": "Non-functionalized paramagnetic microbead protein-corona enrichment of low-abundance plasma/serum proteins + on-bead tryptic digestion (iST); read out by bottom-up DIA-MS (typically timsTOF HT/Pro)",
+        "plex_or_depth": "~3,800 protein IDs/sample on timsTOF Pro at 60 SPD (ENRICH); ENRICHplus deeper. Enrichment adds 50->100% more protein IDs vs neat plasma. Unit: protein groups (open MS, not fixed list)",
+        "matrix": "Human/rodent plasma, serum, CSF and other high-dynamic-range fluids; 20 uL input",
+        "quantitation_type": "Relative / semi-quant (label-free DIA); high reproducibility, identifications at 1% FDR",
+        "key_citation_short": "Bruker/PreOmics press release (ASMS 2023): https://ir.bruker.com/press-releases/press-release-details/2023/PreOmics-Introduces-New-ENRICH-iST-Kits...; and https://www.preomics.com/products/enrich-ist",
+        "commercial_status_note": "Launched; ~$100/sample deep plasma proteome positioning (Bruker 2024). Kits + APP96 automation",
+        "notes": "Enrichment-service/sample-prep chemistry explicitly in-lane; a lower-cost alternative to nanoparticle-corona (Seer) and immunodepletion. Pairs with timsTOF HT + Biognosys Spectronaut.",
+        "overview": {
+          "about": "ENRICH-iST is a sample-preparation chemistry that enriches low-abundance proteins from plasma, serum, and other body fluids before mass spectrometry analysis. It uses non-functionalized paramagnetic microbeads coated with a protein corona to selectively capture and concentrate proteins from high-background matrices, then digests them on the bead surface into peptides. These peptides are identified and quantified by data-independent acquisition mass spectrometry, typically on a timsTOF instrument. The platform identifies ~3,800 protein groups per sample and adds 50–100% more protein IDs compared to unprocessed plasma, making it a cost-effective alternative to immunodepletion or nanoparticle enrichment for deep plasma proteomics.",
+          "best_for": "Discovery studies requiring broad protein coverage in plasma or cerebrospinal fluid with modest sample input.",
+          "strengths": [
+            "Enriches 50–100% more protein identifications than unenriched plasma",
+            "Handles 20 µL input across diverse matrices (plasma, serum, CSF)",
+            "Label-free quantitation with 1% FDR and high reproducibility"
+          ],
+          "limitations": [
+            "Relative quantitation only; not absolute protein amounts",
+            "Optimized for high-dynamic-range fluids; may not suit low-protein matrices",
+            "Dependent on downstream MS platform and software for peptide identification"
+          ]
+        },
+        "publications": [
+          {
+            "label": "Bruker/PreOmics press release (ASMS 2023): https://ir.bruker.com/press-releases/press-release-details/2023/PreOmics-Introduces-New-ENRICH-iST-Kits...; and https://www.preomics.com/products/enrich-ist",
+            "doi": null
+          }
+        ]
+      },
+      "sub100_confirmed": false
+    },
+    {
+      "rank": null,
+      "platform": "Proteonano Ultraplex Proteomics Platform",
+      "vendor": "Nanomics Biotechnology (Nanomics Biotech)",
+      "integration_tier": "T3",
+      "integration_status": "Enabling sample-prep (not ranked)",
+      "apt_integrated": false,
+      "maturity_score": 1,
+      "validation_score": 1.0,
+      "apt_readiness_rank_v1": null,
+      "availability_status": "generally_available",
+      "currently_deployable": true,
+      "replaced_by": null,
+      "source": "expansion_search",
+      "key_citation": "bioRxiv 10.1101/2024.08.20.608582 (technical assessment) and bioRxiv 10.1101/2023.09.12.556305 (1000-plex, picogram sensitivity, DKD)",
+      "availability_source": "https://www.amerigoscientific.com/proteonano-ultraplex-proteomics-platform.html",
+      "notes": "A genuine second-vendor nanoparticle-enrichment + DIA-MS platform distinct from Seer Proteograph; Proteonano uses designed peptide nanobinders (not a protein corona) and was benchmarked against Proteograph XT and Mag-Net in the preprint.",
+      "entity_type": "sample_prep_chemistry",
+      "runs_on": null,
+      "ranked": false,
+      "tier_num": 3.0,
+      "scoreable": false,
+      "readiness_precise": null,
+      "validation_basis": null,
+      "score_status": null,
+      "detail": {
+        "chemistry": "Designed peptide affinity binders (\"nanobinders\") covalently attached to ~200 nm superparamagnetic nanoparticles for abundant-protein compression, then bottom-up LC-MS",
+        "plex_or_depth": "~1,000-plex 'ultraplex' deep plasma profiling; picogram sensitivity for low-abundance proteins (<10 ng/mL). Unit: protein groups (open MS). Vendor/preprint claim",
+        "matrix": "Human plasma (EDTA); demonstrated on disease cohorts",
+        "quantitation_type": "Relative / semi-quant (label-free DIA) with QC/normalization system for batch control",
+        "key_citation_short": "bioRxiv 10.1101/2024.08.20.608582 (technical assessment) and bioRxiv 10.1101/2023.09.12.556305 (1000-plex, picogram sensitivity, DKD)",
+        "commercial_status_note": "Commercial kit (Nanomics); direct competitor to Seer Proteograph (which uses nanoparticle-corona enrichment). Availability strongest in China/APAC",
+        "notes": "A genuine second-vendor nanoparticle-enrichment + DIA-MS platform distinct from Seer Proteograph; Proteonano uses designed peptide nanobinders (not a protein corona) and was benchmarked against Proteograph XT and Mag-Net in the preprint.",
+        "overview": {
+          "about": "Proteonano Ultraplex is a sample-preparation chemistry that enriches low-abundance proteins from plasma using magnetic nanoparticles functionalized with designed peptide affinity binders (nanobinders). The nanobinders capture and compress abundant proteins so that lower-abundance ones become detectable. The enriched sample is then analyzed by data-independent acquisition mass spectrometry (DIA-MS) on high-resolution Orbitrap or timsTOF instruments, detecting on the order of 1,000 protein groups per plasma sample without a fixed antibody panel.",
+          "strengths": [
+            "Deep, open-discovery protein profiling (~1,000-plex) without predefined target panels",
+            "Picogram sensitivity for low-abundance plasma proteins below 10 ng/mL",
+            "Integrated batch control and normalization for multi-sample reproducibility"
+          ],
+          "limitations": [
+            "Currently restricted to human plasma (EDTA); applicability to other matrices undemonstrated",
+            "Relative/semi-quantitative output; not absolute quantification",
+            "Limited commercial availability outside China and Asia-Pacific regions"
+          ],
+          "best_for": "Disease biomarker discovery studies requiring deep, label-free plasma protein profiling."
+        },
+        "publications": [
+          {
+            "label": "bioRxiv  (technical assessment) and bioRxiv  (1000-plex, picogram sensitivity, DKD)",
+            "doi": "10.1101/2024.08.20.608582"
+          }
+        ]
+      },
+      "sub100_confirmed": false
+    },
+    {
+      "rank": 21,
+      "platform": "ProteomEdge targeted-MS panels (ApoEdge, ComplemEdge, LiverEdge, DiscoveryEdge175)",
+      "vendor": "ProteomEdge",
+      "integration_tier": "T2",
+      "integration_status": "Integration-ready",
+      "apt_integrated": false,
+      "maturity_score": 2,
+      "validation_score": 1,
+      "apt_readiness_rank_v1": 1.75,
+      "availability_status": "generally_available",
+      "currently_deployable": true,
+      "replaced_by": "",
+      "source": "proteomedge.com; company product pages",
+      "key_citation": "AstraZeneca laroprovstat (oral PCSK9 inhibitor AZD0780) phase-1 trial, Circulation 2026;153(25):1999-2010, DOI 10.1161/CIRCULATIONAHA.125.075973; apolipoprotein MS panel is an AstraZeneca in-house method (PrEST/HPA lineage); named ProteomEdge/ApoEdge product use in this paper is unverified",
+      "availability_source": "https://proteomedge.com/",
+      "notes": "Added at vendor request (LinkedIn outreach); assessed on the same evidence bar as other catalog rows, no privileged placement. Independence gate: vendor/CRO evidence only, panel not independently validated.",
+      "entity_type": "service_assay",
+      "runs_on": "Triple-quadrupole LC-SRM/MRM (Orbitrap use inferred, unconfirmed)",
+      "ranked": true,
+      "tier_num": 2,
+      "scoreable": true,
+      "readiness_precise": 1.7,
+      "validation_basis": "vendor/CRO only (independent panel validation not established)",
+      "score_status": "preliminary",
+      "verification_grade": "amber",
+      "verification_source_tier": "vendor",
+      "sub100_confirmed": false,
+      "detail": {
+        "chemistry": "Targeted mass spectrometry with heavy-labelled recombinant protein standards for absolute quantification; application-specific panels in vacuum-dried plate format",
+        "plex_or_depth": "Application panels: ApoEdge ~18 apolipoproteins; ComplemEdge ~81 complement proteins; LiverEdge ~39 liver proteins; DiscoveryEdge175 ~176 targets",
+        "matrix": "blood plasma (vendor specifies ~1 uL plasma per well; serum unconfirmed)",
+        "quantitation_type": "Absolute (heavy-labelled standards)",
+        "key_citation_short": "AstraZeneca laroprovstat (PCSK9) phase-1, Circulation 2026, with an apolipoprotein MS readout (ApoEdge product use unverified)",
+        "commercial_status_note": "Products shipping since Nov 2023 (ApoEdge); reagent plates distributed from Stockholm, runnable in-house or via CRO partners (specific CRO count/geography vendor-asserted, unverified)",
+        "notes": "Founded from the Human Protein Atlas program (M. Uhlén, D. Kotol).",
+        "overview": {
+          "about": "ProteomEdge provides targeted mass spectrometry panels for absolute protein quantification, delivered through CRO service partners. Each panel uses heavy-labelled recombinant protein standards so that a known reference is measured alongside every target, giving absolute concentrations. Panels are application-specific: ApoEdge covers about 18 apolipoproteins, ComplemEdge about 81 complement proteins, LiverEdge about 39 liver-disease proteins, and DiscoveryEdge175 about 176 targets. The company grew out of the Human Protein Atlas program. Independent validation of the panels is not yet established, and a cited AstraZeneca phase-1 trial (of a PCSK9 inhibitor) used an apolipoprotein MS readout, but named-product use is not confirmed.",
+          "strengths": [
+            "Absolute quantification via heavy-labelled standards",
+            "Focused, clinically motivated panels",
+            "Available through multiple European CRO partners"
+          ],
+          "limitations": [
+            "Independent panel validation not established",
+            "Small defined panels, not discovery-scale",
+            "Evidence is largely vendor or CRO-sourced"
+          ],
+          "best_for": "Absolute quantification of targeted protein panels (e.g. apolipoproteins, complement) in plasma via CRO services"
+        },
+        "publications": [
+          {
+            "label": "AstraZeneca laroprovstat (PCSK9) phase-1, Circulation 2026, with an apolipoprotein MS readout (ApoEdge product use unverified)",
+            "doi": null
+          },
+          {
+            "label": "AstraZeneca laroprovstat (oral PCSK9 inhibitor AZD0780) phase-1 trial, Circulation 2026;153(25):1999-2010",
+            "doi": "10.1161/CIRCULATIONAHA.125.075973"
+          }
+        ]
+      }
+    }
+  ]
+}

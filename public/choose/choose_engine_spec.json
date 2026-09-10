@@ -1,0 +1,216 @@
+{
+  "engine_version": "v3.7",
+  "generated_from": "src/components/HelpMeChoose.jsx + src/data/scoring.json (Atlas of Proteomic Technologies)",
+  "source_locations": {
+    "scoring_function": "HelpMeChoose.jsx: computeResults()",
+    "goal_adjustments": "HelpMeChoose.jsx: computeResults(), goalAdj object",
+    "hard_filters": "HelpMeChoose.jsx: getHardFilter()",
+    "sample_flexibility_overrides": "HelpMeChoose.jsx: getSampleFlexScore()",
+    "priority_miss_penalty": "HelpMeChoose.jsx: computeResults(), PRIORITY_MISS_LABELS block",
+    "data": "src/data/scoring.json, src/data/platforms.json"
+  },
+  "platform_ids": ["olink-explore-ht", "illumina-protein-prep", "nulisa", "nomic-omni", "seer-proteograph", "biognosys-truediscovery"],
+  "ptm_capable": ["seer-proteograph", "biognosys-truediscovery"],
+  "absolute_quant_capable": ["nomic-omni"],
+  "cost_efficiency_bands": {
+    "basis": "Commercial per-sample service price, orders of >=1,000 samples, 2024-2026 quotations and published rates",
+    "bands": { "5": "<$75", "4": "$75-250", "3": "$250-1,000", "2": "$1,000-3,000", "1": ">$3,000" },
+    "band_note": "Bands approximately logarithmic. Edges are approximate and placed between observed commercial service prices, including same-class products not scored in this atlas; academic-core internal rates are outside the pricing basis and do not set edges. No scored platform's placement changes if an edge moves within its gap. Smaller batches price higher on all platforms; population-scale consortium pricing is excluded (not available to individual studies)."
+  },
+  "slider_dimensions": {
+    "cost": "cost_efficiency", "coverage": "proteome_coverage", "precision": "precision",
+    "specificity": "specificity", "sensitivity": "sensitivity", "throughput": "throughput", "pqtl": "pqtl_accuracy"
+  },
+  "goals": ["drug_target", "discovery", "disease_char", "validation", "pharmacoproteomics", "population"],
+  "sample_types": ["plasma", "serum", "csf", "tissue", "cell_culture", "multiple"],
+  "study_sizes": ["small", "medium", "large", "xlarge"],
+  "weight_range": [1, 5],
+
+  "goal_adjustments": {
+    "drug_target":        { "coverage": 1, "specificity": 1 },
+    "discovery":           { "coverage": 2, "throughput": 1, "specificity": 1 },
+    "disease_char":        { "coverage": 1, "sensitivity": 1, "precision": 1 },
+    "validation":           { "precision": 1, "specificity": 1 },
+    "pharmacoproteomics":   { "precision": 1, "sensitivity": 1 },
+    "population":           { "cost": 1, "throughput": 1, "coverage": 1 }
+  },
+
+  "size_boost": {
+    "formula": "boost(size) = (2 if size == 'xlarge' else 1 if size == 'large' else 0) * SIZE_BOOST_SCALE, applied identically to both eff.cost and eff.throughput",
+    "SIZE_BOOST_SCALE": 0.5,
+    "note_v3.0": "SIZE_BOOST_SCALE was 1.0 through v2.9. Halved in v3.0: the unscaled boost applied the same study-size input to two dimensions simultaneously (cost and throughput), both of which happen to be Nomic Omni's strongest, tied-max scores (5/5) - a double-stack on one input rather than two independent signals. This is the only score-independent parameter change in v3.0; no platform's score in scoring.json changed."
+  },
+
+  "context_boosts": {
+    "csf_sensitivity":       { "condition": "sampleType == 'csf'", "value": 4, "applies_to": "sensitivity" },
+    "cns_focus_sensitivity": { "condition": "toggles.cnsFocus == 'yes'", "value": "8 if sampleType == 'csf' else 6", "applies_to": "sensitivity" },
+    "cns_focus_specificity": { "condition": "toggles.cnsFocus == 'yes'", "value": "4 if sampleType == 'csf' else 2", "applies_to": "specificity" },
+    "longitudinal_precision":{ "condition": "toggles.longitudinal == 'yes'", "value": 2, "applies_to": "precision" }
+  },
+  "context_boost_provenance_note": "CNS-focus and longitudinal boost magnitudes are expert judgment by the tool's own authors (Whelan & Smith-Byrne), not derived from an external published source, despite a source-code comment in HelpMeChoose.jsx that reads like a citation ('Boost magnitudes from Whelan & Smith-Byrne (2026)'). This is disclosed in Methods.jsx's Author Contributions section (the tool's authors) but the comment wording is misleading in isolation and is being cleaned up. This does not affect the fairness simulation below, which runs with both toggles off (baseline) by construction.",
+
+  "effective_weight_formula": "eff[dim] = max(0, raw_slider[dim] + applicable_boosts[dim]) for cost/coverage/precision/specificity/sensitivity/throughput; eff.pqtl = max(0, raw_slider.pqtl) (pqtl receives no automatic boost, so eff.pqtl == the raw slider value)",
+
+  "priority_miss_penalty": {
+    "rule": "If a platform scores exactly 1/5 on a slider dimension AND the user's raw slider value (not the boosted effective weight) for that dimension is >= 5, apply a 0.85x multiplier to that platform's raw score.",
+    "changed_in_v3.0": "Through v2.9 this gated on the boosted effective weight (eff[dim]), so an automatic goal/size/toggle adjustment could push an untouched slider's effective weight to >=5 and trigger a penalty the user never asked for. v3.0 gates on the user's own raw slider value instead.",
+    "note": "Among the 7 slider-relevant dimensions (cost_efficiency, proteome_coverage, precision, specificity, sensitivity, throughput, pqtl_accuracy), only Alamar NULISA (proteome_coverage = 1) currently has any score of exactly 1 in scoring.json. The rule itself is platform-agnostic; given the current, evidence-based score matrix, it can only ever fire against NULISA via this slider-based route.",
+    "fix_d": "Extended to sample-flexibility: the same 0.85x multiplier now also fires when a platform's sample-flexibility override for the selected sample type is 1 (getSampleFlexScore() == 1: zero published validation for that matrix, currently Nomic Omni / Alamar NULISA / Seer Proteograph XT in tissue). Before this, a platform with no validation in the user's sample type could still win outright on unrelated strength - e.g. Nomic winning tissue-matrix scenarios on cost/throughput alone, at a higher rate than Olink, which has at least some (homogenate-only) tissue validation. Verified directly: restricting the full grid to tissue matrix, Nomic's outright-win share went from 3.28% (unrelated strength buying back a recommendation for an unvalidated matrix) to 0.00% after this change, with no change to the underlying tissue per-platform ranking (see sample_flexibility_weight.tissue_rationale) since Biognosys/Olink/SomaSeq scores are untouched by this rule."
+  },
+
+  "quantification_weight": { "yes": 4, "nice": 1, "no": 0, "applies_to": "quantification_type score" },
+  "sample_flexibility_weight": {
+    "base_by_sample_type": { "tissue": 5, "cell_culture": 5, "multiple": 5, "csf": 3, "default": 1 },
+    "note_v3.0": "Tissue was 8 through v2.9-era engines, uniquely higher than cell_culture/multiple (both 5) with no documented reason it should carry more weight than any other atypical matrix. At 8, a platform with the maximum flex_score (5) earned 40 points from matrix compatibility alone - more than the maximum possible contribution from a fully-maxed priority slider (5 weight x 5 score = 25), letting sample type override any explicit user priority regardless of how strongly stated. Reduced to 5, matching cell_culture/multiple, so it can meaningfully favor a tissue-compatible platform without being able to dominate the recommendation outright. The per-platform ranking below is unchanged: it reflects real validation differences (see tissue_rationale), not this weight. A related, separate correction (see priority_miss_penalty.fix_d) addresses a different residual issue this weight reduction alone did not fix: a platform with zero validation for the selected matrix could still win on unrelated strength.",
+    "per_platform_overrides": {
+      "tissue": { "nulisa": 1, "nomic-omni": 1, "seer-proteograph": 1, "olink-explore-ht": 3, "illumina-protein-prep": 3, "biognosys-truediscovery": "base (5, unchanged)" },
+      "tissue_rationale": "Biognosys TrueDiscovery (mass spectrometry) works on native solid tissue and homogenates directly, so it keeps its base score of 5. Olink Explore HT and SomaSeq (Illumina Protein Prep) score 3 in tissue, the same as their general multi-matrix score: homogenate and lysate input is the normal way these affinity assays are run on tissue, and both have published tissue studies (brain, plaque, tumour, biopsy). The earlier value of 2 marked them down against a native solid-tissue mass-spec standard that does not fit how the assays actually work; that tissue-specific markdown is gone. Nomic, NULISA, and Seer Proteograph XT stay at 1 (no published solid-tissue validation); Seer's corona enrichment needs liquid input, and its solid-tissue product, Proteograph DIRECT, is not modelled here.",
+      "cell_culture": { "nomic-omni": 4 },
+      "cell_culture_rationale": "Nomic is extensively validated in perturb-seq / high-throughput cell assays. Its boosted score (4/5) still sits below Biognosys's unmodified base (5/5); Nomic's cell-culture lead in practice comes from its broader all-round strength (cost, throughput, quantification), not from this override alone."
+    }
+  },
+  "protein_target_weight": {
+    "value": 6,
+    "condition": "proteinTargets.length > 0 (gene list in the optional Step 1 protein search, populated either by direct symbol entry or by expanding a selected Reactome pathway; both write to the same proteinTargets array, so this weight and the hard filter below apply identically regardless of source)",
+    "hard_filter": "excluded if proteinTargets.length >= 3 and this platform covers < 50% of the listed targets",
+    "simulation_coverage_note": "NOT exercised by either the baseline grid or the real-world rescoring below. The downloadable per-session results file (DownloadResults() in HelpMeChoose.jsx) does not record which proteins, if any, a respondent searched for, so this code path cannot be reconstructed from the available real-world data and is not included in this reproducibility bundle. Disclosed as a known gap, not modeled as zero-risk."
+  },
+
+  "hard_filters": [
+    { "id": "ptm_systematic", "condition": "toggles.ptmDetection == 'systematic'", "excludes": "all 6 platforms (none perform systematic PTM enrichment)" },
+    { "id": "ptm", "condition": "toggles.ptmDetection == 'incidental' and platform not in ptm_capable", "excludes": "all except seer-proteograph, biognosys-truediscovery" },
+    { "id": "absquant", "condition": "toggles.absoluteQuant == 'yes' and platform not in absolute_quant_capable", "excludes": "all except nomic-omni" },
+    { "id": "protein_coverage", "condition": "see protein_target_weight.hard_filter above", "excludes": "varies; untested by this bundle" }
+  ],
+
+  "calibration": {
+    "total_weight": "sum of all eff[dim] values + quantification_weight + sample_flexibility_weight + protein_target_weight",
+    "min_possible_raw": "total_weight * 1",
+    "max_possible_raw": "total_weight * 5",
+    "display_pct": "clamp(0, 100, ROUND( (raw_score - min_possible_raw) / (max_possible_raw - min_possible_raw) * 100 ))"
+  },
+  "rounding_rule": {
+    "spec": "ROUND must match JavaScript's Math.round(): round half away from zero (e.g. 62.5 -> 63), NOT Python's built-in round() (round half to even / banker's rounding, e.g. 62.5 -> 62).",
+    "why_this_is_called_out": "Discovered during v3.0 development: a live-browser cross-check of the corrected engine showed a 1-point discrepancy (63% live vs 62% predicted) for illumina-protein-prep in one test scenario. Root cause was traced to an exact raw value of 62.5000 hitting the two languages' different rounding conventions. This reproduction script uses a js_round() helper (floor(x+0.5) for non-negative x) to match the live app exactly - a plain Python round() will NOT reproduce these numbers in every case."
+  },
+  "tie_band": 3,
+  "tie_band_note": "For a given scenario, the 'tie group' is every eligible platform within tie_band points of the top displayPct (HelpMeChoose.jsx's own isTopTier condition). This is a scenario-level concept, not a platform-level statistic by itself.",
+  "win_statistics_definition": "Two mutually exclusive, platform-level statistics are reported, and a platform lands in exactly one of them per scenario it is eligible for. OUTRIGHT WIN: the tie group has exactly one member and this platform is it - no other platform is even within tie_band. This is the only condition under which the live app declares a sole winner: getScoreExplanation() renders 'Best overall match' only when topTierCount == 1. CO-RECOMMENDED: the tie group has two or more members and this platform is one of them; the app renders 'N platforms are statistically tied' for all of them, with no winner singled out, even when their displayPct values are not exactly equal, only within tie_band of each other. An earlier version of this bundle reported a single combined 'top-tier rate' (outright win + co-recommended, undifferentiated) and a separate 'no sole winner' percentage bolted onto the platform table; both were retired as confusing. 'Top-tier rate' conflated two different questions ('does this platform ever win alone?' vs 'is this platform often in contention?') into one number. 'No sole winner' is not a platform statistic at all - it is a property of the scenario population - so it is reported on its own as tie_group_size_distribution (see baseline_grid/secondary_check/real_world below), not inside the platform table. Outright win rates sum to LESS than 100% across platforms (many scenarios have no platform standing alone at all: see tie_group_size_distribution, key 1 = outright win, keys 2-6 = the share with no sole winner). Co-recommended rates sum to MORE than 100% whenever average tie-group size exceeds 2, since every platform in a k-way tie is counted once, contributing k counts to that one scenario. Concretely, why this matters: displayPct values of 68/66/65/65/61/54 have a 4-platform tie group (all within 3 points of 68), and the app shows all four as tied - but a naive 'highest number wins' definition (used in an earlier draft of this bundle, with exact-tie fractional credit layered on top) still credited the platform at 68 with a full outright win.",
+
+  "prevalence_weighting": {
+    "rationale": "Earlier versions of this bundle (and the manuscript draft) enumerated every goal, sample type, study size, and toggle combination as equally likely and called that the 'baseline'. That is not a neutral choice: real usage is far from uniform. The manuscript's own methodology already rejected equal weighting for the two toggles specifically, on the grounds that it would represent a CNS-focus rate of 50% - considered and rejected as unrepresentative before the true rate was known. The same problem exists for goals, sample types, and study sizes, just previously unaddressed: pharmacoproteomics, for example, was 0% of real sessions but received full 1/6 grid weight; plasma was 55.4% of real sessions but also received only 1/6. baseline_grid below reweights all four axes by observed real-world prevalence instead, so it answers 'what does a randomly selected real user experience' rather than 'what happens if every theoretical combination is equally likely'.",
+    "goal_prevalence": { "discovery": 0.554, "disease_char": 0.169, "population": 0.138, "drug_target": 0.077, "validation": 0.062, "pharmacoproteomics": 0.0 },
+    "sample_type_prevalence": { "plasma": 0.554, "multiple": 0.231, "serum": 0.062, "csf": 0.062, "tissue": 0.062, "cell_culture": 0.031 },
+    "study_size_prevalence": { "small": 0.108, "medium": 0.185, "large": 0.508, "xlarge": 0.200 },
+    "cns_focus_prevalence": 0.077,
+    "longitudinal_prevalence": 0.175,
+    "toggle_prevalence_note": "cns_focus_prevalence corrects an earlier ~20% estimate that mixed two incompatible questionnaire schemas: 45 pre-v2.0 respondents on separate neuroscience-focus/pTau-focus toggles, and 20 post-v2.0 respondents on a single merged CNS-focus toggle. The ~20% figure conflated the two; 7.7% is the corrected, schema-consistent rate. longitudinal_prevalence remains an imputed estimate, since that toggle postdates this survey export. The four toggle-state combinations are weighted as the product of these two rates (independence assumed; no joint measurement exists).",
+    "source": "All prevalence figures are direct tabulations from the 65 collected survey profiles (choose_real_world_data.csv), except longitudinal_prevalence (imputed, see above).",
+    "scope_note": "This affects only how the aggregate fairness simulation is summarized, not any individual real user's recommendation - a real user's own stated goal/sample/size/toggles already reflect their actual situation, with no uniform-vs-weighted ambiguity. It also has a real limitation worth stating plainly: it makes the baseline statistic dependent on the 65-respondent sample being reasonably representative of true usage, a dependency the old uniform grid did not have. Worth refreshing as more real usage data accumulates, the same as evidence-base scores already are.",
+    "superseded_methodology": "The previous uniform-weighting methodology is retained, unchanged, as baseline_grid_uniform_legacy below - documented, not deleted - so anyone auditing previously published numbers can still reproduce them exactly. It should not be used for new reporting."
+  },
+  "baseline_grid": {
+    "description": "Primary baseline, prevalence-weighted: 6 goals x 6 sample types x 4 study sizes x 4 toggle-state combinations, each weighted by real-world prevalence (see prevalence_weighting above), x the full 3^7 = 2,187 weight-level sweep per bucket = 1,259,712 scenarios enumerated. No RNG.",
+    "n": "1,259,712 scenarios, prevalence-weighted",
+    "outright_win_pct": {
+      "seer-proteograph": 12.29, "illumina-protein-prep": 9.38, "nomic-omni": 6.65,
+      "nulisa": 4.68, "olink-explore-ht": 3.08, "biognosys-truediscovery": 1.02
+    },
+    "co_recommended_pct": {
+      "seer-proteograph": 39.15, "illumina-protein-prep": 33.41, "olink-explore-ht": 33.23,
+      "nomic-omni": 28.28, "nulisa": 17.42, "biognosys-truediscovery": 16.47
+    },
+    "tie_group_size_distribution": {
+      "1_outright_win": 37.09, "2_way_tie": 33.12, "3_way_tie": 20.01,
+      "4_way_tie": 7.53, "5_way_tie": 1.95, "6_way_tie": 0.31
+    }
+  },
+  "baseline_grid_uniform_legacy": {
+    "description": "SUPERSEDED - audit/comparison only, do not use for reporting. Treats every goal, sample type, and study size as equally likely (toggles fixed off): 6 goals x 6 sample types x 4 study sizes x 3 weight levels (1, 3, 5) per each of 7 sliders (3^7 = 2187) = 314,928 scenarios. Kept reproducible so previously published numbers under this methodology can still be verified exactly; see prevalence_weighting above for why this was replaced.",
+    "n": 314928,
+    "outright_win_pct": {
+      "nomic-omni": 9.59, "illumina-protein-prep": 8.54, "seer-proteograph": 8.41,
+      "nulisa": 7.16, "biognosys-truediscovery": 3.37, "olink-explore-ht": 2.03
+    },
+    "co_recommended_pct": {
+      "illumina-protein-prep": 31.56, "seer-proteograph": 30.44, "olink-explore-ht": 29.39,
+      "nomic-omni": 26.08, "biognosys-truediscovery": 24.32, "nulisa": 18.29
+    },
+    "tie_group_size_distribution": {
+      "1_outright_win": 39.10, "2_way_tie": 33.45, "3_way_tie": 18.91,
+      "4_way_tie": 6.47, "5_way_tie": 1.84, "6_way_tie": 0.23
+    }
+  },
+  "secondary_check": {
+    "description": "Plasma matrix, biomarker-discovery goal, large or extra-large study size: the most prevalent real-world user profile (Figure 4B). 2 sizes x 3^7 weight combinations = 4,374 scenarios, specialised toggles off. No RNG. Added in this bundle revision - an earlier draft reported this slice's numbers without shipping the code to reproduce them; run_secondary_check() in regen_fairness.py now generates them directly.",
+    "n": 4374,
+    "outright_win_pct": {
+      "seer-proteograph": 17.58, "nomic-omni": 9.33, "illumina-protein-prep": 6.72,
+      "olink-explore-ht": 4.12, "nulisa": 0.14, "biognosys-truediscovery": 0.0
+    },
+    "co_recommended_pct": {
+      "seer-proteograph": 45.04, "olink-explore-ht": 39.71, "nomic-omni": 36.74,
+      "illumina-protein-prep": 29.06, "nulisa": 8.14, "biognosys-truediscovery": 0.0
+    },
+    "tie_group_size_distribution": {
+      "1_outright_win": 37.88, "2_way_tie": 35.21, "3_way_tie": 19.94,
+      "4_way_tie": 6.40, "5_way_tie": 0.57
+    }
+  },
+  "real_world": {
+    "description": "n=65 downloaded results files from real Help Me Choose users (April-June 2026); 1 excluded as an internal test submission (file 04-16); 2 further excluded where the respondent's stated requirements hard-filtered all 6 platforms (absolute-quant + PTM combinations with no eligible platform). Rescored against the current engine using each respondent's own stated goal/sample/size/weights/toggles.",
+    "n_downloaded": 65,
+    "n_test_excluded": 1,
+    "n_fully_hard_filtered": 2,
+    "n_scored": 63,
+    "outright_win_pct": {
+      "nomic-omni": 19.05, "seer-proteograph": 15.87, "olink-explore-ht": 0.0,
+      "illumina-protein-prep": 0.0, "nulisa": 0.0, "biognosys-truediscovery": 0.0
+    },
+    "co_recommended_pct": {
+      "seer-proteograph": 57.14, "illumina-protein-prep": 44.44, "olink-explore-ht": 42.86,
+      "nomic-omni": 33.33, "biognosys-truediscovery": 20.63, "nulisa": 19.05
+    },
+    "tie_group_size_distribution": {
+      "1_outright_win": 34.92, "2_way_tie": 14.29, "3_way_tie": 22.22,
+      "4_way_tie": 20.63, "5_way_tie": 7.94
+    },
+    "anonymized_data_file": "choose_real_world_data.csv",
+    "note": "The real-world spread is still wider than the prevalence-weighted baseline grid even though both now reflect real-world prevalence, because real respondent characteristics are correlated (a tissue-focused study is more likely to co-occur with a particular goal or toggle) in a way the baseline grid's independent-axis weighting cannot capture, and real respondents' own slider choices are not a uniform 1/3/5 sweep. At n=63, four platforms (Olink, SomaSeq, NULISA, Biognosys) have zero observed outright wins; this is a small-sample floor effect, not evidence they can never win outright (the baseline grid shows all four do, at low rates: 3.1%, 9.4%, 4.7%, 1.0%)."
+  },
+
+  "known_limitations": [
+    "Protein-target search (optional Step 1 feature, +6 weight and a coverage hard filter) is not exercised by any sweep; the downloadable results format does not capture protein-target usage, so this path is unaudited by this bundle. This includes target lists populated by the Reactome pathway selector, which writes to the same proteinTargets array as direct symbol entry and is therefore unaudited for the same reason, not a separate gap.",
+    "The real-world sample (n=63 scored) is a convenience sample of people who completed the Help Me Choose questionnaire and downloaded their results, not a random sample of proteomics researchers; goal/sample/size marginals are reported in Figure 4B for reference.",
+    "Co-recommended rate and outright win rate answer different questions and are not interchangeable: co-recommended rate (the metric Methods.jsx leads with, and the sort key used in the CSVs and tables in this bundle) asks how often a platform is tied with at least one other platform at the top; outright win rate asks how often it is the sole, uncontested best choice. Both are reported for every dataset; neither alone is the full picture. Co-recommended rates can sum to well over 100%; outright win rates do not sum to 100% (see tie_group_size_distribution).",
+    "The prevalence-weighted baseline grid assumes goal, sample type, study size, and toggle state are statistically independent (weighted as a product of their individual real-world rates). Real respondents' characteristics are likely correlated; the independence assumption is a simplification, disclosed rather than hidden, and is part of why the real-world dataset's spread differs from the baseline grid's even though both now use real-world prevalence (see baseline_grid's real_world.note)."
+  ],
+
+  "platforms": {
+    "olink-explore-ht": {
+      "display_name": "Olink Explore HT",
+      "scores": { "proteome_coverage": 4, "precision": 2, "specificity": 4, "sensitivity": 4, "cost_efficiency": 3, "throughput": 5, "quantification_type": 2, "sample_flexibility": 3, "evidence_depth": 5, "pqtl_accuracy": 3 }
+    },
+    "illumina-protein-prep": {
+      "display_name": "SomaSeq",
+      "scores": { "proteome_coverage": 5, "precision": 5, "specificity": 2, "sensitivity": 4, "cost_efficiency": 3, "throughput": 4, "quantification_type": 2, "sample_flexibility": 3, "evidence_depth": 5, "pqtl_accuracy": 2 }
+    },
+    "nulisa": {
+      "display_name": "Alamar NULISA",
+      "scores": { "proteome_coverage": 1, "precision": 5, "specificity": 4, "sensitivity": 5, "cost_efficiency": 4, "throughput": 3, "quantification_type": 2, "sample_flexibility": 3, "evidence_depth": 3, "pqtl_accuracy": 3 }
+    },
+    "nomic-omni": {
+      "display_name": "Nomic nELISA / Omni 1000",
+      "scores": { "proteome_coverage": 2, "precision": 4, "specificity": 4, "sensitivity": 3, "cost_efficiency": 5, "throughput": 5, "quantification_type": 4, "sample_flexibility": 2, "evidence_depth": 1, "pqtl_accuracy": 3 }
+    },
+    "seer-proteograph": {
+      "display_name": "Seer Proteograph XT",
+      "scores": { "proteome_coverage": 5, "precision": 3, "specificity": 4, "sensitivity": 3, "cost_efficiency": 3, "throughput": 3, "quantification_type": 3, "sample_flexibility": 3, "evidence_depth": 4, "pqtl_accuracy": 5 }
+    },
+    "biognosys-truediscovery": {
+      "display_name": "Biognosys TrueDiscovery",
+      "scores": { "proteome_coverage": 4, "precision": 3, "specificity": 4, "sensitivity": 3, "cost_efficiency": 3, "throughput": 3, "quantification_type": 3, "sample_flexibility": 5, "evidence_depth": 3, "pqtl_accuracy": 3 }
+    }
+  },
+  "scores_source": "src/data/scoring.json, byte-verified against these embedded values at bundle generation time"
+}

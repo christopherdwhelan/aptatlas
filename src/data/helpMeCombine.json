@@ -1,0 +1,1050 @@
+{
+  "universe": {
+    "drug_targets": 1450,
+    "approved_phase4": 929,
+    "proteome_canonical": 20190,
+    "proteome_atlas_union": 15123,
+    "fda_approved_biomarkers": 217,
+    "atlas_fetch_date": "2026-07-26",
+    "chembl_fetch_date": "2026-07-15",
+    "fda_biomarker_source": "Bhowmick P, Roome S, Borchers CH, Goodlett DR, Mohammed Y. J Proteome Res 2021;20(4):2091-2103 (PMC8041396), Table S2, deduplicated to unique UniProt accessions."
+  },
+  "coverage_modes": [
+    {
+      "key": "drug_targets",
+      "label": "Drug targets",
+      "denominator": 1450,
+      "default": true
+    },
+    {
+      "key": "proteome_canonical",
+      "label": "Canonical proteome (SwissProt)",
+      "denominator": 20190
+    },
+    {
+      "key": "proteome_atlas_union",
+      "label": "Detectable proteome (Atlas union)",
+      "denominator": 15123
+    },
+    {
+      "key": "fda_biomarkers",
+      "label": "FDA-approved biomarkers",
+      "denominator": 217
+    },
+    {
+      "key": "ptm_proteoforms",
+      "label": "PTMs / proteoforms",
+      "denominator": null,
+      "note": "Qualitative: mass-spec only. Affinity panels cannot resolve PTMs/proteoforms. Shown as a capability flag, not a %."
+    }
+  ],
+  "quality_dimensions": {
+    "proteome_coverage": 1,
+    "precision": 1,
+    "specificity": 1,
+    "sensitivity": 1,
+    "cost_efficiency": 1,
+    "throughput": 1,
+    "quantification_type": 1,
+    "sample_flexibility": 1,
+    "evidence_depth": 1,
+    "pqtl_accuracy": 1
+  },
+  "composite_axes": [
+    {
+      "key": "coverage",
+      "default_weight": 1.0,
+      "note": "Coverage denominator set by the coverage-mode selector. No axis is privileged by default; see default_philosophy."
+    },
+    {
+      "key": "complementarity",
+      "default_weight": 1.0,
+      "note": "= NET-NEW targets the 2nd platform adds beyond the better single platform (count or % of universe)."
+    },
+    {
+      "key": "quality",
+      "default_weight": 1.0,
+      "note": "Default = the five intrinsic measurement properties. Maturity properties separate, opt-in."
+    },
+    {
+      "key": "cost",
+      "default_weight": 1.0,
+      "invert": true
+    },
+    {
+      "key": "class_balance",
+      "default_weight": 0.5
+    },
+    {
+      "key": "sample_volume",
+      "default_weight": 0.0,
+      "note": "Opt-in only."
+    },
+    {
+      "key": "ms_fit",
+      "default_weight": 0.0,
+      "note": "Opt-in only. 1 if the pair contains a mass-spectrometry platform (Seer Proteograph XT or Biognosys TrueDiscovery)."
+    }
+  ],
+  "quality_axis_dims_used": [
+    "precision",
+    "specificity",
+    "sensitivity",
+    "quantification_type",
+    "pqtl_accuracy",
+    "throughput",
+    "evidence_depth",
+    "sample_flexibility"
+  ],
+  "dedup_note": "proteome_coverage folded into coverage axis; cost_efficiency into cost axis",
+  "no_feasibility_penalty": "Sample-volume feasibility is NOT auto-penalized. Volume is an optional axis (default weight 0). Infeasible pairs are flagged for the user but not down-scored unless volume is weighted.",
+  "platforms": {
+    "nomic-omni": {
+      "display_name": "Nomic Omni",
+      "coverage_gene_set_size": 1058,
+      "coverage": {
+        "drug_targets": 23.5,
+        "proteome_canonical": 5.2,
+        "proteome_atlas_union": 7.0,
+        "fda_biomarkers": 41.5
+      },
+      "ptm_proteoform_capable": false,
+      "app_scores": {
+        "proteome_coverage": 2,
+        "precision": 4,
+        "specificity": 4,
+        "sensitivity": 3,
+        "cost_efficiency": 5,
+        "throughput": 5,
+        "quantification_type": 4,
+        "sample_flexibility": 2,
+        "evidence_depth": 1,
+        "pqtl_accuracy": 3
+      },
+      "sample_volume_uL": 10,
+      "cost_tier_rel": 1.0
+    },
+    "olink-explore-ht": {
+      "display_name": "Olink Explore HT",
+      "coverage_gene_set_size": 5416,
+      "coverage": {
+        "drug_targets": 39.7,
+        "proteome_canonical": 26.8,
+        "proteome_atlas_union": 35.8,
+        "fda_biomarkers": 57.6
+      },
+      "ptm_proteoform_capable": false,
+      "app_scores": {
+        "proteome_coverage": 4,
+        "precision": 2,
+        "specificity": 4,
+        "sensitivity": 4,
+        "cost_efficiency": 3,
+        "throughput": 5,
+        "quantification_type": 2,
+        "sample_flexibility": 3,
+        "evidence_depth": 5,
+        "pqtl_accuracy": 3
+      },
+      "sample_volume_uL": 2,
+      "cost_tier_rel": 2.5
+    },
+    "illumina-protein-prep": {
+      "display_name": "SomaSeq",
+      "coverage_gene_set_size": 9342,
+      "coverage": {
+        "drug_targets": 63.6,
+        "proteome_canonical": 46.3,
+        "proteome_atlas_union": 61.8,
+        "fda_biomarkers": 89.9
+      },
+      "ptm_proteoform_capable": false,
+      "app_scores": {
+        "proteome_coverage": 5,
+        "precision": 5,
+        "specificity": 2,
+        "sensitivity": 4,
+        "cost_efficiency": 3,
+        "throughput": 4,
+        "quantification_type": 2,
+        "sample_flexibility": 3,
+        "evidence_depth": 5,
+        "pqtl_accuracy": 2
+      },
+      "sample_volume_uL": 55,
+      "cost_tier_rel": 3.0
+    },
+    "nulisa": {
+      "display_name": "Alamar NULISA",
+      "coverage_gene_set_size": 392,
+      "coverage": {
+        "drug_targets": 10.1,
+        "proteome_canonical": 1.9,
+        "proteome_atlas_union": 2.6,
+        "fda_biomarkers": 14.3
+      },
+      "ptm_proteoform_capable": false,
+      "app_scores": {
+        "proteome_coverage": 1,
+        "precision": 5,
+        "specificity": 4,
+        "sensitivity": 5,
+        "cost_efficiency": 4,
+        "throughput": 3,
+        "quantification_type": 2,
+        "sample_flexibility": 3,
+        "evidence_depth": 3,
+        "pqtl_accuracy": 3
+      },
+      "sample_volume_uL": 25,
+      "cost_tier_rel": 2.0
+    },
+    "seer-proteograph": {
+      "display_name": "Seer Proteograph XT",
+      "coverage_gene_set_size": 10364,
+      "coverage": {
+        "drug_targets": 57.0,
+        "proteome_canonical": 51.3,
+        "proteome_atlas_union": 68.5,
+        "fda_biomarkers": 86.2
+      },
+      "ptm_proteoform_capable": true,
+      "app_scores": {
+        "proteome_coverage": 5,
+        "precision": 3,
+        "specificity": 4,
+        "sensitivity": 3,
+        "cost_efficiency": 3,
+        "throughput": 3,
+        "quantification_type": 3,
+        "sample_flexibility": 3,
+        "evidence_depth": 4,
+        "pqtl_accuracy": 5
+      },
+      "sample_volume_uL": 245,
+      "cost_tier_rel": 3.0
+    },
+    "biognosys-truediscovery": {
+      "display_name": "Biognosys TrueDiscovery",
+      "coverage_gene_set_size": 3575,
+      "coverage": {
+        "drug_targets": 32.6,
+        "proteome_canonical": 17.7,
+        "proteome_atlas_union": 23.6,
+        "fda_biomarkers": 72.8
+      },
+      "ptm_proteoform_capable": true,
+      "app_scores": {
+        "proteome_coverage": 4,
+        "precision": 3,
+        "specificity": 4,
+        "sensitivity": 3,
+        "cost_efficiency": 2,
+        "throughput": 3,
+        "quantification_type": 3,
+        "sample_flexibility": 5,
+        "evidence_depth": 3,
+        "pqtl_accuracy": 3
+      },
+      "sample_volume_uL": 40.0,
+      "cost_tier_rel": 3.0
+    }
+  },
+  "pairs": [
+    {
+      "a": "Nomic Omni",
+      "b": "Olink Explore HT",
+      "coverage_pct": 43.4,
+      "coverage_ci_lo": 40.8,
+      "coverage_ci_hi": 46.1,
+      "coverage_pct_canonical": 27.9,
+      "coverage_pct_atlas_union": 37.2,
+      "coverage_pct_fda": 66.8,
+      "net_new_targets": 53,
+      "net_new_pct": 3.66,
+      "quality_intrinsic": 3.3,
+      "quality_maturity": 3.5,
+      "class_balance": 0.876,
+      "total_cost": 3.5,
+      "joint_volume_uL": 12,
+      "composite": 0.4923,
+      "pareto_nondominated": true,
+      "top3_pct": 33.44,
+      "mean_regret": 0.2325,
+      "win_pct_secondary": 15.58,
+      "tier": 2
+    },
+    {
+      "a": "Nomic Omni",
+      "b": "SomaSeq",
+      "coverage_pct": 64.8,
+      "coverage_ci_lo": 62.5,
+      "coverage_ci_hi": 67.2,
+      "coverage_pct_canonical": 46.5,
+      "coverage_pct_atlas_union": 62.1,
+      "coverage_pct_fda": 92.2,
+      "net_new_targets": 17,
+      "net_new_pct": 1.17,
+      "quality_intrinsic": 3.3,
+      "quality_maturity": 3.33,
+      "class_balance": 0.911,
+      "total_cost": 4.0,
+      "joint_volume_uL": 65,
+      "composite": 0.5267,
+      "pareto_nondominated": true,
+      "top3_pct": 22.19,
+      "mean_regret": 0.2884,
+      "win_pct_secondary": 4.33,
+      "tier": 2
+    },
+    {
+      "a": "Nomic Omni",
+      "b": "Alamar NULISA",
+      "coverage_pct": 24.7,
+      "coverage_ci_lo": 22.5,
+      "coverage_ci_hi": 26.8,
+      "coverage_pct_canonical": 5.7,
+      "coverage_pct_atlas_union": 7.6,
+      "coverage_pct_fda": 45.6,
+      "net_new_targets": 17,
+      "net_new_pct": 1.17,
+      "quality_intrinsic": 3.7,
+      "quality_maturity": 2.83,
+      "class_balance": 0.767,
+      "total_cost": 3.0,
+      "joint_volume_uL": 35,
+      "composite": 0.4567,
+      "pareto_nondominated": true,
+      "top3_pct": 23.48,
+      "mean_regret": 0.2754,
+      "win_pct_secondary": 8.87,
+      "tier": 2
+    },
+    {
+      "a": "Nomic Omni",
+      "b": "Seer Proteograph XT",
+      "coverage_pct": 63.2,
+      "coverage_ci_lo": 60.8,
+      "coverage_ci_hi": 65.7,
+      "coverage_pct_canonical": 52.9,
+      "coverage_pct_atlas_union": 70.7,
+      "coverage_pct_fda": 90.3,
+      "net_new_targets": 91,
+      "net_new_pct": 6.28,
+      "quality_intrinsic": 3.6,
+      "quality_maturity": 3.0,
+      "class_balance": 0.918,
+      "total_cost": 4.0,
+      "joint_volume_uL": 255,
+      "composite": 0.7109,
+      "pareto_nondominated": true,
+      "top3_pct": 48.48,
+      "mean_regret": 0.1573,
+      "win_pct_secondary": 18.72,
+      "tier": 2
+    },
+    {
+      "a": "Nomic Omni",
+      "b": "Biognosys TrueDiscovery",
+      "coverage_pct": 42.2,
+      "coverage_ci_lo": 39.7,
+      "coverage_ci_hi": 44.7,
+      "coverage_pct_canonical": 20.0,
+      "coverage_pct_atlas_union": 26.6,
+      "coverage_pct_fda": 78.8,
+      "net_new_targets": 140,
+      "net_new_pct": 9.66,
+      "quality_intrinsic": 3.4,
+      "quality_maturity": 3.17,
+      "class_balance": 0.848,
+      "total_cost": 4.0,
+      "joint_volume_uL": 50.0,
+      "composite": 0.5693,
+      "pareto_nondominated": true,
+      "top3_pct": 25.97,
+      "mean_regret": 0.2103,
+      "win_pct_secondary": 4.87,
+      "tier": 2
+    },
+    {
+      "a": "Olink Explore HT",
+      "b": "SomaSeq",
+      "coverage_pct": 68.8,
+      "coverage_ci_lo": 66.3,
+      "coverage_ci_hi": 71.2,
+      "coverage_pct_canonical": 55.1,
+      "coverage_pct_atlas_union": 73.6,
+      "coverage_pct_fda": 94.9,
+      "net_new_targets": 76,
+      "net_new_pct": 5.24,
+      "quality_intrinsic": 3.0,
+      "quality_maturity": 4.17,
+      "class_balance": 0.918,
+      "total_cost": 5.5,
+      "joint_volume_uL": 57,
+      "composite": 0.4148,
+      "pareto_nondominated": true,
+      "top3_pct": 11.58,
+      "mean_regret": 0.3544,
+      "win_pct_secondary": 2.16,
+      "tier": 3
+    },
+    {
+      "a": "Olink Explore HT",
+      "b": "Alamar NULISA",
+      "coverage_pct": 40.3,
+      "coverage_ci_lo": 37.7,
+      "coverage_ci_hi": 42.8,
+      "coverage_pct_canonical": 27.1,
+      "coverage_pct_atlas_union": 36.1,
+      "coverage_pct_fda": 61.3,
+      "net_new_targets": 9,
+      "net_new_pct": 0.62,
+      "quality_intrinsic": 3.4,
+      "quality_maturity": 3.67,
+      "class_balance": 0.869,
+      "total_cost": 4.5,
+      "joint_volume_uL": 27,
+      "composite": 0.3778,
+      "pareto_nondominated": true,
+      "top3_pct": 9.42,
+      "mean_regret": 0.3463,
+      "win_pct_secondary": 1.73,
+      "tier": 3
+    },
+    {
+      "a": "Olink Explore HT",
+      "b": "Seer Proteograph XT",
+      "coverage_pct": 68.6,
+      "coverage_ci_lo": 66.3,
+      "coverage_ci_hi": 70.9,
+      "coverage_pct_canonical": 62.1,
+      "coverage_pct_atlas_union": 82.9,
+      "coverage_pct_fda": 92.2,
+      "net_new_targets": 168,
+      "net_new_pct": 11.59,
+      "quality_intrinsic": 3.3,
+      "quality_maturity": 3.83,
+      "class_balance": 0.924,
+      "total_cost": 5.5,
+      "joint_volume_uL": 247,
+      "composite": 0.6263,
+      "pareto_nondominated": true,
+      "top3_pct": 31.82,
+      "mean_regret": 0.2196,
+      "win_pct_secondary": 12.12,
+      "tier": 2
+    },
+    {
+      "a": "Olink Explore HT",
+      "b": "Biognosys TrueDiscovery",
+      "coverage_pct": 51.9,
+      "coverage_ci_lo": 49.4,
+      "coverage_ci_hi": 54.5,
+      "coverage_pct_canonical": 36.2,
+      "coverage_pct_atlas_union": 48.4,
+      "coverage_pct_fda": 83.9,
+      "net_new_targets": 177,
+      "net_new_pct": 12.21,
+      "quality_intrinsic": 3.1,
+      "quality_maturity": 4.0,
+      "class_balance": 0.888,
+      "total_cost": 5.5,
+      "joint_volume_uL": 42.0,
+      "composite": 0.4775,
+      "pareto_nondominated": true,
+      "top3_pct": 18.72,
+      "mean_regret": 0.2549,
+      "win_pct_secondary": 4.98,
+      "tier": 3
+    },
+    {
+      "a": "SomaSeq",
+      "b": "Alamar NULISA",
+      "coverage_pct": 64.1,
+      "coverage_ci_lo": 61.6,
+      "coverage_ci_hi": 66.6,
+      "coverage_pct_canonical": 46.4,
+      "coverage_pct_atlas_union": 61.9,
+      "coverage_pct_fda": 91.2,
+      "net_new_targets": 7,
+      "net_new_pct": 0.48,
+      "quality_intrinsic": 3.4,
+      "quality_maturity": 3.5,
+      "class_balance": 0.911,
+      "total_cost": 5.0,
+      "joint_volume_uL": 80,
+      "composite": 0.4691,
+      "pareto_nondominated": true,
+      "top3_pct": 13.96,
+      "mean_regret": 0.3686,
+      "win_pct_secondary": 6.28,
+      "tier": 3
+    },
+    {
+      "a": "SomaSeq",
+      "b": "Seer Proteograph XT",
+      "coverage_pct": 76.6,
+      "coverage_ci_lo": 74.3,
+      "coverage_ci_hi": 78.8,
+      "coverage_pct_canonical": 69.6,
+      "coverage_pct_atlas_union": 92.9,
+      "coverage_pct_fda": 97.7,
+      "net_new_targets": 188,
+      "net_new_pct": 12.97,
+      "quality_intrinsic": 3.3,
+      "quality_maturity": 3.67,
+      "class_balance": 0.928,
+      "total_cost": 6.0,
+      "joint_volume_uL": 300,
+      "composite": 0.6508,
+      "pareto_nondominated": true,
+      "top3_pct": 28.68,
+      "mean_regret": 0.2419,
+      "win_pct_secondary": 13.31,
+      "tier": 2
+    },
+    {
+      "a": "SomaSeq",
+      "b": "Biognosys TrueDiscovery",
+      "coverage_pct": 67.2,
+      "coverage_ci_lo": 64.8,
+      "coverage_ci_hi": 69.7,
+      "coverage_pct_canonical": 50.2,
+      "coverage_pct_atlas_union": 67.1,
+      "coverage_pct_fda": 95.9,
+      "net_new_targets": 53,
+      "net_new_pct": 3.66,
+      "quality_intrinsic": 3.1,
+      "quality_maturity": 3.83,
+      "class_balance": 0.912,
+      "total_cost": 6.0,
+      "joint_volume_uL": 95.0,
+      "composite": 0.3704,
+      "pareto_nondominated": true,
+      "top3_pct": 3.14,
+      "mean_regret": 0.3623,
+      "win_pct_secondary": 0.22,
+      "tier": 3
+    },
+    {
+      "a": "Alamar NULISA",
+      "b": "Seer Proteograph XT",
+      "coverage_pct": 60.3,
+      "coverage_ci_lo": 57.7,
+      "coverage_ci_hi": 62.9,
+      "coverage_pct_canonical": 52.0,
+      "coverage_pct_atlas_union": 69.4,
+      "coverage_pct_fda": 88.5,
+      "net_new_targets": 49,
+      "net_new_pct": 3.38,
+      "quality_intrinsic": 3.7,
+      "quality_maturity": 3.17,
+      "class_balance": 0.919,
+      "total_cost": 5.0,
+      "joint_volume_uL": 270,
+      "composite": 0.6052,
+      "pareto_nondominated": true,
+      "top3_pct": 20.13,
+      "mean_regret": 0.2531,
+      "win_pct_secondary": 6.28,
+      "tier": 2
+    },
+    {
+      "a": "Alamar NULISA",
+      "b": "Biognosys TrueDiscovery",
+      "coverage_pct": 37.8,
+      "coverage_ci_lo": 35.5,
+      "coverage_ci_hi": 40.3,
+      "coverage_pct_canonical": 18.7,
+      "coverage_pct_atlas_union": 25.0,
+      "coverage_pct_fda": 77.4,
+      "net_new_targets": 76,
+      "net_new_pct": 5.24,
+      "quality_intrinsic": 3.5,
+      "quality_maturity": 3.33,
+      "class_balance": 0.84,
+      "total_cost": 5.0,
+      "joint_volume_uL": 65.0,
+      "composite": 0.424,
+      "pareto_nondominated": true,
+      "top3_pct": 5.41,
+      "mean_regret": 0.3136,
+      "win_pct_secondary": 0.54,
+      "tier": 3
+    },
+    {
+      "a": "Seer Proteograph XT",
+      "b": "Biognosys TrueDiscovery",
+      "coverage_pct": 59.5,
+      "coverage_ci_lo": 57.0,
+      "coverage_ci_hi": 62.1,
+      "coverage_pct_canonical": 53.6,
+      "coverage_pct_atlas_union": 71.6,
+      "coverage_pct_fda": 90.3,
+      "net_new_targets": 37,
+      "net_new_pct": 2.55,
+      "quality_intrinsic": 3.4,
+      "quality_maturity": 3.5,
+      "class_balance": 0.919,
+      "total_cost": 6.0,
+      "joint_volume_uL": 285.0,
+      "composite": 0.4177,
+      "pareto_nondominated": false,
+      "top3_pct": 3.57,
+      "mean_regret": 0.3644,
+      "win_pct_secondary": 0.0,
+      "tier": 4
+    }
+  ],
+  "ms_note": "Mass spectrometry is modelled as TWO independent platforms as of engine v2.9 (Seer Proteograph XT and Biognosys TrueDiscovery), each with its own accession-level coverage list from public/proteins.json. Both are independently PTM/proteoform-capable, so ms_fit=1 for any pair containing either.",
+  "fairness_note": "Axis redundancy audit (15 pairs): coverage & class_balance correlate r=+0.93, essentially unchanged from the 10-pair engine. class_balance defaults to weight 0.5 so this redundancy is not double-counted (user-adjustable). No axis is privileged by default (all of coverage/complementarity/quality/cost start at weight 1; see default_philosophy). Under the representative priority sweep (924 scenarios spanning all four numeric coverage denominators), no pair reaches the 80% top-3 threshold required for Tier 1: Nomic Omni + Seer Proteograph XT leads on both win-rate (18.7%) and top-3 rate (48.5%), with SomaSeq + Seer Proteograph XT, Olink Explore HT + Seer Proteograph XT, and Nomic Omni + Biognosys TrueDiscovery clustering close behind as genuine Tier-2 contenders. The ranking is real about being weighting-dependent: which pair 'wins' changes substantially with the user's priorities and chosen coverage denominator (see ranking_sensitivity_note).",
+  "quality_axes": {
+    "intrinsic": {
+      "dims": [
+        "precision",
+        "specificity",
+        "sensitivity",
+        "quantification_type",
+        "pqtl_accuracy"
+      ],
+      "default_weight": 1.0,
+      "label": "Intrinsic measurement properties",
+      "note": "How good a single measurement is. THIS IS THE DEFAULT quality axis."
+    },
+    "maturity": {
+      "dims": [
+        "throughput",
+        "evidence_depth",
+        "sample_flexibility"
+      ],
+      "default_weight": 0.0,
+      "label": "Platform maturity / operational",
+      "note": "Adoption & practicality. OFF by default, it reflects how established a platform is, not its measurement properties."
+    }
+  },
+  "quality_custom_weighting": "Users may override the grouping and set a custom importance weight (0 to 3) on any of the 8 quality sub-dimensions individually. Default = intrinsic dims at 1, maturity dims at 0.",
+  "naming_note": "nELISA is Nomic's technology (= Nomic Omni). NULISA is Alamar's separate platform; different companies, do not conflate. Nomic (nELISA) has the top quantification_type score (4 = absolute pg/mL concentration); NULISA scores 2 (within-assay relative). Seer Proteograph XT and Biognosys TrueDiscovery are both independent mass-spectrometry platforms (see ms_note); they are no longer modelled as a single merged category as of engine v2.9.",
+  "ranking_sensitivity_note": "Under default (equal) weights and the drug-target denominator: Nomic Omni + Seer Proteograph XT ranks highest on the composite (0.711), followed by SomaSeq + Seer Proteograph XT (0.651), Olink Explore HT + Seer Proteograph XT (0.626), and Alamar NULISA + Seer Proteograph XT (0.605); the gap between #1 and #4 is small relative to the sweep's spread. Across the full priority sweep, max win-share is 18.7% and max top-3 share is 48.5%, both held by Nomic Omni + Seer Proteograph XT; no pair reaches Tier 1. Only one pair is Pareto-dominated: Seer Proteograph XT + Biognosys TrueDiscovery (both mass-spec, heavy overlap, dominated by several affinity+MS pairs on complementarity). Adding Biognosys TrueDiscovery as an independent platform surfaces new strong options, notably Nomic Omni + Biognosys TrueDiscovery (140 net-new drug targets, the largest net-new figure of any Nomic pairing).",
+  "default_philosophy": "All axes with a nonzero default weight (coverage, complementarity, quality, cost) start EQUAL at weight 1: no single axis is privileged by default. class_balance defaults to 0.5; sample_volume and ms_fit default to 0 and are opt-in only. Users set up to three priorities to raise the axes that matter to them; the tool does not presuppose that coverage (or any other axis) is what a given user cares about most.",
+  "complementarity_note": "Complementarity is measured as NET-NEW targets added, not 1-Jaccard orthogonality, which rewards small panels for a high unique-fraction while contributing few targets in absolute terms. Net-new reflects how many targets the pairing actually lets you measure that a single platform can't. Example: Nomic Omni + Biognosys TrueDiscovery adds 140 net-new drug targets, the largest net-new figure of any Nomic Omni pairing, ahead of Nomic Omni + Seer Proteograph XT (91).",
+  "anchor_recommendations": {
+    "Nomic Omni": {
+      "anchor_solo_pct": 23.5,
+      "single_suffices": false,
+      "tiered_partners": [
+        {
+          "partner": "Seer Proteograph XT",
+          "pair_coverage_pct": 63.2,
+          "net_new_targets": 91,
+          "composite": 0.7109,
+          "top3_pct": 48.48,
+          "mean_regret": 0.1573,
+          "pareto": true,
+          "coverage_gain_pp": 39.7,
+          "tier": 2
+        },
+        {
+          "partner": "Biognosys TrueDiscovery",
+          "pair_coverage_pct": 42.2,
+          "net_new_targets": 140,
+          "composite": 0.5693,
+          "top3_pct": 25.97,
+          "mean_regret": 0.2103,
+          "pareto": true,
+          "coverage_gain_pp": 18.7,
+          "tier": 2
+        },
+        {
+          "partner": "SomaSeq",
+          "pair_coverage_pct": 64.8,
+          "net_new_targets": 17,
+          "composite": 0.5267,
+          "top3_pct": 22.19,
+          "mean_regret": 0.2884,
+          "pareto": true,
+          "coverage_gain_pp": 41.3,
+          "tier": 2
+        },
+        {
+          "partner": "Olink Explore HT",
+          "pair_coverage_pct": 43.4,
+          "net_new_targets": 53,
+          "composite": 0.4923,
+          "top3_pct": 33.44,
+          "mean_regret": 0.2325,
+          "pareto": true,
+          "coverage_gain_pp": 19.9,
+          "tier": 2
+        },
+        {
+          "partner": "Alamar NULISA",
+          "pair_coverage_pct": 24.7,
+          "net_new_targets": 17,
+          "composite": 0.4567,
+          "top3_pct": 23.48,
+          "mean_regret": 0.2754,
+          "pareto": true,
+          "coverage_gain_pp": 1.2,
+          "tier": 2
+        }
+      ]
+    },
+    "Olink Explore HT": {
+      "anchor_solo_pct": 39.7,
+      "single_suffices": false,
+      "tiered_partners": [
+        {
+          "partner": "Seer Proteograph XT",
+          "pair_coverage_pct": 68.6,
+          "net_new_targets": 168,
+          "composite": 0.6263,
+          "top3_pct": 31.82,
+          "mean_regret": 0.2196,
+          "pareto": true,
+          "coverage_gain_pp": 28.9,
+          "tier": 2
+        },
+        {
+          "partner": "Nomic Omni",
+          "pair_coverage_pct": 43.4,
+          "net_new_targets": 53,
+          "composite": 0.4923,
+          "top3_pct": 33.44,
+          "mean_regret": 0.2325,
+          "pareto": true,
+          "coverage_gain_pp": 3.7,
+          "tier": 2
+        },
+        {
+          "partner": "Biognosys TrueDiscovery",
+          "pair_coverage_pct": 51.9,
+          "net_new_targets": 177,
+          "composite": 0.4775,
+          "top3_pct": 18.72,
+          "mean_regret": 0.2549,
+          "pareto": true,
+          "coverage_gain_pp": 12.2,
+          "tier": 3
+        },
+        {
+          "partner": "SomaSeq",
+          "pair_coverage_pct": 68.8,
+          "net_new_targets": 76,
+          "composite": 0.4148,
+          "top3_pct": 11.58,
+          "mean_regret": 0.3544,
+          "pareto": true,
+          "coverage_gain_pp": 29.1,
+          "tier": 3
+        },
+        {
+          "partner": "Alamar NULISA",
+          "pair_coverage_pct": 40.3,
+          "net_new_targets": 9,
+          "composite": 0.3778,
+          "top3_pct": 9.42,
+          "mean_regret": 0.3463,
+          "pareto": true,
+          "coverage_gain_pp": 0.6,
+          "tier": 3
+        }
+      ]
+    },
+    "SomaSeq": {
+      "anchor_solo_pct": 63.6,
+      "single_suffices": true,
+      "tiered_partners": [
+        {
+          "partner": "Seer Proteograph XT",
+          "pair_coverage_pct": 76.6,
+          "net_new_targets": 188,
+          "composite": 0.6508,
+          "top3_pct": 28.68,
+          "mean_regret": 0.2419,
+          "pareto": true,
+          "coverage_gain_pp": 13.0,
+          "tier": 2
+        },
+        {
+          "partner": "Nomic Omni",
+          "pair_coverage_pct": 64.8,
+          "net_new_targets": 17,
+          "composite": 0.5267,
+          "top3_pct": 22.19,
+          "mean_regret": 0.2884,
+          "pareto": true,
+          "coverage_gain_pp": 1.2,
+          "tier": 2
+        },
+        {
+          "partner": "Alamar NULISA",
+          "pair_coverage_pct": 64.1,
+          "net_new_targets": 7,
+          "composite": 0.4691,
+          "top3_pct": 13.96,
+          "mean_regret": 0.3686,
+          "pareto": true,
+          "coverage_gain_pp": 0.5,
+          "tier": 3
+        },
+        {
+          "partner": "Olink Explore HT",
+          "pair_coverage_pct": 68.8,
+          "net_new_targets": 76,
+          "composite": 0.4148,
+          "top3_pct": 11.58,
+          "mean_regret": 0.3544,
+          "pareto": true,
+          "coverage_gain_pp": 5.2,
+          "tier": 3
+        },
+        {
+          "partner": "Biognosys TrueDiscovery",
+          "pair_coverage_pct": 67.2,
+          "net_new_targets": 53,
+          "composite": 0.3704,
+          "top3_pct": 3.14,
+          "mean_regret": 0.3623,
+          "pareto": true,
+          "coverage_gain_pp": 3.6,
+          "tier": 3
+        }
+      ]
+    },
+    "Alamar NULISA": {
+      "anchor_solo_pct": 10.1,
+      "single_suffices": false,
+      "tiered_partners": [
+        {
+          "partner": "Seer Proteograph XT",
+          "pair_coverage_pct": 60.3,
+          "net_new_targets": 49,
+          "composite": 0.6052,
+          "top3_pct": 20.13,
+          "mean_regret": 0.2531,
+          "pareto": true,
+          "coverage_gain_pp": 50.2,
+          "tier": 2
+        },
+        {
+          "partner": "SomaSeq",
+          "pair_coverage_pct": 64.1,
+          "net_new_targets": 7,
+          "composite": 0.4691,
+          "top3_pct": 13.96,
+          "mean_regret": 0.3686,
+          "pareto": true,
+          "coverage_gain_pp": 54.0,
+          "tier": 3
+        },
+        {
+          "partner": "Nomic Omni",
+          "pair_coverage_pct": 24.7,
+          "net_new_targets": 17,
+          "composite": 0.4567,
+          "top3_pct": 23.48,
+          "mean_regret": 0.2754,
+          "pareto": true,
+          "coverage_gain_pp": 14.6,
+          "tier": 2
+        },
+        {
+          "partner": "Biognosys TrueDiscovery",
+          "pair_coverage_pct": 37.8,
+          "net_new_targets": 76,
+          "composite": 0.424,
+          "top3_pct": 5.41,
+          "mean_regret": 0.3136,
+          "pareto": true,
+          "coverage_gain_pp": 27.7,
+          "tier": 3
+        },
+        {
+          "partner": "Olink Explore HT",
+          "pair_coverage_pct": 40.3,
+          "net_new_targets": 9,
+          "composite": 0.3778,
+          "top3_pct": 9.42,
+          "mean_regret": 0.3463,
+          "pareto": true,
+          "coverage_gain_pp": 30.2,
+          "tier": 3
+        }
+      ]
+    },
+    "Seer Proteograph XT": {
+      "anchor_solo_pct": 57.0,
+      "single_suffices": false,
+      "tiered_partners": [
+        {
+          "partner": "Nomic Omni",
+          "pair_coverage_pct": 63.2,
+          "net_new_targets": 91,
+          "composite": 0.7109,
+          "top3_pct": 48.48,
+          "mean_regret": 0.1573,
+          "pareto": true,
+          "coverage_gain_pp": 6.2,
+          "tier": 2
+        },
+        {
+          "partner": "SomaSeq",
+          "pair_coverage_pct": 76.6,
+          "net_new_targets": 188,
+          "composite": 0.6508,
+          "top3_pct": 28.68,
+          "mean_regret": 0.2419,
+          "pareto": true,
+          "coverage_gain_pp": 19.6,
+          "tier": 2
+        },
+        {
+          "partner": "Olink Explore HT",
+          "pair_coverage_pct": 68.6,
+          "net_new_targets": 168,
+          "composite": 0.6263,
+          "top3_pct": 31.82,
+          "mean_regret": 0.2196,
+          "pareto": true,
+          "coverage_gain_pp": 11.6,
+          "tier": 2
+        },
+        {
+          "partner": "Alamar NULISA",
+          "pair_coverage_pct": 60.3,
+          "net_new_targets": 49,
+          "composite": 0.6052,
+          "top3_pct": 20.13,
+          "mean_regret": 0.2531,
+          "pareto": true,
+          "coverage_gain_pp": 3.3,
+          "tier": 2
+        },
+        {
+          "partner": "Biognosys TrueDiscovery",
+          "pair_coverage_pct": 59.5,
+          "net_new_targets": 37,
+          "composite": 0.4177,
+          "top3_pct": 3.57,
+          "mean_regret": 0.3644,
+          "pareto": false,
+          "coverage_gain_pp": 2.5,
+          "tier": 4
+        }
+      ]
+    },
+    "Biognosys TrueDiscovery": {
+      "anchor_solo_pct": 32.6,
+      "single_suffices": false,
+      "tiered_partners": [
+        {
+          "partner": "Nomic Omni",
+          "pair_coverage_pct": 42.2,
+          "net_new_targets": 140,
+          "composite": 0.5693,
+          "top3_pct": 25.97,
+          "mean_regret": 0.2103,
+          "pareto": true,
+          "coverage_gain_pp": 9.6,
+          "tier": 2
+        },
+        {
+          "partner": "Olink Explore HT",
+          "pair_coverage_pct": 51.9,
+          "net_new_targets": 177,
+          "composite": 0.4775,
+          "top3_pct": 18.72,
+          "mean_regret": 0.2549,
+          "pareto": true,
+          "coverage_gain_pp": 19.3,
+          "tier": 3
+        },
+        {
+          "partner": "Alamar NULISA",
+          "pair_coverage_pct": 37.8,
+          "net_new_targets": 76,
+          "composite": 0.424,
+          "top3_pct": 5.41,
+          "mean_regret": 0.3136,
+          "pareto": true,
+          "coverage_gain_pp": 5.2,
+          "tier": 3
+        },
+        {
+          "partner": "Seer Proteograph XT",
+          "pair_coverage_pct": 59.5,
+          "net_new_targets": 37,
+          "composite": 0.4177,
+          "top3_pct": 3.57,
+          "mean_regret": 0.3644,
+          "pareto": false,
+          "coverage_gain_pp": 26.9,
+          "tier": 4
+        },
+        {
+          "partner": "SomaSeq",
+          "pair_coverage_pct": 67.2,
+          "net_new_targets": 53,
+          "composite": 0.3704,
+          "top3_pct": 3.14,
+          "mean_regret": 0.3623,
+          "pareto": true,
+          "coverage_gain_pp": 34.6,
+          "tier": 3
+        }
+      ]
+    }
+  },
+  "interaction_modes": {
+    "anchor_mode": {
+      "description": "User selects their FIRST/existing platform. Tool ranks the best SECOND platform to add, showing marginal gain (coverage_gain_pp, net_new_targets) over the anchor alone. This is the primary entry point.",
+      "default_first_platform": "Nomic Omni (consortium's selected anchor), but any platform can be chosen or none."
+    },
+    "discovery_mode": {
+      "description": "No first platform specified. Tool recommends the best overall pair from the full ranking (currently Nomic Omni + Seer Proteograph XT under default weights).",
+      "trigger": "User picks 'I don't have a platform yet' / leaves anchor unset."
+    },
+    "single_suffices_flag": "If the anchor alone covers >=60% in the selected mode, flag that a second platform may add limited marginal value (show the marginal gain so the user decides)."
+  },
+  "fairness_analyses": {
+    "coverage_confidence_intervals": {
+      "method": "2,000-resample bootstrap over the 1,450-target universe (numpy binomial resampling, seed 42), independently regenerated for all 15 pairs.",
+      "key_result": "Several pairs remain statistical ties (overlapping 95% CIs); the UI shows CIs and labels overlapping pairs as tied rather than ranking them.",
+      "table": "coverage_bootstrap_ci.csv"
+    },
+    "pareto_frontier": {
+      "non_dominated": 14,
+      "total": 15,
+      "dominated": [
+        "Seer Proteograph XT + Biognosys TrueDiscovery"
+      ],
+      "note": "14 of 15 pairs are non-dominated: for nearly every pair there is no strictly-better alternative on all axes, so the 'best' pair genuinely depends on which axis you prioritize. The one dominated pair combines the two mass-spec platforms, whose coverage overlaps heavily and which add limited net-new value relative to an affinity+MS pairing."
+    },
+    "quality_score_robustness": {
+      "method": "2,000 draws jittering each 1-5 intrinsic quality score by +/-1 (clipped 1-5)",
+      "key_result": "No pair is #1 in anywhere near 100% of perturbations under the new 15-pair field; the ranking is genuinely close among the Tier-2 cluster, which is itself evidence the tool is not silently privileging one pair."
+    },
+    "robustness_metric": {
+      "primary": [
+        "top3_pct",
+        "mean_regret"
+      ],
+      "secondary": "win_pct",
+      "why": "Win-rate ('how often is this pair the single best') structurally rewards pairs that PEAK on one axis and penalizes well-rounded pairs. The app reports TOP-3 FREQUENCY and MEAN REGRET as the primary robustness metrics; win-rate is kept only as a secondary 'is there a dominant pick?' signal.",
+      "headline": "Nomic Omni + Seer Proteograph XT leads all three metrics (top-3 48.5%, regret 0.157, win 18.7%) but well short of the 80% top-3 bar for Tier 1, unlike the prior 5-platform engine."
+    }
+  },
+  "recommendation_output": {
+    "mode": "TIERED, not single-pick",
+    "tiers": {
+      "1": "Leading choice - clear best (top-3 >=80%)",
+      "2": "Strong contenders - genuinely competitive, choice depends on your priority (Pareto-optimal, top-3 >=20%)",
+      "3": "Situational - reasonable only under specific priorities (Pareto-optimal, top-3 <20%)",
+      "4": "Not recommended - dominated (another pair beats them on every axis)"
+    },
+    "rule": "Always present a TIERED list, never a single winner. In anchor mode, show the anchor's own tiered partner list (anchor_recommendations[anchor].tiered_partners). Flag any T1/T2 gap that is within the coverage CI as a tie.",
+    "consortium_note": "As of engine v2.9 (6 platforms, 15 pairs), no pair reaches Tier 1. For the Nomic Omni anchor, all five partners land in Tier 2 - Nomic Omni's own solo coverage (23.5%) is low enough that any second platform adds substantial value, so the choice among partners depends heavily on which axis (coverage, net-new, or PTM capability) the user prioritizes."
+  },
+  "engine_version": "v2.11"
+}

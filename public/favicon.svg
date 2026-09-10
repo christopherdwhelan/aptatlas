@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 28 28">
+
+  <!-- Antibody Y - top-left -->
+  <g stroke="#E8622A" stroke-width="2.4" stroke-linecap="round" fill="none">
+    <line x1="7" y1="11.5" x2="7" y2="7"/>
+    <line x1="7" y1="7" x2="3" y2="3"/>
+    <line x1="7" y1="7" x2="11" y2="3"/>
+    <circle cx="3" cy="3" r="1.4" fill="#E8622A" stroke="none"/>
+    <circle cx="11" cy="3" r="1.4" fill="#E8622A" stroke="none"/>
+  </g>
+
+  <!-- Aptamer - top-right -->
+  <g stroke="#e8c4a0" stroke-linecap="round" fill="none">
+    <circle cx="21" cy="7" r="2.0" stroke-width="1.5"/>
+    <line x1="19" y1="6.15" x2="15.8" y2="6.15" stroke-width="0.85"/>
+    <line x1="19" y1="7.85" x2="15.8" y2="7.85" stroke-width="0.85"/>
+    <line x1="18.1" y1="6.15" x2="18.1" y2="7.85" stroke-width="0.75"/>
+    <line x1="17.2" y1="6.15" x2="17.2" y2="7.85" stroke-width="0.75"/>
+    <line x1="16.3" y1="6.15" x2="16.3" y2="7.85" stroke-width="0.75"/>
+    <circle cx="15.8" cy="7" r="1.1" stroke-width="1.4"/>
+    <line x1="23.036" y1="6.236" x2="25.536" y2="3.736" stroke-width="0.85"/>
+    <line x1="21.764" y1="4.964" x2="24.264" y2="2.464" stroke-width="0.85"/>
+    <line x1="23.014" y1="4.986" x2="24.286" y2="3.714" stroke-width="0.75"/>
+    <circle cx="24.9" cy="3.1" r="1.0" stroke-width="1.4"/>
+    <line x1="20.15" y1="9" x2="20.15" y2="11.5" stroke-width="0.85"/>
+    <line x1="21.85" y1="9" x2="21.85" y2="11.5" stroke-width="0.85"/>
+    <line x1="20.15" y1="9.9" x2="21.85" y2="9.9" stroke-width="0.75"/>
+    <line x1="20.15" y1="10.8" x2="21.85" y2="10.8" stroke-width="0.75"/>
+  </g>
+
+  <!-- Peptide zigzag - bottom-left -->
+  <g stroke-linecap="round">
+    <line x1="2.5" y1="23" x2="5.5" y2="19" stroke="#C44D18" stroke-width="1.2"/>
+    <line x1="5.5" y1="19" x2="8.5" y2="23" stroke="#C44D18" stroke-width="1.2"/>
+    <line x1="8.5" y1="23" x2="11.5" y2="19" stroke="#C44D18" stroke-width="1.2"/>
+    <circle cx="2.5" cy="23" r="1.5" fill="#C44D18" stroke="none"/>
+    <circle cx="5.5" cy="19" r="1.5" fill="#C44D18" stroke="none"/>
+    <circle cx="8.5" cy="23" r="1.5" fill="#C44D18" stroke="none"/>
+    <circle cx="11.5" cy="19" r="1.5" fill="#C44D18" stroke="none"/>
+  </g>
+
+  <!-- Nanoparticle ring - bottom-right -->
+  <g fill="#a85c3a" stroke="none">
+    <circle cx="25.2" cy="21" r="1.4"/>
+    <circle cx="23.97" cy="23.97" r="1.4"/>
+    <circle cx="21" cy="25.2" r="1.4"/>
+    <circle cx="18.03" cy="23.97" r="1.4"/>
+    <circle cx="16.8" cy="21" r="1.4"/>
+    <circle cx="18.03" cy="18.03" r="1.4"/>
+    <circle cx="21" cy="16.8" r="1.4"/>
+    <circle cx="23.97" cy="18.03" r="1.4"/>
+  </g>
+
+</svg>

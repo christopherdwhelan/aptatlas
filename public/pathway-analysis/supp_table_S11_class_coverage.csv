@@ -1,0 +1,12 @@
+Class,n,n_approved,best_single,best_single_pct,best_pair,best_pair_pct,union6,any_affinity,any_ms,skew
+Ion channel,156,147,SomaSeq,16.0,SomaSeq + Olink Explore HT,24.4,30.8,25.0,11.5,balanced
+GPCR,154,113,SomaSeq,26.6,Seer Proteograph XT + SomaSeq,40.3,47.4,34.4,20.1,balanced
+Transcription factor,24,6,SomaSeq,58.3,Seer Proteograph XT + SomaSeq,70.8,75.0,66.7,45.8,affinity-skewed
+Transporter,90,72,Seer Proteograph XT,75.6,Seer Proteograph XT + SomaSeq,81.1,82.2,43.3,75.6,MS-skewed
+Kinase,142,56,SomaSeq,71.8,Seer Proteograph XT + SomaSeq,82.4,85.2,77.5,69.7,balanced
+Enzyme (other),252,185,Seer Proteograph XT,69.4,Seer Proteograph XT + SomaSeq,86.1,88.9,73.8,72.2,balanced
+Secreted/ligand,158,77,SomaSeq,82.3,Seer Proteograph XT + SomaSeq,93.0,94.3,89.2,68.4,affinity-skewed
+Other,143,80,Seer Proteograph XT,76.2,Seer Proteograph XT + SomaSeq,93.0,95.1,79.7,79.0,balanced
+Membrane receptor,192,113,SomaSeq,92.7,SomaSeq + Olink Explore HT,94.8,95.3,94.8,66.7,affinity-skewed
+Protease,111,59,Seer Proteograph XT,88.3,Seer Proteograph XT + SomaSeq,94.6,95.5,91.9,89.2,balanced
+Nuclear receptor,24,19,SomaSeq,83.3,Seer Proteograph XT + SomaSeq,91.7,100.0,91.7,33.3,affinity-skewed

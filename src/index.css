@@ -1,0 +1,190 @@
+@import url('https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: 'Myriad Pro', 'Source Sans 3', ui-sans-serif, system-ui, sans-serif;
+
+  /* Brand palette - Ignition Scientific */
+  --color-brand-50:  #fdf2f2;
+  --color-brand-100: #fce0e0;
+  --color-brand-200: #f8b8b8;
+  --color-brand-300: #f08080;
+  --color-brand-400: #c84040;
+  --color-brand-500: #8B1A1A;
+  --color-brand-600: #7a1616;
+  --color-brand-700: #631111;
+  --color-brand-800: #4a0d0d;
+  --color-brand-900: #320808;
+
+  /* Teal tokens remapped to dark red for Tailwind class compatibility */
+  --color-teal-50:  #fdf2f2;
+  --color-teal-100: #fce0e0;
+  --color-teal-200: #f8b8b8;
+  --color-teal-300: #f08080;
+  --color-teal-400: #c84040;
+  --color-teal-500: #8B1A1A;
+  --color-teal-600: #8B1A1A;
+  --color-teal-700: #631111;
+  --color-teal-800: #4a0d0d;
+  --color-teal-900: #320808;
+
+  --color-navy-50:  #f5f5f5;
+  --color-navy-100: #e8e8e8;
+  --color-navy-200: #d0d0d0;
+  --color-navy-300: #a0a0a0;
+  --color-navy-400: #707070;
+  --color-navy-500: #444444;
+  --color-navy-600: #2a2a2a;
+  --color-navy-700: #141310;
+  --color-navy-800: #0a0a0a;
+  --color-navy-900: #050505;
+
+  --color-gold-50:  #fffbf0;
+  --color-gold-100: #fef3cc;
+  --color-gold-200: #fde68a;
+  --color-gold-300: #fcd34d;
+  --color-gold-400: #f59e0b;
+  --color-gold-500: #d97706;
+  --color-gold-600: #b45309;
+  --color-gold-700: #92400e;
+
+  --color-purple-50:  #f5f3ff;
+  --color-purple-100: #ede9fe;
+  --color-purple-200: #ddd6fe;
+  --color-purple-300: #c4b5fd;
+  --color-purple-400: #a78bfa;
+  --color-purple-500: #8b5cf6;
+  --color-purple-600: #6b5b95;
+  --color-purple-700: #5b4880;
+
+  --color-surface-50:  #fafaf9;
+  --color-surface-100: #f3f2f0;
+  --color-surface-200: #e5e4e2;
+  --color-surface-300: #d0cfcc;
+  --color-surface-400: #6f6d67;
+  --color-surface-500: #52504a;
+  --color-surface-600: #3a3834;
+  --color-surface-700: #2a2824;
+  --color-surface-800: #1a1916;
+  --color-surface-900: #141310;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html {
+  font-family: 'Myriad Pro', 'Source Sans 3', ui-sans-serif, system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-size: 14px;
+  font-weight: 400;
+}
+
+body {
+  margin: 0;
+  background: #ffffff;
+  color: #141310;
+  font-weight: 400;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: #f3f2f0; }
+::-webkit-scrollbar-thumb { background: #d0cfcc; border-radius: 0; }
+::-webkit-scrollbar-thumb:hover { background: #C44D18; }
+
+/* Tab fade transition */
+@keyframes tabFadeIn {
+  from { opacity: 0; transform: translateY(5px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.tab-content {
+  /* 'backwards' (not 'both'): the fade-up entrance still plays, but the final
+     transform does NOT persist. 'both' left translateY(0) applied permanently,
+     which made .tab-content a containing block and trapped fixed overlays
+     (DetailPanel/DetailModal) inside it. */
+  animation: tabFadeIn 0.18s ease-out backwards;
+}
+
+/* ============================================================
+   Weight ladder (design review finding #3)
+   Body text is 400 (baked into the components below); content section,
+   card, and dialog titles carry 600 for hierarchy. The header hero sits
+   outside <main>, and KPI numerals / taglines are not headings, so both
+   keep the lighter display weight.
+   ============================================================ */
+main :is(h1, h2, h3):not(.text-2xl):not(.text-3xl),
+[role="dialog"] :is(h1, h2, h3):not(.text-2xl):not(.text-3xl) { font-weight: 600 !important; }
+
+/* Overview hero: cycling detection-modality icon (crossfades through the four) */
+@keyframes aptCycle {
+  0%   { opacity: 0; transform: scale(0.92); filter: blur(2px); }
+  15%  { opacity: 1; transform: scale(1);    filter: blur(0);   }
+  25%  { opacity: 1; transform: scale(1);    filter: blur(0);   }
+  40%  { opacity: 0; transform: scale(1.06); filter: blur(2px); }
+  100% { opacity: 0; transform: scale(1.06); filter: blur(2px); }
+}
+.apt-cycler-frame { position: absolute; inset: 0; opacity: 0; transform-origin: center; }
+.apt-cycler-static { display: none; }
+@media (prefers-reduced-motion: reduce) {
+  .apt-cycler { display: none; }
+  .apt-cycler-static { display: block; }
+  .tab-content { animation: none; }
+  .apt-panel-slide { animation: none; }
+}
+
+/* Focus-visible baseline (finding #1): keyboard focus always shows a crimson ring.
+   Elements previously used focus:outline-none with no replacement. */
+.tab-nav-btn:focus-visible { outline: 2px solid #8B1A1A; outline-offset: -2px; }
+:where(a, button, input, select, textarea, [tabindex="0"]):focus-visible {
+  outline: 2px solid #8B1A1A;
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* Tab nav hover */
+.tab-nav-btn:hover {
+  color: #141310 !important;
+  background: #fafaf9;
+}
+
+/* Global link */
+a {
+  color: #8B1A1A;
+  text-underline-offset: 3px;
+  text-decoration-thickness: 0.5px;
+}
+a:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* Hide scrollbar for tab nav on mobile */
+.tab-scroll::-webkit-scrollbar { display: none; }
+.tab-scroll { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* Range input cross-browser */
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  background: #e5e4e2;
+  height: 3px;
+  border-radius: 0;
+  outline: none;
+}
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 14px; height: 14px;
+  border-radius: 50%;
+  background: #8B1A1A;
+  cursor: pointer;
+  border: 2px solid #fff;
+}
+input[type="range"]::-moz-range-thumb {
+  width: 14px; height: 14px;
+  border-radius: 50%;
+  background: #8B1A1A;
+  cursor: pointer;
+  border: 2px solid #fff;
+}

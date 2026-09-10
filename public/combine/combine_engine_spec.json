@@ -1,0 +1,514 @@
+{
+  "engine_version": "v3.7",
+  "generated_from": "src/components/HelpMeCombine.jsx + src/data/helpMeCombine.json (Atlas of Proteomic Technologies)",
+  "source_locations": {
+    "priorities_derive_axes_quality_dims": "HelpMeCombine.jsx: PRIORITIES, derive(), AXES, QUALITY_DIMS, DEFAULT_QWEIGHTS",
+    "quality_function": "HelpMeCombine.jsx: customQuality()",
+    "scoring_function": "HelpMeCombine.jsx: scorePairs()",
+    "pair_coverage": "HelpMeCombine.jsx: pairCoverage(), pairNetNew(), cov()",
+    "data": "src/data/helpMeCombine.json"
+  },
+  "axes": [
+    {
+      "key": "coverage",
+      "default_weight": 1,
+      "invert": false
+    },
+    {
+      "key": "complementarity",
+      "default_weight": 1,
+      "invert": false
+    },
+    {
+      "key": "quality",
+      "default_weight": 1,
+      "invert": false
+    },
+    {
+      "key": "cost",
+      "default_weight": 1,
+      "invert": true
+    },
+    {
+      "key": "class_balance",
+      "default_weight": 0.5,
+      "invert": false
+    },
+    {
+      "key": "sample_volume",
+      "default_weight": 0,
+      "invert": true
+    },
+    {
+      "key": "ms_fit",
+      "default_weight": 0,
+      "invert": false
+    }
+  ],
+  "priority_to_lever": {
+    "coverage": {
+      "axis": "coverage",
+      "set_weight_to": 5
+    },
+    "complementarity": {
+      "axis": "complementarity",
+      "set_weight_to": 5
+    },
+    "precision": {
+      "quality_dim": "precision"
+    },
+    "specificity": {
+      "quality_dim": "specificity"
+    },
+    "sensitivity": {
+      "quality_dim": "sensitivity"
+    },
+    "quantification": {
+      "quality_dim": "quantification_type"
+    },
+    "pqtl": {
+      "quality_dim": "pqtl_accuracy"
+    },
+    "throughput": {
+      "quality_dim": "throughput"
+    },
+    "cost": {
+      "axis": "cost",
+      "set_weight_to": 5
+    },
+    "volume": {
+      "axis": "sample_volume",
+      "set_weight_to": 5
+    },
+    "tissue": {
+      "axis": "ms_fit",
+      "set_weight_to": 5
+    }
+  },
+  "priority_combination_rule": "Start from the default axis weights above. Each selected priority overrides its lever: an axis priority sets that axis weight to 5; a quality-dimension priority is collected. If one or more quality-dimension priorities are selected, the quality axis weight is set to 5 and the quality sub-dimension weights are set to 1 for exactly the selected dimensions and 0 for all others. If no quality-dimension priority is selected, the quality sub-dimension weights take their defaults (intrinsic 1, maturity 0). Weights are never summed across priorities or renormalised outside the composite weighted mean.",
+  "quality_dims": [
+    {
+      "key": "precision",
+      "group": "intrinsic",
+      "default_weight": 1
+    },
+    {
+      "key": "specificity",
+      "group": "intrinsic",
+      "default_weight": 1
+    },
+    {
+      "key": "sensitivity",
+      "group": "intrinsic",
+      "default_weight": 1
+    },
+    {
+      "key": "quantification_type",
+      "group": "intrinsic",
+      "default_weight": 1
+    },
+    {
+      "key": "pqtl_accuracy",
+      "group": "intrinsic",
+      "default_weight": 1
+    },
+    {
+      "key": "throughput",
+      "group": "maturity",
+      "default_weight": 0
+    },
+    {
+      "key": "evidence_depth",
+      "group": "maturity",
+      "default_weight": 0
+    },
+    {
+      "key": "sample_flexibility",
+      "group": "maturity",
+      "default_weight": 0
+    }
+  ],
+  "quality_formula": "quality(pair) = ( sum over sub-dims d with weight w_d > 0 of w_d * (app_scores[a][d] + app_scores[b][d]) / 2 ) / ( sum of w_d ). This is the AVERAGE of the two platforms on each property (not best-of-pair). If no sub-dimension has weight > 0, quality = 0.",
+  "raw_axis_values": "coverage = pair coverage in the chosen denominator; complementarity = net-new percent in the chosen denominator; quality = quality(pair) above; cost = total_cost; class_balance = class_balance; sample_volume = joint_volume_uL; ms_fit = 1 if the pair contains a mass-spectrometry platform (Seer Proteograph XT or Biognosys TrueDiscovery) else 0.",
+  "pair_coverage_rule": "EXACT for all four numeric denominators as of v2.9 (P13: the independence-model estimate has been removed). drug_targets and fda_biomarkers are exact set intersections against their external reference lists (1,450 ChEMBL drug targets; 217 FDA-approved biomarkers, Bhowmick et al. 2021). proteome_canonical and proteome_atlas_union are exact unions of each platform's own accession-level list, computed directly from public/proteins.json.",
+  "normalisation": "Per axis, min-max across the fifteen pairs to [0,1]: n = (x - min)/(max - min); for inverted axes (cost, sample_volume) n = (max - x)/(max - min). If max == min the range is treated as 1 so the axis contributes 0.",
+  "composite_formula": "composite(pair) = ( sum over axes of weight[axis] * n[axis] ) / ( sum over axes of weight[axis] ). Winner of a scenario = the pair with the highest composite (discovery mode, all fifteen pairs eligible).",
+  "denominators": {
+    "drug_targets": 1450,
+    "proteome_atlas_union": 15123,
+    "proteome_canonical": 20190,
+    "fda_biomarkers": 217
+  },
+  "pathway_coverage_disclosure": "The UI's optional Reactome pathway selector shows each pair's precomputed pathway coverage (source: reactome_pathways.json, pathway_coverage.json) as a descriptive figure alongside composite, with a view-only toggle to re-order the ranked list by it. It is not an eighth axis (not in the seven-entry axes array above), not a twelfth priority (not in priority_to_lever above), and not a fifth coverage denominator (not in denominators above): it enters no formula in this spec and does not affect composite, so it is outside the priority_sweep's input space and requires no change to any scored quantity here.",
+  "priority_sweep": "All combinations of 1, 2, or 3 of the eleven priorities (11 + 55 + 165 = 231), evaluated over the four numeric denominators = 924 scenarios. Fully deterministic; no RNG.",
+  "bootstrap_ci": "Per pair, 2,000-resample bootstrap over the drug-target universe (n=1,450): draws ~ Binomial(1450, coverage_pct/100) / 1450 via numpy.random.default_rng(seed=42), 2.5th/97.5th percentiles. Computed once per pair, in pair order, immediately after the platform/pair data is loaded and before the sweeps run (order affects the RNG stream and must match for exact reproduction).",
+  "platforms": {
+    "nomic-omni": {
+      "display_name": "Nomic Omni",
+      "ptm_proteoform_capable": false,
+      "coverage": {
+        "drug_targets": 23.5,
+        "proteome_canonical": 5.2,
+        "proteome_atlas_union": 7.0,
+        "fda_biomarkers": 41.5
+      },
+      "app_scores": {
+        "proteome_coverage": 2,
+        "precision": 4,
+        "specificity": 4,
+        "sensitivity": 3,
+        "cost_efficiency": 5,
+        "throughput": 5,
+        "quantification_type": 4,
+        "sample_flexibility": 2,
+        "evidence_depth": 1,
+        "pqtl_accuracy": 3
+      }
+    },
+    "olink-explore-ht": {
+      "display_name": "Olink Explore HT",
+      "ptm_proteoform_capable": false,
+      "coverage": {
+        "drug_targets": 39.7,
+        "proteome_canonical": 26.8,
+        "proteome_atlas_union": 35.8,
+        "fda_biomarkers": 57.6
+      },
+      "app_scores": {
+        "proteome_coverage": 4,
+        "precision": 2,
+        "specificity": 4,
+        "sensitivity": 4,
+        "cost_efficiency": 3,
+        "throughput": 5,
+        "quantification_type": 2,
+        "sample_flexibility": 3,
+        "evidence_depth": 5,
+        "pqtl_accuracy": 3
+      }
+    },
+    "illumina-protein-prep": {
+      "display_name": "SomaSeq",
+      "ptm_proteoform_capable": false,
+      "coverage": {
+        "drug_targets": 63.6,
+        "proteome_canonical": 46.3,
+        "proteome_atlas_union": 61.8,
+        "fda_biomarkers": 89.9
+      },
+      "app_scores": {
+        "proteome_coverage": 5,
+        "precision": 5,
+        "specificity": 2,
+        "sensitivity": 4,
+        "cost_efficiency": 3,
+        "throughput": 4,
+        "quantification_type": 2,
+        "sample_flexibility": 3,
+        "evidence_depth": 5,
+        "pqtl_accuracy": 2
+      }
+    },
+    "nulisa": {
+      "display_name": "Alamar NULISA",
+      "ptm_proteoform_capable": false,
+      "coverage": {
+        "drug_targets": 10.1,
+        "proteome_canonical": 1.9,
+        "proteome_atlas_union": 2.6,
+        "fda_biomarkers": 14.3
+      },
+      "app_scores": {
+        "proteome_coverage": 1,
+        "precision": 5,
+        "specificity": 4,
+        "sensitivity": 5,
+        "cost_efficiency": 4,
+        "throughput": 3,
+        "quantification_type": 2,
+        "sample_flexibility": 3,
+        "evidence_depth": 3,
+        "pqtl_accuracy": 3
+      }
+    },
+    "seer-proteograph": {
+      "display_name": "Seer Proteograph XT",
+      "ptm_proteoform_capable": true,
+      "coverage": {
+        "drug_targets": 57.0,
+        "proteome_canonical": 51.3,
+        "proteome_atlas_union": 68.5,
+        "fda_biomarkers": 86.2
+      },
+      "app_scores": {
+        "proteome_coverage": 5,
+        "precision": 3,
+        "specificity": 4,
+        "sensitivity": 3,
+        "cost_efficiency": 3,
+        "throughput": 3,
+        "quantification_type": 3,
+        "sample_flexibility": 3,
+        "evidence_depth": 4,
+        "pqtl_accuracy": 5
+      }
+    },
+    "biognosys-truediscovery": {
+      "display_name": "Biognosys TrueDiscovery",
+      "ptm_proteoform_capable": true,
+      "coverage": {
+        "drug_targets": 32.6,
+        "proteome_canonical": 17.7,
+        "proteome_atlas_union": 23.6,
+        "fda_biomarkers": 72.8
+      },
+      "app_scores": {
+        "proteome_coverage": 4,
+        "precision": 3,
+        "specificity": 4,
+        "sensitivity": 3,
+        "cost_efficiency": 3,
+        "throughput": 3,
+        "quantification_type": 3,
+        "sample_flexibility": 5,
+        "evidence_depth": 3,
+        "pqtl_accuracy": 3
+      }
+    }
+  },
+  "display_name_to_slug": {
+    "Nomic Omni": "nomic-omni",
+    "Olink Explore HT": "olink-explore-ht",
+    "SomaSeq": "illumina-protein-prep",
+    "Alamar NULISA": "nulisa",
+    "Seer Proteograph XT": "seer-proteograph",
+    "Biognosys TrueDiscovery": "biognosys-truediscovery"
+  },
+  "pairs": [
+    {
+      "a": "Nomic Omni",
+      "b": "Olink Explore HT",
+      "coverage_pct": 43.4,
+      "coverage_ci_lo": 40.8,
+      "coverage_ci_hi": 46.1,
+      "coverage_pct_canonical": 27.9,
+      "coverage_pct_atlas_union": 37.2,
+      "coverage_pct_fda": 66.8,
+      "net_new_pct": 3.66,
+      "net_new_targets": 53,
+      "total_cost": 3.5,
+      "class_balance": 0.876,
+      "joint_volume_uL": 12
+    },
+    {
+      "a": "Nomic Omni",
+      "b": "SomaSeq",
+      "coverage_pct": 64.8,
+      "coverage_ci_lo": 62.5,
+      "coverage_ci_hi": 67.2,
+      "coverage_pct_canonical": 46.5,
+      "coverage_pct_atlas_union": 62.1,
+      "coverage_pct_fda": 92.2,
+      "net_new_pct": 1.17,
+      "net_new_targets": 17,
+      "total_cost": 4.0,
+      "class_balance": 0.911,
+      "joint_volume_uL": 65
+    },
+    {
+      "a": "Nomic Omni",
+      "b": "Alamar NULISA",
+      "coverage_pct": 24.7,
+      "coverage_ci_lo": 22.5,
+      "coverage_ci_hi": 26.8,
+      "coverage_pct_canonical": 5.7,
+      "coverage_pct_atlas_union": 7.6,
+      "coverage_pct_fda": 45.6,
+      "net_new_pct": 1.17,
+      "net_new_targets": 17,
+      "total_cost": 3.0,
+      "class_balance": 0.767,
+      "joint_volume_uL": 35
+    },
+    {
+      "a": "Nomic Omni",
+      "b": "Seer Proteograph XT",
+      "coverage_pct": 63.2,
+      "coverage_ci_lo": 60.8,
+      "coverage_ci_hi": 65.7,
+      "coverage_pct_canonical": 52.9,
+      "coverage_pct_atlas_union": 70.7,
+      "coverage_pct_fda": 90.3,
+      "net_new_pct": 6.28,
+      "net_new_targets": 91,
+      "total_cost": 4.0,
+      "class_balance": 0.918,
+      "joint_volume_uL": 255
+    },
+    {
+      "a": "Nomic Omni",
+      "b": "Biognosys TrueDiscovery",
+      "coverage_pct": 42.2,
+      "coverage_ci_lo": 39.7,
+      "coverage_ci_hi": 44.7,
+      "coverage_pct_canonical": 20.0,
+      "coverage_pct_atlas_union": 26.6,
+      "coverage_pct_fda": 78.8,
+      "net_new_pct": 9.66,
+      "net_new_targets": 140,
+      "total_cost": 4.0,
+      "class_balance": 0.848,
+      "joint_volume_uL": 50.0
+    },
+    {
+      "a": "Olink Explore HT",
+      "b": "SomaSeq",
+      "coverage_pct": 68.8,
+      "coverage_ci_lo": 66.3,
+      "coverage_ci_hi": 71.2,
+      "coverage_pct_canonical": 55.1,
+      "coverage_pct_atlas_union": 73.6,
+      "coverage_pct_fda": 94.9,
+      "net_new_pct": 5.24,
+      "net_new_targets": 76,
+      "total_cost": 5.5,
+      "class_balance": 0.918,
+      "joint_volume_uL": 57
+    },
+    {
+      "a": "Olink Explore HT",
+      "b": "Alamar NULISA",
+      "coverage_pct": 40.3,
+      "coverage_ci_lo": 37.7,
+      "coverage_ci_hi": 42.8,
+      "coverage_pct_canonical": 27.1,
+      "coverage_pct_atlas_union": 36.1,
+      "coverage_pct_fda": 61.3,
+      "net_new_pct": 0.62,
+      "net_new_targets": 9,
+      "total_cost": 4.5,
+      "class_balance": 0.869,
+      "joint_volume_uL": 27
+    },
+    {
+      "a": "Olink Explore HT",
+      "b": "Seer Proteograph XT",
+      "coverage_pct": 68.6,
+      "coverage_ci_lo": 66.3,
+      "coverage_ci_hi": 70.9,
+      "coverage_pct_canonical": 62.1,
+      "coverage_pct_atlas_union": 82.9,
+      "coverage_pct_fda": 92.2,
+      "net_new_pct": 11.59,
+      "net_new_targets": 168,
+      "total_cost": 5.5,
+      "class_balance": 0.924,
+      "joint_volume_uL": 247
+    },
+    {
+      "a": "Olink Explore HT",
+      "b": "Biognosys TrueDiscovery",
+      "coverage_pct": 51.9,
+      "coverage_ci_lo": 49.4,
+      "coverage_ci_hi": 54.5,
+      "coverage_pct_canonical": 36.2,
+      "coverage_pct_atlas_union": 48.4,
+      "coverage_pct_fda": 83.9,
+      "net_new_pct": 12.21,
+      "net_new_targets": 177,
+      "total_cost": 5.5,
+      "class_balance": 0.888,
+      "joint_volume_uL": 42.0
+    },
+    {
+      "a": "SomaSeq",
+      "b": "Alamar NULISA",
+      "coverage_pct": 64.1,
+      "coverage_ci_lo": 61.6,
+      "coverage_ci_hi": 66.6,
+      "coverage_pct_canonical": 46.4,
+      "coverage_pct_atlas_union": 61.9,
+      "coverage_pct_fda": 91.2,
+      "net_new_pct": 0.48,
+      "net_new_targets": 7,
+      "total_cost": 5.0,
+      "class_balance": 0.911,
+      "joint_volume_uL": 80
+    },
+    {
+      "a": "SomaSeq",
+      "b": "Seer Proteograph XT",
+      "coverage_pct": 76.6,
+      "coverage_ci_lo": 74.3,
+      "coverage_ci_hi": 78.8,
+      "coverage_pct_canonical": 69.6,
+      "coverage_pct_atlas_union": 92.9,
+      "coverage_pct_fda": 97.7,
+      "net_new_pct": 12.97,
+      "net_new_targets": 188,
+      "total_cost": 6.0,
+      "class_balance": 0.928,
+      "joint_volume_uL": 300
+    },
+    {
+      "a": "SomaSeq",
+      "b": "Biognosys TrueDiscovery",
+      "coverage_pct": 67.2,
+      "coverage_ci_lo": 64.8,
+      "coverage_ci_hi": 69.7,
+      "coverage_pct_canonical": 50.2,
+      "coverage_pct_atlas_union": 67.1,
+      "coverage_pct_fda": 95.9,
+      "net_new_pct": 3.66,
+      "net_new_targets": 53,
+      "total_cost": 6.0,
+      "class_balance": 0.912,
+      "joint_volume_uL": 95.0
+    },
+    {
+      "a": "Alamar NULISA",
+      "b": "Seer Proteograph XT",
+      "coverage_pct": 60.3,
+      "coverage_ci_lo": 57.7,
+      "coverage_ci_hi": 62.9,
+      "coverage_pct_canonical": 52.0,
+      "coverage_pct_atlas_union": 69.4,
+      "coverage_pct_fda": 88.5,
+      "net_new_pct": 3.38,
+      "net_new_targets": 49,
+      "total_cost": 5.0,
+      "class_balance": 0.919,
+      "joint_volume_uL": 270
+    },
+    {
+      "a": "Alamar NULISA",
+      "b": "Biognosys TrueDiscovery",
+      "coverage_pct": 37.8,
+      "coverage_ci_lo": 35.5,
+      "coverage_ci_hi": 40.3,
+      "coverage_pct_canonical": 18.7,
+      "coverage_pct_atlas_union": 25.0,
+      "coverage_pct_fda": 77.4,
+      "net_new_pct": 5.24,
+      "net_new_targets": 76,
+      "total_cost": 5.0,
+      "class_balance": 0.84,
+      "joint_volume_uL": 65.0
+    },
+    {
+      "a": "Seer Proteograph XT",
+      "b": "Biognosys TrueDiscovery",
+      "coverage_pct": 59.5,
+      "coverage_ci_lo": 57.0,
+      "coverage_ci_hi": 62.1,
+      "coverage_pct_canonical": 53.6,
+      "coverage_pct_atlas_union": 71.6,
+      "coverage_pct_fda": 90.3,
+      "net_new_pct": 2.55,
+      "net_new_targets": 37,
+      "total_cost": 6.0,
+      "class_balance": 0.919,
+      "joint_volume_uL": 285.0
+    }
+  ]
+}

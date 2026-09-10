@@ -1,0 +1,25 @@
+cff-version: 1.2.0
+message: "If you use this software or its data, please cite it as below."
+title: "Atlas of Proteomic Technologies (APT)"
+abstract: >-
+  An interactive reference and decision-support tool for selecting and
+  combining commercial high-plex proteomics platforms, with two transparent
+  recommendation engines and full reproducibility bundles for their fairness
+  analyses.
+type: software
+authors:
+  - family-names: Whelan
+    given-names: Christopher D.
+  - family-names: Smith-Byrne
+    given-names: K.
+version: "4.0"
+date-released: 2026-09-07
+license: MIT
+url: "https://aptatlas.org"
+repository-code: "https://github.com/christopherdwhelan/aptatlas"
+keywords:
+  - proteomics
+  - high-plex proteomics
+  - platform comparison
+  - biomarker discovery
+  - reproducibility
