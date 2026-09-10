@@ -17,6 +17,14 @@ date-released: 2026-09-07
 license: MIT
 url: "https://aptatlas.org"
 repository-code: "https://github.com/christopherdwhelan/aptatlas"
+doi: 10.5281/zenodo.22697191
+identifiers:
+  - type: doi
+    value: 10.5281/zenodo.22697191
+    description: "Concept DOI (all versions)"
+  - type: doi
+    value: 10.5281/zenodo.22697192
+    description: "Version-specific DOI (v4.0.0)"
 keywords:
   - proteomics
   - high-plex proteomics

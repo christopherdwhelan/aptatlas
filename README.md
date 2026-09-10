@@ -1,5 +1,7 @@
 # Atlas of Proteomic Technologies (APT)
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.22697191.svg)](https://doi.org/10.5281/zenodo.22697191)
+
 An interactive reference and decision-support tool for selecting and combining commercial high-plex proteomics platforms. APT scores the platforms most established in the peer-reviewed literature across ten analytical dimensions, catalogues the broader landscape of protein-measurement technologies, and provides two transparent recommendation engines: **Help Me Choose** (single-platform selection) and **Help Me Combine** (two-platform pairing).
 
 Live application: https://aptatlas.org
@@ -42,7 +44,12 @@ npm run build    # production build
 
 ## Citation
 
-If you use APT, please cite the manuscript (Whelan and Smith-Byrne) and this software. Machine-readable metadata is in `CITATION.cff`.
+If you use APT, please cite the manuscript (Whelan and Smith-Byrne) and this software archive:
+
+- This version (v4.0.0): https://doi.org/10.5281/zenodo.22697192
+- All versions (always resolves to the latest): https://doi.org/10.5281/zenodo.22697191
+
+Machine-readable metadata is in `CITATION.cff`.
 
 ## License
 
