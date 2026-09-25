@@ -6,7 +6,7 @@ An interactive reference and decision-support tool for selecting and combining c
 
 Live application: https://aptatlas.org
 
-This repository accompanies the APT manuscript (Whelan and Smith-Byrne) and contains the application source, the scoring and catalogue data, and the reproducibility bundles for both engines' fairness analyses.
+This repository accompanies the APT preprint (Whelan and Smith-Byrne, bioRxiv 2026, https://doi.org/10.64898/2026.09.10.750723) and contains the application source, the scoring and catalogue data, and the reproducibility bundles for both engines' fairness analyses.
 
 ## What is here
 
@@ -18,7 +18,7 @@ This repository accompanies the APT manuscript (Whelan and Smith-Byrne) and cont
 - `public/combine/`: Help Me Combine reproducibility bundle. Engine specification, the priority-sweep script, and its outputs.
 - `figures/`: the platform radar figure and its generator.
 
-The live data-collection backend (per-visit logging, submission handling, and the admin dashboard) is intentionally omitted from this archive.
+The live data-collection backend (per-visit logging, submission handling, and the admin API endpoints) is intentionally omitted from this archive. The admin dashboard UI component is present but is non-functional without that backend.
 
 ## Reproducing the fairness analyses
 
@@ -44,10 +44,10 @@ npm run build    # production build
 
 ## Citation
 
-If you use APT, please cite the manuscript (Whelan and Smith-Byrne) and this software archive:
+If you use APT, please cite the preprint and this software archive:
 
-- This version (v4.0.0): https://doi.org/10.5281/zenodo.22697192
-- All versions (always resolves to the latest): https://doi.org/10.5281/zenodo.22697191
+- Preprint: Whelan CD, Smith-Byrne K. Atlas of Proteomic Technologies: an evidence-based framework for selecting and combining commercial proteomics platforms. bioRxiv 2026. https://doi.org/10.64898/2026.09.10.750723
+- Software (all versions, resolves to the latest): https://doi.org/10.5281/zenodo.22697191
 
 Machine-readable metadata is in `CITATION.cff`.
 

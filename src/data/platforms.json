@@ -12,7 +12,7 @@
     "quantification": "Relative (NPX units, log2 scale)",
     "precision": "Median CV ~11.4% (Explore 3072) to ~26.8% (Explore HT) per Alkahest 2025 study; CV improves significantly for proteins above LOD",
     "throughput": "Semi-automated, ~10M data points/week; 172 samples per reagent kit",
-    "costRange": "Low-to-moderate cost",
+    "costRange": "Moderate, variable cost",
     "costRangeNumeric": [
       180,
       500
@@ -75,7 +75,7 @@
     "quantification": "Relative (cross-version bridging tools)",
     "precision": "Median CV ~5.3%, best in class",
     "throughput": "Automated NGS library prep on Illumina sequencers; ~9,500 proteins per sample in ~2.5 days",
-    "costRange": "Low-to-moderate cost",
+    "costRange": "Moderate, variable cost",
     "costRangeNumeric": [
       150,
       220
@@ -249,7 +249,7 @@
     "sampleTypes": "Plasma, serum; strong for tissue proteomics",
     "quantification": "Label-free relative (MS intensity); absolute quantification possible with SIS peptides",
     "precision": "Median CV ~26.4% (Alkahest study)",
-    "costRange": "Moderate cost",
+    "costRange": "Moderate, variable cost",
     "costRangeNumeric": [
       150,
       350
@@ -307,7 +307,7 @@
     "sampleTypes": "Plasma, serum, tissue, CSF, cell lysates, the broadest validated sample-type range",
     "quantification": "Label-free relative; absolute via SIS peptides (TrueSignature panels)",
     "precision": "Median CV ~29.8% (Alkahest study, older workflow); P2 enrichment claims median CVs below 10%",
-    "costRange": "Moderate-to-high cost",
+    "costRange": "Moderate, variable cost",
     "costRangeNumeric": [
       500,
       800

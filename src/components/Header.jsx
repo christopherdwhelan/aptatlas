@@ -1,8 +1,8 @@
 import logoUrl from '../assets/ignition_logo.png'
 import AptIcon from './AptIcon'
 
-const VERSION      = '4.0'
-const LAST_UPDATED = 'September 7, 2026'
+const VERSION      = '4.1'
+const LAST_UPDATED = 'September 25, 2026'
 
 // Pointy-top regular hexagon polygon points, circumradius r=14 (inradius≈12.12)
 const hexPts = (cx, cy) =>

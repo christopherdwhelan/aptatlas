@@ -7,3 +7,4 @@ dist-html/
 .env.*
 .vercel/
 .DS_Store
+.vercel

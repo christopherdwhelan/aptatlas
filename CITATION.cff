@@ -12,8 +12,8 @@ authors:
     given-names: Christopher D.
   - family-names: Smith-Byrne
     given-names: K.
-version: "4.0"
-date-released: 2026-09-07
+version: "4.1"
+date-released: 2026-09-25
 license: MIT
 url: "https://aptatlas.org"
 repository-code: "https://github.com/christopherdwhelan/aptatlas"
@@ -23,8 +23,19 @@ identifiers:
     value: 10.5281/zenodo.22697191
     description: "Concept DOI (all versions)"
   - type: doi
-    value: 10.5281/zenodo.22697192
-    description: "Version-specific DOI (v4.0.0)"
+    value: 10.64898/2026.09.10.750723
+    description: "Companion preprint (bioRxiv)"
+preferred-citation:
+  type: article
+  title: "Atlas of Proteomic Technologies: an evidence-based framework for selecting and combining commercial proteomics platforms"
+  authors:
+    - family-names: Whelan
+      given-names: Christopher D.
+    - family-names: Smith-Byrne
+      given-names: K.
+  year: 2026
+  journal: "bioRxiv"
+  doi: 10.64898/2026.09.10.750723
 keywords:
   - proteomics
   - high-plex proteomics

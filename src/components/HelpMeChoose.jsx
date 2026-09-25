@@ -70,6 +70,10 @@ const PLATFORM_BEST_WHEN = {
 // statistical tie - a co-recommendation rather than a ranked also-ran.
 const TIE_BAND = 3
 
+// Stamped onto each logged recommendation so a row ties to the engine that produced it.
+// No shared version constant exists yet; keep in step with Header.jsx VERSION on release.
+const APP_VERSION = 'v4.1'
+
 // Platforms that deliver validated absolute quantification in physical concentration units.
 // Nomic nELISA reports ELISA-calibrated pg/mL. The other scored products are label-free /
 // relative (Olink, Illumina, and Seer Proteograph XT DIA) or semi-quantitative (NULISA).
@@ -271,7 +275,7 @@ function getScoreExplanation(result, eligibleResults, weights, activePathway) {
       : `${platform.name} covers fewer than half of your specified target proteins and has been excluded. Check the Protein Coverage tab to see exactly which targets are and aren't measured.`
   }
   if (hardFilter === 'ptm') {
-    return `${platform.name} is antibody-based and cannot detect PTMs or isoforms. Only MS-based platforms (Seer XT, TrueDiscovery) can capture incidental PTM signal from DIA-MS readout.`
+    return `${platform.name} is affinity-based and cannot detect PTMs or isoforms. Only MS-based platforms (Seer XT, TrueDiscovery) can capture incidental PTM signal from DIA-MS readout.`
   }
   if (hardFilter === 'absquant') {
     const kind = scores.quantification_type >= 3 ? 'label-free MS quantification (relative abundance, not physical concentrations)' : 'within-assay relative units only (not physical concentrations)'
@@ -896,7 +900,7 @@ function ResultCard({ result, rank, isTopTier, topTierCount, eligibleResults, we
   const explanation       = getScoreExplanation(result, eligibleResults, weights, activePathway)
   const { gains, misses } = getGainsAndMisses(result, weights)
 
-  const filterLabel = hardFilter === 'ptm'              ? 'Requires systematic PTM enrichment' :
+  const filterLabel = hardFilter === 'ptm'              ? 'Requires DIA-MS PTM capture' :
                       hardFilter === 'ptm_systematic'   ? 'No systematic PTM workflow available' :
                       hardFilter === 'absquant'         ? 'Requires absolute quantification'  :
                       hardFilter === 'protein_coverage' ? (activePathway ? `Covers <50% of the ${activePathway.name} pathway` : `Covers <50% of your target proteins`) : ''
@@ -1341,6 +1345,9 @@ function StepResults({ results, answers, weights, toggles, proteinTargets, activ
         studySize:       answers.studySize ?? null,
         toggles,
         weights,
+        proteinTargets:  proteinTargets && proteinTargets.length ? proteinTargets : null,
+        pathwayId:       activePathway ? activePathway.id : null,
+        appVersion:      APP_VERSION,
       }),
     }).catch(() => {})
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -1370,7 +1377,7 @@ function StepResults({ results, answers, weights, toggles, proteinTargets, activ
           )}
         </div>
         <p className="text-xs mt-3" style={{ color: '#6f6d67', fontWeight: 400 }}>
-          We log anonymized usage data, including your approximate location and the inputs above, to improve this tool.
+          We log anonymized usage data, including your approximate location, the inputs above, and any protein targets or pathway you entered, to improve this tool.
           No name or contact details are included unless you choose to share them in the optional step below.
         </p>
       </div>

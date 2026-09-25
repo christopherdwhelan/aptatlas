@@ -93,7 +93,7 @@ export default function App() {
         </div>
         <div className="max-w-screen-xl mx-auto mt-2">
           <p className="text-[11px] leading-relaxed text-center" style={{ color: '#6f6d67', fontWeight: 400 }}>
-            An independent resource, provided free of charge; not sponsored by, affiliated with, or endorsed by any platform or vendor named. Scores and recommendations reflect the authors' assessment of published literature, offered as opinion to guide study-design decisions, not definitive or commercial rankings. Product and company names are trademarks of their respective owners, used for identification and comparison only. Provided without warranty; verify specifications with vendors. Believe something is inaccurate?{' '}
+            An independent resource, provided free of charge; not sponsored by, affiliated with, or endorsed by any platform or vendor named. Scores and recommendations reflect the authors' assessment of published literature, offered as opinion to guide study-design decisions, not definitive or commercial rankings, and not procurement, legal, or investment advice. Product and company names are trademarks of their respective owners, used for identification and comparison only. Provided without warranty; verify specifications and pricing with vendors. Believe something is inaccurate?{' '}
             <a href="mailto:chris@ignitionscientific.com" style={{ color: '#8B1A1A' }}>Email us</a>{' '}and we will review it. See Methods for full disclosure.
           </p>
         </div>

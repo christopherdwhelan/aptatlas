@@ -2,8 +2,6 @@ import { useState } from 'react'
 import SectionLayout from './SectionLayout'
 import scoring from '../data/scoring.json'
 
-const APT_VERSION = 'v4.0'
-
 function ContactButton({ email }) {
   const [copied, setCopied] = useState(false)
   function handleClick(e) {
@@ -233,6 +231,25 @@ export default function Methods() {
         </p>
       </BracketCard>
 
+      {/* 1a - How to Cite */}
+      <div className="px-6 py-5 mb-5" style={{ background: 'rgba(8,145,178,0.05)', borderLeft: '4px solid #0891B2' }}>
+        <p className="text-xs uppercase tracking-widest mb-2" style={{ color: '#0891B2', fontSize: 10, letterSpacing: '0.08em', fontWeight: 400 }}>
+          How to Cite
+        </p>
+        <p className="text-sm leading-relaxed mb-3" style={{ color: '#52504a', fontWeight: 400 }}>
+          If you use this tool to inform a study design or publication, please cite the accompanying preprint:
+        </p>
+        <div className="px-4 py-3 text-sm leading-relaxed font-mono" style={{ background: 'rgba(8,145,178,0.06)', border: '1px solid rgba(8,145,178,0.2)', color: '#52504a', fontWeight: 400 }}>
+          Whelan, Christopher D. &amp; Smith-Byrne, K. (2026). Atlas of Proteomic Technologies: an evidence-based framework for selecting and combining commercial proteomics platforms. <em>bioRxiv</em>.{' '}
+          <a href="https://doi.org/10.64898/2026.09.10.750723" target="_blank" rel="noopener noreferrer" className="hover:underline" style={{ color: '#C44D18' }}>
+            https://doi.org/10.64898/2026.09.10.750723
+          </a>
+        </div>
+        <p className="text-xs mt-3 leading-relaxed" style={{ color: '#6f6d67', fontWeight: 400 }}>
+          This preprint has not yet been peer reviewed; the citation will be updated when a peer-reviewed version is available.
+        </p>
+      </div>
+
       {/* 1b - Development process flowchart */}
       <MethodsFlowchart id="how-built" />
 
@@ -265,10 +282,10 @@ export default function Methods() {
           Independence, trademarks, and terms of use
         </p>
         <p className="text-sm leading-relaxed mb-3" style={{ color: '#52504a', fontWeight: 400 }}>
-          The Atlas of Proteomic Technologies is an independent, educational resource provided free of charge. It is not sponsored by, affiliated with, or endorsed by any platform or vendor named, and Ignition Scientific has no financial relationship with the companies whose products are compared. Scores and recommendations are the authors' good-faith interpretation of publicly available data and expert judgment as of the date shown; they are offered as opinion, not statements of fact, and are not definitive or commercial rankings.
+          The Atlas of Proteomic Technologies is an independent, educational resource provided free of charge. It is not sponsored by, affiliated with, or endorsed by any platform or vendor named, and Ignition Scientific has no financial relationship with the companies whose products are compared. Scores and recommendations are the authors' good-faith interpretation of publicly available data and expert judgment as of the date shown; they are offered as opinion, not statements of fact, and are not definitive or commercial rankings, nor procurement, legal, or investment advice.
         </p>
         <p className="text-sm leading-relaxed" style={{ color: '#52504a', fontWeight: 400 }}>
-          Product and company names (including Olink, SomaScan, SomaSeq, Alamar NULISA, Nomic nELISA, Seer Proteograph, and Biognosys TrueDiscovery) are trademarks of their respective owners and are used here for identification and comparison only. The tool is provided "as is," without warranty of any kind; verify all specifications with the vendor before making purchasing decisions. If you believe any statement is inaccurate or out of date, email{' '}
+          Product and company names (including Olink, SomaScan, SomaSeq, Alamar NULISA, Nomic nELISA, Seer Proteograph, and Biognosys TrueDiscovery) are trademarks of their respective owners and are used here for identification and comparison only. The tool is provided "as is," without warranty of any kind; verify all specifications and pricing with the vendor before making purchasing decisions. If you believe any statement is inaccurate or out of date, email{' '}
           <a href="mailto:chris@ignitionscientific.com" className="hover:underline" style={{ color: '#8B1A1A', fontWeight: 400 }}>chris@ignitionscientific.com</a>{' '}and we will review and correct it promptly.
         </p>
       </div>
@@ -280,25 +297,6 @@ export default function Methods() {
         </p>
         <p className="text-sm leading-relaxed" style={{ color: '#52504a', fontWeight: 400 }}>
           <a href="https://scholar.google.com/citations?user=t56JLZIAAAAJ&hl=en" target="_blank" rel="noopener noreferrer" className="hover:underline" style={{ color: '#141310', fontWeight: 500 }}>Christopher D. Whelan</a> conceived and developed the Atlas of Proteomic Technologies, including the scoring framework, recommendation engine, evidence curation, and web application. <a href="https://scholar.google.com/citations?user=7f1YjGgAAAAJ&hl=en" target="_blank" rel="noopener noreferrer" className="hover:underline" style={{ color: '#141310', fontWeight: 500 }}>Karl Smith-Byrne</a> provided scientific oversight and critical review of the scoring methodology. C.D.W. and K.S-B. contacted their respective industry and academic networks to gather early feedback and to inform future iterations of the tool.
-        </p>
-      </div>
-
-      {/* 3 - How to Cite */}
-      <div className="px-6 py-5 mb-5" style={{ background: 'rgba(8,145,178,0.05)', borderLeft: '4px solid #0891B2' }}>
-        <p className="text-xs uppercase tracking-widest mb-2" style={{ color: '#0891B2', fontSize: 10, letterSpacing: '0.08em', fontWeight: 400 }}>
-          How to Cite
-        </p>
-        <p className="text-sm leading-relaxed mb-3" style={{ color: '#52504a', fontWeight: 400 }}>
-          If you use this tool to inform a study design or publication, please cite it as follows:
-        </p>
-        <div className="px-4 py-3 text-sm leading-relaxed font-mono" style={{ background: 'rgba(8,145,178,0.06)', border: '1px solid rgba(8,145,178,0.2)', color: '#52504a', fontWeight: 400 }}>
-          Whelan, Christopher D. &amp; Smith-Byrne, K. ({new Date().getFullYear()}). <em>Atlas of Proteomic Technologies (APT)</em>, {APT_VERSION} [Web application]. Ignition Scientific.{' '}
-          <a href="https://apt.ignitionscientific.com" className="hover:underline" style={{ color: '#C44D18' }}>
-            https://apt.ignitionscientific.com
-          </a>
-        </div>
-        <p className="text-xs mt-3 leading-relaxed" style={{ color: '#6f6d67', fontWeight: 400 }}>
-          If a peer-reviewed methods paper accompanies a future release, this citation will be updated.
         </p>
       </div>
 
@@ -1027,6 +1025,7 @@ export default function Methods() {
         <SectionHeading>Version History</SectionHeading>
         <div className="space-y-0">
           {[
+            { version: 'v4.1', date: 'September 25, 2026', notes: 'Help Me Choose: the automatic per-visit log now also records any protein targets entered or Reactome pathway selected, and the app version, so every logged recommendation can be reproduced exactly from its recorded inputs. Previously these inputs affected the recommendation (through the protein-target weight and coverage filter) but were not recorded. The Results-page disclosure now lists them. Also corrected the eligibility label for the incidental (DIA-MS) PTM filter, which previously read "Requires systematic PTM enrichment", and described the excluded platforms as affinity-based rather than antibody-based. No score, weight, or recommendation logic changed.' },
             { version: 'v4.0', date: 'September 7, 2026', notes: 'Added the All Platforms tab: a catalog of 46 protein measurement platforms that situates the six APT-assessed platforms within the broader landscape. A single sortable table carries the evaluation level of each platform (APT-assessed, integration-readiness candidate, targeted panel, early technology, enabling instrument, or retired), its content-list type (fixed, configurable, or open), and an integration-readiness score for the candidates. Targeted or configurable panels with no fixed large content list are catalogued for completeness but not ranked; nine pre-commercial or not-yet-independently-validated platforms are catalogued as early technologies with no score or rank; and mass-spectrometry instrument lines and sample-preparation chemistries are listed as an enabling layer rather than ranked as platforms, so the same measurement is not double-counted. Each entry shows the platform\'s availability status and opens a detail panel; the six content-list-anchored platforms link through to their full Platform Comparison score. No change to the six-platform scores or either recommendation engine. See the new Platform Catalog and Integration-Readiness section for the full rubric.' },
             { version: 'v3.7', date: 'September 6, 2026', notes: 'Usability, accessibility, and reliability pass; no score, weight, or engine change. Fixed two bugs: the platform detail panel could open scrolled off-screen and trap the page (it now anchors to the viewport), and the Protein Coverage browser could load indefinitely if its data request failed (it now shows a retry). Accessibility: keyboard focus is visible again on the tab bar and search inputs, the platform detail overlays announce as dialogs and manage focus, the tab bar and the Help Me Choose question cards and sliders carry proper roles and labels, and the reduced-motion setting now also stops the tab and panel transitions. Help Me Choose keeps each step in the browser history, so Back and Forward move between steps instead of discarding answers. The Overview adds a second entry point to Help Me Combine, and its main button now reads "Get a platform recommendation". The Platform Comparison view toggle now shows which mode is selected on load. The Protein Coverage tab leads with search: the cross-platform overlap view and the CSV export are controls in the filter row rather than full-width banners, a coverage filter for proteins measured by all six platforms was added, and the platform data notices moved below the table. Site-wide: a clearer type-weight hierarchy and several color-contrast fixes.' },
             { version: 'v3.6', date: 'September 5, 2026', notes: 'Presentation and documentation only; no score, weight, or engine change. Added a section navigation rail to the Methods and Reproducibility pages. Documented the cost-efficiency score as commercial price bands at volume (5 = under about $75 per sample; down to 1 = above about $3,000), with the same bands shown on the cost slider and in the downloadable engine specification. Added a footnote wherever protein counts appear, noting that counts differ in kind across technologies and are mapped to UniProt identifiers for comparison. The quantification axis now reads as a level rather than a score out of 5, since its values are an ordered readout class, not a quality gradient. Platform radar profiles now render as outlines rather than filled areas, with a note that the axes are independent and the enclosed shape is not a summary statistic. "Sample flexibility" is now labelled "multi-matrix validation" in the prose, matching the score name used since v2.5. Some dense passages were tightened for readability.' },

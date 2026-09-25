@@ -166,6 +166,23 @@ function DetailRow({ row, colSpan = 7, onDelete, deleting }) {
                 {Object.values(toggles).every(v => v == null) && <span className="text-xs" style={{ color: '#6f6d67' }}>None selected</span>}
               </div>
             </div>
+            <div>
+              <p className="text-xs mb-1" style={{ color: '#6f6d67', fontWeight: 500 }}>Targets and version</p>
+              <div className="flex flex-wrap gap-1.5">
+                {(row.protein_targets && row.protein_targets.length > 0) && (
+                  <span className="px-1.5 py-0.5 text-xs" style={{ border: '1px solid #e5e4e2', color: '#141310' }}>Proteins: {row.protein_targets.join(', ')}</span>
+                )}
+                {row.pathway_id && (
+                  <span className="px-1.5 py-0.5 text-xs" style={{ border: '1px solid #e5e4e2', color: '#141310' }}>Pathway: {row.pathway_id}</span>
+                )}
+                {row.app_version && (
+                  <span className="px-1.5 py-0.5 text-xs" style={{ border: '1px solid #e5e4e2', color: '#141310' }}>Version: {row.app_version}</span>
+                )}
+                {!(row.protein_targets && row.protein_targets.length) && !row.pathway_id && !row.app_version && (
+                  <span className="text-xs" style={{ color: '#6f6d67' }}>None recorded</span>
+                )}
+              </div>
+            </div>
           </div>
           <button
             onClick={onDelete}
