@@ -12,8 +12,8 @@ authors:
     given-names: Christopher D.
   - family-names: Smith-Byrne
     given-names: K.
-version: "4.1"
-date-released: 2026-09-25
+version: "4.3"
+date-released: 2026-10-09
 license: MIT
 url: "https://aptatlas.org"
 repository-code: "https://github.com/christopherdwhelan/aptatlas"

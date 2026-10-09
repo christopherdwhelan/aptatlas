@@ -263,7 +263,7 @@ export default function Overview({ onNavigateToProteins }) {
         />
         <KpiCard
           icon={Icons.proteins}
-          value="15,123"
+          value="14,340"
           label="Unique Proteins (6-platform union)"
         />
       </div>

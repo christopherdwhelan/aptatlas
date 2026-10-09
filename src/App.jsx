@@ -8,12 +8,13 @@ import AllPlatforms from './components/AllPlatforms'
 import Comparison from './components/Comparison'
 import EvidenceBase from './components/EvidenceBase'
 import ProteinBrowser from './components/ProteinBrowser'
+import UnassayedProteome from './components/UnassayedProteome'
 import HelpMeChoose from './components/HelpMeChoose'
 import HelpMeCombine from './components/HelpMeCombine'
 import Methods from './components/Methods'
 import Reproducibility from './components/Reproducibility'
 
-const VALID_TABS = ['overview', 'platforms', 'comparison', 'evidence', 'proteins', 'chooser', 'combine', 'methods', 'reproducibility']
+const VALID_TABS = ['overview', 'platforms', 'comparison', 'evidence', 'proteins', 'unassayed', 'chooser', 'combine', 'methods', 'reproducibility']
 
 function getTabFromHash() {
   // The chooser wizard encodes its step as `#chooser/2` etc.; the tab is the part
@@ -25,6 +26,9 @@ function getTabFromHash() {
 export default function App() {
   const [activeTab, setActiveTab] = useState(getTabFromHash)
   const [proteinFilter, setProteinFilter] = useState(null)
+  // Search and scope handed to the Unassayed Proteome tab by a Protein Coverage lookup;
+  // cleared when the tab is opened directly from the nav.
+  const [unassayedInit, setUnassayedInit] = useState(null)
 
   // Keep URL hash in sync when tab changes programmatically
   const handleTabChange = (tabId) => {
@@ -36,6 +40,11 @@ export default function App() {
   const navigateToProteins = (platformId) => {
     setProteinFilter(platformId)
     handleTabChange('proteins')
+  }
+
+  const navigateToUnassayed = (search, scope) => {
+    setUnassayedInit({ search, scope })
+    handleTabChange('unassayed')
   }
 
   // Header version badge → Methods tab, scrolled to the changelog.
@@ -61,7 +70,7 @@ export default function App() {
   return (
     <div className="min-h-screen flex flex-col" style={{ background: '#ffffff' }}>
       <Header onVersionClick={navigateToChangelog} />
-      <TabNav activeTab={activeTab} onTabChange={handleTabChange} />
+      <TabNav activeTab={activeTab} onTabChange={(tabId) => { setUnassayedInit(null); handleTabChange(tabId) }} />
 
       <main className="flex-1 max-w-screen-xl mx-auto w-full px-4 sm:px-6 py-5 sm:py-6">
         {/* key={activeTab} triggers remount → CSS fade animation plays on each switch */}
@@ -70,7 +79,8 @@ export default function App() {
           {activeTab === 'platforms'   && <AllPlatforms onCompareInDepth={() => handleTabChange('comparison')} />}
           {activeTab === 'comparison'  && <Comparison />}
           {activeTab === 'evidence'    && <EvidenceBase />}
-          {activeTab === 'proteins'    && <ProteinBrowser key={proteinFilter} initialPlatform={proteinFilter} />}
+          {activeTab === 'proteins'    && <ProteinBrowser key={proteinFilter} initialPlatform={proteinFilter} onOpenUnassayed={navigateToUnassayed} />}
+          {activeTab === 'unassayed'   && <UnassayedProteome initialSearch={unassayedInit?.search} initialScope={unassayedInit?.scope} />}
           {activeTab === 'chooser'     && <HelpMeChoose />}
           {activeTab === 'combine'     && <HelpMeCombine />}
           {activeTab === 'methods'     && <Methods />}

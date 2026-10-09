@@ -48,6 +48,40 @@ function Bar({ label, count, max }) {
   )
 }
 
+function PlatformBreakdownPanel({ rows }) {
+  const withTotal = (rows || []).map(r => ({
+    platform: r.platform,
+    outright: r.outright || 0,
+    co: r.co_recommended || 0,
+    total: (r.outright || 0) + (r.co_recommended || 0),
+  }))
+  const max = withTotal.length ? Math.max(...withTotal.map(r => r.total)) : 0
+  return (
+    <div className="bg-white px-4 py-4" style={{ border: '1px solid #e5e4e2' }}>
+      <h2 className="text-xs uppercase mb-1" style={{ color: '#6f6d67', fontWeight: 600, letterSpacing: '0.06em' }}>By recommended platform</h2>
+      <p className="text-[10px] mb-3 leading-snug" style={{ color: '#a3a19d', fontWeight: 400 }}>
+        What each visitor was shown: sole recommendation vs. one of several statistically tied. Co-recommended counts every appearance in a tie, so totals exceed the number of visits.
+      </p>
+      {withTotal.length === 0
+        ? <p className="text-xs" style={{ color: '#6f6d67' }}>No data yet.</p>
+        : withTotal.map(row => (
+            <div key={row.platform || 'unknown'} className="mb-2.5 last:mb-0">
+              <div className="flex items-baseline justify-between mb-1 gap-2">
+                <span className="text-xs truncate" style={{ color: '#141310', fontWeight: 400 }}>{row.platform || 'Unknown'}</span>
+                <span className="text-xs tabular-nums flex-shrink-0" style={{ color: '#6f6d67' }}>
+                  {row.total} shown <span style={{ color: '#a3a19d' }}>({row.outright} outright, {row.co} co-rec)</span>
+                </span>
+              </div>
+              <div className="h-1.5 w-full flex" style={{ background: '#f0eee9' }}>
+                <div className="h-full" style={{ width: `${max ? (row.outright / max) * 100 : 0}%`, background: '#8B1A1A' }} />
+                <div className="h-full" style={{ width: `${max ? (row.co / max) * 100 : 0}%`, background: '#cf9a96' }} />
+              </div>
+            </div>
+          ))}
+    </div>
+  )
+}
+
 function BreakdownPanel({ title, rows, rowKey, format }) {
   const max = rows.length ? Math.max(...rows.map(r => r.count)) : 0
   const fmt = format || (v => prettify(v) || 'Unknown')
@@ -453,7 +487,7 @@ export default function Admin() {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-5">
-          <BreakdownPanel title="By recommended platform" rows={byPlatform} rowKey="top_platform" format={v => v || 'Unknown'} />
+          <PlatformBreakdownPanel rows={byPlatform} />
           <BreakdownPanel title="By country" rows={byCountry} rowKey="country" format={v => v || 'Unknown'} />
           <BreakdownPanel title="By primary goal" rows={byGoal} rowKey="primary_goal" />
           <BreakdownPanel title="By sample type" rows={bySampleType} rowKey="sample_type" />

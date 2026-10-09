@@ -1,4 +1,5 @@
 import { useState, useMemo, useCallback, useEffect, useRef } from 'react'
+import { loadUnassayed, searchUnassayed, statusLine, detectionLine, STATUS_NONE } from '../data/unassayed'
 
 const PLATFORM_META = {
   'olink-explore-ht':      { label: 'Olink Explore HT',       color: '#E85D26', partial: false },
@@ -10,6 +11,10 @@ const PLATFORM_META = {
 }
 
 const ALL_PLATFORM_IDS = Object.keys(PLATFORM_META)
+
+// Canonical Swiss-Prot accessions credited to a platform for an entry, honoring the
+// osteopontin split override (the Q9BX95 row credits P10451 to NULISA, Q9BX95 to Seer).
+const canonFor = (p, pid) => (p.canonical_by_platform && p.canonical_by_platform[pid]) || p.canonical || []
 const PAGE_SIZE = 100
 
 const SHORT_LABELS = {
@@ -59,7 +64,7 @@ function OverlapHeatmap({ proteins }) {
     const sets = {}
     for (const pid of ALL_PLATFORM_IDS) sets[pid] = new Set()
     for (const p of proteins) {
-      for (const pid of p.platforms) sets[pid]?.add(p.uniprot)
+      for (const pid of p.platforms) { for (const acc of canonFor(p, pid)) sets[pid]?.add(acc) }
     }
     const totals = {}
     for (const pid of ALL_PLATFORM_IDS) totals[pid] = sets[pid].size
@@ -157,25 +162,32 @@ function OverlapHeatmap({ proteins }) {
 
 function VennDiagram({ proteins, platformIds }) {
   const regions = useMemo(() => {
-    const inc = (pid, p) => p.platforms.includes(pid)
+    const setFor = (pid) => {
+      const s = new Set()
+      for (const p of proteins) if (p.platforms.includes(pid)) for (const acc of canonFor(p, pid)) s.add(acc)
+      return s
+    }
     if (platformIds.length === 2) {
       const [a, b] = platformIds
-      return {
-        onlyA: proteins.filter(p =>  inc(a,p) && !inc(b,p)).length,
-        onlyB: proteins.filter(p => !inc(a,p) &&  inc(b,p)).length,
-        AB:    proteins.filter(p =>  inc(a,p) &&  inc(b,p)).length,
-      }
+      const A = setFor(a), B = setFor(b)
+      let onlyA = 0, onlyB = 0, AB = 0
+      for (const x of new Set([...A, ...B])) { const ia = A.has(x), ib = B.has(x); if (ia && ib) AB++; else if (ia) onlyA++; else onlyB++ }
+      return { onlyA, onlyB, AB }
     }
     const [a, b, c] = platformIds
-    return {
-      onlyA: proteins.filter(p =>  inc(a,p) && !inc(b,p) && !inc(c,p)).length,
-      onlyB: proteins.filter(p => !inc(a,p) &&  inc(b,p) && !inc(c,p)).length,
-      onlyC: proteins.filter(p => !inc(a,p) && !inc(b,p) &&  inc(c,p)).length,
-      AB:    proteins.filter(p =>  inc(a,p) &&  inc(b,p) && !inc(c,p)).length,
-      AC:    proteins.filter(p =>  inc(a,p) && !inc(b,p) &&  inc(c,p)).length,
-      BC:    proteins.filter(p => !inc(a,p) &&  inc(b,p) &&  inc(c,p)).length,
-      ABC:   proteins.filter(p =>  inc(a,p) &&  inc(b,p) &&  inc(c,p)).length,
+    const A = setFor(a), B = setFor(b), C = setFor(c)
+    let onlyA = 0, onlyB = 0, onlyC = 0, AB = 0, AC = 0, BC = 0, ABC = 0
+    for (const x of new Set([...A, ...B, ...C])) {
+      const ia = A.has(x), ib = B.has(x), ic = C.has(x)
+      if (ia && ib && ic) ABC++
+      else if (ia && ib) AB++
+      else if (ia && ic) AC++
+      else if (ib && ic) BC++
+      else if (ia) onlyA++
+      else if (ib) onlyB++
+      else onlyC++
     }
+    return { onlyA, onlyB, onlyC, AB, AC, BC, ABC }
   }, [proteins, platformIds])
 
   const fmt = n => n.toLocaleString()
@@ -274,6 +286,43 @@ function VennSection({ proteins }) {
   )
 }
 
+// Lookups of proteins that no platform lists (or only a mass spectrometry list) would
+// otherwise come back empty or without tissue context; answer them from the Unassayed
+// Proteome list and link through to that tab.
+const UNASSAYED_SHOWN = 5
+
+function UnassayedMatches({ hits, query, onOpen }) {
+  const shown = hits.slice(0, UNASSAYED_SHOWN)
+  const scope = hits.some(r => r.status !== STATUS_NONE) ? 'affinity' : 'none'
+  return (
+    <div style={{ background: '#fafaf9', border: '1px solid #e5e4e2', borderLeft: '3px solid #8B1A1A', padding: '14px 18px' }}>
+      <p className="uppercase mb-2" style={{ fontSize: 10, letterSpacing: '0.08em', color: '#8B1A1A', fontWeight: 500 }}>
+        In the Unassayed Proteome list
+      </p>
+      <ul className="space-y-2.5">
+        {shown.map(r => (
+          <li key={r.uniprot}>
+            <p className="text-sm" style={{ color: '#141310', fontWeight: 400 }}>
+              <span className="font-mono text-xs mr-2">{r.gene}</span>
+              <a href={`https://www.uniprot.org/uniprotkb/${r.uniprot}`} target="_blank" rel="noopener noreferrer"
+                className="font-mono text-xs hover:underline mr-2" style={{ color: '#C44D18' }}>{r.uniprot}</a>
+              <span style={{ color: '#52504a' }}>{r.protein_name}</span>
+            </p>
+            <p className="text-xs mt-0.5" style={{ color: '#52504a', fontWeight: 400 }}>
+              <span style={{ color: '#141310', fontWeight: 500 }}>{statusLine(r)}.</span>{' '}{detectionLine(r)}.
+            </p>
+          </li>
+        ))}
+      </ul>
+      <button onClick={() => onOpen?.(query.trim(), scope)} className="text-xs mt-3 hover:underline cursor-pointer" style={{ color: '#8B1A1A', fontWeight: 400 }}>
+        {hits.length > UNASSAYED_SHOWN
+          ? `View all ${hits.length.toLocaleString()} matches in the Unassayed Proteome tab →`
+          : 'View in the Unassayed Proteome tab →'}
+      </button>
+    </div>
+  )
+}
+
 function PlatformPill({ platformId, small }) {
   const meta = PLATFORM_META[platformId]
   if (!meta) return null
@@ -287,15 +336,15 @@ function PlatformPill({ platformId, small }) {
   )
 }
 
-export default function ProteinBrowser({ initialPlatform, onNavigate }) {
+export default function ProteinBrowser({ initialPlatform, onNavigate, onOpenUnassayed }) {
   const [proteins, setProteins] = useState(null)
   const [loadError, setLoadError] = useState(false)
-  // proteins.length counts browsable rows, not distinct proteins: a handful of UniProt IDs
-  // (e.g. MAPT/P10636) have multiple rows for distinct PTM/epitope-specific assays (NULISA's
-  // pTau-181/205/212/217/231 panels), which is correct for browsing/search but overcounts
-  // "unique proteins" - dedupe by accession here to match the Overview KPI's definition.
+  // Distinct reviewed human proteins (canonical Swiss-Prot accessions), not browsable rows:
+  // proteins are listed under several identifier formats (isoforms, MS protein groups,
+  // unreviewed accessions) and some collapse to the same canonical protein, so counting rows
+  // overcounts. Dedupe by canonical accession to match the Overview KPI's distinct definition.
   const uniqueProteinCount = useMemo(
-    () => proteins ? new Set(proteins.map(p => p.uniprot)).size : null,
+    () => proteins ? new Set(proteins.flatMap(p => p.canonical || [])).size : null,
     [proteins]
   )
   const [selectedPlatforms, setSelectedPlatforms] = useState(
@@ -310,6 +359,18 @@ export default function ProteinBrowser({ initialPlatform, onNavigate }) {
   const [suggestions, setSuggestions] = useState([])
   const [showSuggestions, setShowSuggestions] = useState(false)
   const searchRef = useRef(null)
+  // The Unassayed Proteome list is fetched on first use of the search box, not on page load.
+  const [unassayed, setUnassayed] = useState(null)
+  const unassayedRequested = useRef(false)
+  const requestUnassayed = () => {
+    if (unassayedRequested.current) return
+    unassayedRequested.current = true
+    loadUnassayed().then(setUnassayed, () => { unassayedRequested.current = false })
+  }
+  const unassayedHits = useMemo(
+    () => (unassayed && search.trim().length >= 2 ? searchUnassayed(unassayed, search) : []),
+    [unassayed, search]
+  )
 
   // Robust load: check the response, cap a stalled request at 30s, and surface
   // a retryable error instead of spinning forever on any fetch/parse failure.
@@ -387,6 +448,7 @@ export default function ProteinBrowser({ initialPlatform, onNavigate }) {
     const val = e.target.value
     setSearch(val)
     setPage(0)
+    requestUnassayed()
     if (val.trim().length >= 2 && proteins) {
       const q = val.trim().toLowerCase()
       const matches = []
@@ -398,6 +460,14 @@ export default function ProteinBrowser({ initialPlatform, onNavigate }) {
         if (gene && gene.toLowerCase().startsWith(q) && !seen.has(gene)) {
           seen.add(gene)
           matches.push({ label: gene, sub: name, type: 'gene' })
+        }
+      }
+      // Then genes on no platform (from the Unassayed Proteome list, once loaded)
+      for (const r of unassayed || []) {
+        if (matches.length >= 8) break
+        if (r.status === STATUS_NONE && r.gene.toLowerCase().startsWith(q) && !seen.has(r.gene)) {
+          seen.add(r.gene)
+          matches.push({ label: r.gene, sub: r.protein_name, type: 'unassayed' })
         }
       }
       // Also match mid-string on protein name
@@ -509,7 +579,7 @@ export default function ProteinBrowser({ initialPlatform, onNavigate }) {
               value={search}
               onChange={handleSearch}
               onBlur={() => setTimeout(() => setShowSuggestions(false), 150)}
-              onFocus={() => suggestions.length > 0 && setShowSuggestions(true)}
+              onFocus={() => { requestUnassayed(); if (suggestions.length > 0) setShowSuggestions(true) }}
               className="w-full pl-12 pr-4 py-4 focus:outline-none focus:ring-2 focus:border-transparent transition"
               style={{ fontSize: 16.5, color: '#141310', background: '#ffffff', border: '1px solid #d0cfcc', fontWeight: 400, '--tw-ring-color': '#8B1A1A' }}
             />
@@ -525,7 +595,7 @@ export default function ProteinBrowser({ initialPlatform, onNavigate }) {
                     style={{ borderBottom: i < suggestions.length - 1 ? '1px solid #f3f2f0' : 'none' }}
                   >
                     <span style={{ fontSize: 13, fontWeight: 400, color: '#141310' }}>{s.label}</span>
-                    <span style={{ fontSize: 11, fontWeight: 400, color: '#6f6d67' }} className="truncate max-w-[55%] text-right ml-3">{s.sub}</span>
+                    <span style={{ fontSize: 11, fontWeight: 400, color: '#6f6d67' }} className="truncate max-w-[55%] text-right ml-3">{s.type === 'unassayed' ? `No platform · ${s.sub}` : s.sub}</span>
                   </button>
                 ))}
               </div>
@@ -641,6 +711,10 @@ export default function ProteinBrowser({ initialPlatform, onNavigate }) {
           </button>
         </div>
       </div>
+      )}
+
+      {proteins && unassayedHits.length > 0 && (
+        <UnassayedMatches hits={unassayedHits} query={search} onOpen={onOpenUnassayed} />
       )}
 
       {/* Table */}

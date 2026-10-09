@@ -6,14 +6,15 @@ An interactive reference and decision-support tool for selecting and combining c
 
 Live application: https://aptatlas.org
 
-This repository accompanies the APT preprint (Whelan and Smith-Byrne, bioRxiv 2026, https://doi.org/10.64898/2026.09.10.750723) and contains the application source, the scoring and catalogue data, and the reproducibility bundles for both engines' fairness analyses.
+This repository accompanies the APT preprint (Whelan and Smith-Byrne, bioRxiv 2026, https://doi.org/10.64898/2026.09.10.750723) and contains the application source, the scoring and catalogue data, the reproducibility bundles for both engines' fairness analyses, and the Unassayed Proteome list.
 
 ## What is here
 
 - `src/`: the React application, including the ten-axis scoring model, both recommendation engines, the platform catalogue, and the Methods documentation shown in-app.
 - `src/data/scoring.json`: the ten-axis platform scores.
 - `src/data/all_platforms.json`: the 46-platform catalogue and integration-readiness data.
-- `public/proteins.json`: per-protein cross-platform coverage.
+- `public/proteins.json`: per-protein cross-platform coverage. Each entry carries the canonical UniProtKB/Swiss-Prot accession(s) it counts toward, so coverage counts each distinct protein once (14,340 across the six platforms, as of v4.2).
+- `public/unassayed/`: the Unassayed Proteome list, as CSV and as the JSON the app loads. It holds the 9,072 human Swiss-Prot proteins on none of the four affinity catalogues; 5,850 of them are on none of the six platforms and the other 3,222 are on a mass spectrometry list only. Each row gives detection in two tissue proteomes (the GTEx tissue proteome, Jiang et al. 2020, and Wang et al. 2019), localization and names from UniProt, protein class and drug-target status from ChEMBL, and focused-paper counts from NCBI gene2pubmed.
 - `public/choose/`: Help Me Choose reproducibility bundle. Engine specification, the anonymised real-world respondent set, the fairness script, and its output CSVs.
 - `public/combine/`: Help Me Combine reproducibility bundle. Engine specification, the priority-sweep script, and its outputs.
 - `figures/`: the platform radar figure and its generator.

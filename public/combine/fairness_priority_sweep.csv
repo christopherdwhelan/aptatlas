@@ -1,22 +1,22 @@
 type,entity,win_count,win_pct,top3_count,top3_pct,mean_regret,mean_rank,participation_pct
-pair,Nomic Omni + Olink Explore HT,144,15.58,309,33.44,0.2325,6.6,
-pair,Nomic Omni + SomaSeq,40,4.33,205,22.19,0.2884,7.8,
-pair,Nomic Omni + Alamar NULISA,82,8.87,217,23.48,0.2754,7.69,
-pair,Nomic Omni + Seer Proteograph XT,173,18.72,448,48.48,0.1573,4.93,
-pair,Nomic Omni + Biognosys TrueDiscovery,45,4.87,240,25.97,0.2103,6.32,
-pair,Olink Explore HT + SomaSeq,20,2.16,107,11.58,0.3543,9.4,
-pair,Olink Explore HT + Alamar NULISA,16,1.73,87,9.42,0.3465,9.57,
-pair,Olink Explore HT + Seer Proteograph XT,112,12.12,294,31.82,0.2195,6.41,
-pair,Olink Explore HT + Biognosys TrueDiscovery,46,4.98,173,18.72,0.255,7.34,
-pair,SomaSeq + Alamar NULISA,58,6.28,129,13.96,0.3687,9.84,
-pair,SomaSeq + Seer Proteograph XT,123,13.31,265,28.68,0.2419,7.02,
-pair,SomaSeq + Biognosys TrueDiscovery,2,0.22,29,3.14,0.3622,10.2,
-pair,Alamar NULISA + Seer Proteograph XT,58,6.28,186,20.13,0.2531,7.36,
-pair,Alamar NULISA + Biognosys TrueDiscovery,5,0.54,50,5.41,0.3136,9.17,
-pair,Seer Proteograph XT + Biognosys TrueDiscovery,0,0.0,33,3.57,0.3644,10.35,
-platform,Nomic Omni,,,,,,,52.4
-platform,Seer Proteograph XT,,,,,,,50.4
-platform,Olink Explore HT,,,,,,,36.6
-platform,SomaSeq,,,,,,,26.3
-platform,Alamar NULISA,,,,,,,23.7
-platform,Biognosys TrueDiscovery,,,,,,,10.6
+pair,Nomic Omni + Olink Explore HT,138,14.94,303,32.79,0.232,6.61,
+pair,Nomic Omni + SomaSeq,39,4.22,205,22.19,0.289,7.81,
+pair,Nomic Omni + Alamar NULISA,82,8.87,215,23.27,0.2785,7.75,
+pair,Nomic Omni + Seer Proteograph XT,166,17.97,439,47.51,0.16,5.0,
+pair,Nomic Omni + Biognosys TrueDiscovery,43,4.65,235,25.43,0.2083,6.29,
+pair,Olink Explore HT + SomaSeq,28,3.03,107,11.58,0.3511,9.37,
+pair,Olink Explore HT + Alamar NULISA,16,1.73,84,9.09,0.348,9.61,
+pair,Olink Explore HT + Seer Proteograph XT,119,12.88,306,33.12,0.2187,6.35,
+pair,Olink Explore HT + Biognosys TrueDiscovery,55,5.95,193,20.89,0.2467,7.13,
+pair,SomaSeq + Alamar NULISA,56,6.06,134,14.5,0.3668,9.8,
+pair,SomaSeq + Seer Proteograph XT,117,12.66,261,28.25,0.2455,7.08,
+pair,SomaSeq + Biognosys TrueDiscovery,2,0.22,28,3.03,0.358,10.11,
+pair,Alamar NULISA + Seer Proteograph XT,58,6.28,183,19.81,0.2538,7.32,
+pair,Alamar NULISA + Biognosys TrueDiscovery,5,0.54,51,5.52,0.3116,9.09,
+pair,Seer Proteograph XT + Biognosys TrueDiscovery,0,0.0,28,3.03,0.3756,10.66,
+platform,Nomic Omni,,,,,,,50.6
+platform,Seer Proteograph XT,,,,,,,49.8
+platform,Olink Explore HT,,,,,,,38.5
+platform,SomaSeq,,,,,,,26.2
+platform,Alamar NULISA,,,,,,,23.5
+platform,Biognosys TrueDiscovery,,,,,,,11.4

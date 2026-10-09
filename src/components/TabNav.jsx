@@ -5,6 +5,7 @@ const TABS = [
   { id: 'platforms',  label: 'All Platforms' },
   { id: 'comparison', label: 'Platform Comparison' },
   { id: 'proteins',   label: 'Protein Coverage' },
+  { id: 'unassayed',  label: 'Unassayed Proteome' },
   { id: 'chooser',    label: 'Help Me Choose' },
   { id: 'combine',    label: 'Help Me Combine' },
   { id: 'evidence',   label: 'Evidence Base' },

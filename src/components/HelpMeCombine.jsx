@@ -75,7 +75,7 @@ const DEFAULT_QWEIGHTS = Object.fromEntries(QUALITY_DIMS.map(d => [d.key, d.def]
 const COVERAGE_TIPS = {
   drug_targets: 'The ~1,450 human proteins targeted by an approved or clinical-phase drug (ChEMBL). Answers: how much of the druggable proteome can the pair measure?',
   proteome_canonical: 'All 20,190 reviewed human protein-coding genes (SwissProt), the full theoretical proteome. Most are not yet measurable by any platform.',
-  proteome_atlas_union: 'The 15,123 proteins measurable by at least one platform in this Atlas, that is, what is realistically detectable today.',
+  proteome_atlas_union: 'The 14,340 distinct proteins measurable by at least one platform in this Atlas, that is, what is realistically detectable today.',
   fda_biomarkers: 'The 217 human proteins with an FDA-approved biomarker assay (Bhowmick et al. 2021, J Proteome Res). Answers: how much of the clinically-actionable, regulator-recognized biomarker space can the pair measure?',
   ptm_proteoforms: 'Post-translational modifications and proteoforms. Mass spec only; affinity panels cannot resolve them, so this is shown as a capability flag, not a percentage.',
 }
