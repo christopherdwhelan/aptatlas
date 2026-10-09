@@ -72,7 +72,7 @@ const TIE_BAND = 3
 
 // Stamped onto each logged recommendation so a row ties to the engine that produced it.
 // No shared version constant exists yet; keep in step with Header.jsx VERSION on release.
-const APP_VERSION = 'v4.1'
+const APP_VERSION = 'v4.3'
 
 // Platforms that deliver validated absolute quantification in physical concentration units.
 // Nomic nELISA reports ELISA-calibrated pg/mL. The other scored products are label-free /
