@@ -23,6 +23,9 @@ identifiers:
     value: 10.5281/zenodo.22697191
     description: "Concept DOI (all versions)"
   - type: doi
+    value: 10.5281/zenodo.23252644
+    description: "Version 4.3.0"
+  - type: doi
     value: 10.64898/2026.09.10.750723
     description: "Companion preprint (bioRxiv)"
 preferred-citation:

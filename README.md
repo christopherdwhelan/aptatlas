@@ -48,6 +48,7 @@ npm run build    # production build
 If you use APT, please cite the preprint and this software archive:
 
 - Preprint: Whelan CD, Smith-Byrne K. Atlas of Proteomic Technologies: an evidence-based framework for selecting and combining commercial proteomics platforms. bioRxiv 2026. https://doi.org/10.64898/2026.09.10.750723
+- Software, version 4.3.0: https://doi.org/10.5281/zenodo.23252644
 - Software (all versions, resolves to the latest): https://doi.org/10.5281/zenodo.22697191
 
 Machine-readable metadata is in `CITATION.cff`.
