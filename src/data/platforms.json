@@ -112,7 +112,7 @@
       },
       {
         "platform": "NULISA",
-        "reason": "If studying Alzheimer's biomarkers (p-tau217, A\u03b242/40): NULISA's attomolar sensitivity and FDA-cleared context is superior"
+        "reason": "If studying Alzheimer's biomarkers (p-tau217, A\u03b242/40): NULISA's attomolar sensitivity and well-validated blood p-tau217 measurement (research use only) make it the stronger choice"
       },
       {
         "platform": "Nomic nELISA",
@@ -142,7 +142,7 @@
       "Ultra-high sensitivity for low-abundance targets",
       "Particularly strong for AD biomarkers (p-tau217, A\u03b242/40)",
       "APOE genotyping from protein panel",
-      "FDA-cleared p-tau217 test context"
+      "Well-validated blood p-tau217 measurement (research use only)"
     ],
     "keyLimitations": [
       "Narrow panel coverage (470 proteins across both panels)",
@@ -154,13 +154,13 @@
     "note": "NOT a broad proteome platform: focused on inflammation and CNS disease panels",
     "platformType": "affinity",
     "color": "#7C3AED",
-    "overview": "NULISA (Nucleic acid Linked Immuno-Sandwich Assay) by Alamar Biosciences is not a broad-proteome discovery platform; it is a precision, ultra-sensitive targeted assay purpose-built for low-abundance proteins in neurodegeneration and inflammation. Its dual capture-and-release mechanism achieves attomolar sensitivity (0.1 pg/mL), placing it roughly 1\u20132 orders of magnitude below the LOD of competing affinity platforms. NULISA is the leading choice for Alzheimer's disease biomarker studies, with p-tau217 detection cleared in an FDA context and demonstrated APOE genotyping from the same run. For researchers studying AD, neuroinflammation, or any biology involving extremely low-abundance analytes, NULISA fills a niche no other platform matches.",
+    "overview": "NULISA (Nucleic acid Linked Immuno-Sandwich Assay) by Alamar Biosciences is not a broad-proteome discovery platform; it is a precision, ultra-sensitive targeted assay purpose-built for low-abundance proteins in neurodegeneration and inflammation. Its dual capture-and-release mechanism achieves attomolar sensitivity (0.1 pg/mL), placing it roughly 1\u20132 orders of magnitude below the LOD of competing affinity platforms. NULISA is the leading choice for Alzheimer's disease biomarker studies, with well-validated blood p-tau217 measurement (research use only) and demonstrated APOE genotyping from the same run. For researchers studying AD, neuroinflammation, or any biology involving extremely low-abundance analytes, NULISA fills a niche no other platform matches.",
     "bestFor": [
       "Alzheimer's disease and neurodegeneration biomarker studies (p-tau217, A\u03b242/40, NfL)",
       "Neuroinflammation panels requiring attomolar-level sensitivity",
       "CSF proteomics where low sample volume and high sensitivity are both needed",
       "Studies requiring absolute quantification of specific AD biomarkers alongside a broader panel",
-      "Clinical research requiring FDA-cleared p-tau217 test context"
+      "Studies needing well-validated blood p-tau217 measurement (research use only)"
     ],
     "considerInstead": [
       {

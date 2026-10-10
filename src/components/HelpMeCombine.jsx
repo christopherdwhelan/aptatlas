@@ -1,5 +1,7 @@
 import { useState, useMemo, useEffect, useRef } from 'react'
 import data from '../data/helpMeCombine.json'
+import { isLowerConfidence, includesNote } from '../data/confidence'
+import LowerConfidenceBadge from './LowerConfidenceBadge'
 
 // ── Data helpers ────────────────────────────────────────────────────────────
 const PLATS = data.platforms
@@ -10,6 +12,17 @@ const SLUG_BY_DISPLAY = Object.fromEntries(
   Object.entries(PLATS).map(([slug, p]) => [p.display_name, slug])
 )
 const ANCHOR_NAMES = Object.values(PLATS).map(p => p.display_name)
+
+// Members of a pair whose low evidence depth flags their scores as lower confidence
+// (display only). `skip` leaves out the anchor, which is flagged once in the list header.
+const flaggedIn = (pair, skip) => [pair.a, pair.b]
+  .filter(name => name !== skip)
+  .map(name => ({ id: SLUG_BY_DISPLAY[name], name }))
+  .filter(f => isLowerConfidence(f.id))
+
+function PairFlag({ flagged, small }) {
+  return flagged.length ? <LowerConfidenceBadge note={includesNote(flagged)} small={small} /> : null
+}
 
 const AXES = [
   { key: 'coverage',        label: 'Coverage',                 def: 1,   max: 6, hint: 'How much of the selected proteome the pair measures together.' },
@@ -76,7 +89,7 @@ const COVERAGE_TIPS = {
   drug_targets: 'The ~1,450 human proteins targeted by an approved or clinical-phase drug (ChEMBL). Answers: how much of the druggable proteome can the pair measure?',
   proteome_canonical: 'All 20,190 reviewed human protein-coding genes (SwissProt), the full theoretical proteome. Most are not yet measurable by any platform.',
   proteome_atlas_union: 'The 14,340 distinct proteins measurable by at least one platform in this Atlas, that is, what is realistically detectable today.',
-  fda_biomarkers: 'The 217 human proteins with an FDA-approved biomarker assay (Bhowmick et al. 2021, J Proteome Res). Answers: how much of the clinically-actionable, regulator-recognized biomarker space can the pair measure?',
+  fda_biomarkers: 'The 216 human proteins with an FDA-approved biomarker assay (Bhowmick et al. 2021, J Proteome Res). Answers: how much of the clinically-actionable, regulator-recognized biomarker space can the pair measure?',
   ptm_proteoforms: 'Post-translational modifications and proteoforms. Mass spec only; affinity panels cannot resolve them, so this is shown as a capability flag, not a percentage.',
 }
 const MODE_TIPS = {
@@ -680,6 +693,11 @@ export default function HelpMeCombine() {
   const singleSuffices = anchorSolo != null && anchorSolo >= 60
 
   const partnerOf = pair => (pair.a === anchor ? pair.b : pair.a)
+  // In anchor mode a flagged anchor is in every pair, so it is flagged once in the
+  // list headers and the per-pair flags cover only the partner.
+  const rowSkip = mode === 'anchor' ? anchor : null
+  const anchorFlagged = mode === 'anchor' && anchorSlug && isLowerConfidence(anchorSlug)
+    ? [{ id: anchorSlug, name: anchor }] : []
   const top = rows[0]
 
   // Co-leaders: consecutive top pairs that are a coverage tie with the leader
@@ -853,6 +871,7 @@ export default function HelpMeCombine() {
                   <div className="flex items-center gap-2 mb-3 flex-wrap">
                     <span className="text-xs px-2 py-0.5" style={{ background: 'rgba(124,134,168,0.14)', color: '#4A5373', fontWeight: 500 }}>Co-leading, statistical tie</span>
                     <span className="text-xs" style={{ color: '#6f6d67', fontWeight: 400 }}>{mode === 'anchor' ? `Best partners for ${anchor}` : 'Best overall pairs'}</span>
+                    <PairFlag flagged={anchorFlagged} />
                   </div>
                   <p className="mb-2" style={{ color: '#141310', fontWeight: 500, fontSize: 20 }}>
                     {mode === 'anchor'
@@ -866,6 +885,7 @@ export default function HelpMeCombine() {
                     {coLeaders.map(({ pair, composite, pathwayCoveragePct }) => (
                       <div key={pair.a + pair.b} className="flex items-center gap-x-4 gap-y-1 flex-wrap py-2" style={{ borderTop: '1px solid #f0efec' }}>
                         <span className="text-sm" style={{ color: '#141310', fontWeight: 500, minWidth: 150 }}>{mode === 'anchor' ? partnerOf(pair) : `${pair.a} + ${pair.b}`}</span>
+                        <PairFlag flagged={flaggedIn(pair, rowSkip)} small />
                         <span className="text-xs" style={{ color: '#8B1A1A', fontWeight: 500 }}>{Math.round(composite * 100)}% score (your weights)</span>
                         <span className="text-xs" style={{ color: '#52504a', fontWeight: 400 }}>{pairCoverage(pair, covMode)}% coverage</span>
                         <span className="text-xs" style={{ color: '#52504a', fontWeight: 400 }}>+{pair.net_new_targets} net-new</span>
@@ -886,6 +906,7 @@ export default function HelpMeCombine() {
                     <span className="text-xs" style={{ color: '#6f6d67', fontWeight: 400 }}>
                       {mode === 'anchor' ? `Best partner for ${anchor}` : 'Best overall pair'}
                     </span>
+                    <PairFlag flagged={flaggedIn(top.pair)} />
                   </div>
                   <p className="mb-2" style={{ color: '#141310', fontWeight: 500, fontSize: 20 }}>
                     {mode === 'anchor' ? `${anchor} + ${partnerOf(top.pair)}` : `${top.pair.a} + ${top.pair.b}`}
@@ -933,9 +954,12 @@ export default function HelpMeCombine() {
               {/* Ranked list */}
               <div className="bg-white" style={{ border: '1px solid #e5e4e2', padding: '14px 18px' }}>
                 <div className="flex items-center justify-between mb-1 flex-wrap gap-2">
-                  <p className="uppercase" style={{ color: '#8B1A1A', fontSize: 10, letterSpacing: '0.08em', fontWeight: 500 }}>
-                    {mode === 'anchor' ? `Partners for ${anchor}` : 'All pairs'}
-                  </p>
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <p className="uppercase" style={{ color: '#8B1A1A', fontSize: 10, letterSpacing: '0.08em', fontWeight: 500 }}>
+                      {mode === 'anchor' ? `Partners for ${anchor}` : 'All pairs'}
+                    </p>
+                    <PairFlag flagged={anchorFlagged} small />
+                  </div>
                   {activePathway && (
                     <div className="flex items-center gap-1.5 text-xs">
                       <button onClick={() => setSortByPathway(false)}
@@ -969,8 +993,10 @@ export default function HelpMeCombine() {
                   {rows.map(({ pair, composite, norm, pathwayCoveragePct }, i) => {
                     const cvg = pairCoverage(pair, covMode)
                     const pairName = mode === 'anchor' ? partnerOf(pair) : `${pair.a} + ${pair.b}`
+                    const rowFlags = flaggedIn(pair, rowSkip)
                     return (
-                      <div key={pair.a + pair.b} className="flex items-center gap-3 text-sm py-1.5" style={{ borderBottom: i < rows.length - 1 ? '1px solid #f0efec' : 'none' }}>
+                      <div key={pair.a + pair.b} className="py-1.5" style={{ borderBottom: i < rows.length - 1 ? '1px solid #f0efec' : 'none' }}>
+                      <div className="flex items-center gap-3 text-sm">
                         <span className="w-4 flex-shrink-0 text-xs" style={{ color: '#b3b1ab', fontWeight: 500 }}>{i + 1}</span>
                         <span className="flex-1 min-w-0" title={pairName}
                           style={{ color: '#141310', fontWeight: 400, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>
@@ -987,6 +1013,10 @@ export default function HelpMeCombine() {
                           <div style={{ width: `${Math.round(composite * 100)}%`, height: '100%', background: '#8B1A1A' }} />
                         </div>
                         <span className="hidden sm:inline flex-shrink-0" style={{ width: 108 }}><TierBadge pair={pair} tier={pair.tier} norm={norm} rows={rows} mode={covMode} qWeights={qWeights} /></span>
+                      </div>
+                      {rowFlags.length > 0 && (
+                        <div className="mt-1" style={{ paddingLeft: 28 }}><PairFlag flagged={rowFlags} small /></div>
+                      )}
                       </div>
                     )
                   })}

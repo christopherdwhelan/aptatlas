@@ -1,7 +1,9 @@
 import { useState } from 'react'
 import ScoreBar from './ScoreBar'
 import DetailPanel from './DetailPanel'
+import LowerConfidenceBadge from '../LowerConfidenceBadge'
 import scoring from '../../data/scoring.json'
+import { isLowerConfidence, platformNote } from '../../data/confidence'
 
 // Rows that display raw platform data (not scored)
 const DATA_ROWS = [
@@ -121,6 +123,7 @@ export default function TableView({ platforms }) {
                     <span style={{ fontSize: 10, fontWeight: 400, color: '#6f6d67' }}>
                       {p.company.split(' ')[0]}
                     </span>
+                    {isLowerConfidence(p.id) && <LowerConfidenceBadge note={platformNote(p.id)} small />}
                   </div>
                 </th>
               ))}

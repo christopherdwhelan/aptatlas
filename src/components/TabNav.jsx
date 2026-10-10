@@ -34,7 +34,7 @@ export default function TabNav({ activeTab, onTabChange }) {
   return (
     <nav className="sticky top-0 z-20 px-4 sm:px-6" style={{ background: '#ffffff', borderBottom: '1px solid #e5e4e2' }}>
       <div className="max-w-screen-xl mx-auto">
-        <div className="tab-scroll flex overflow-x-auto" role="tablist" aria-label="Sections">
+        <div className="tab-scroll flex justify-between overflow-x-auto" role="tablist" aria-label="Sections">
           {TABS.map((tab, i) => {
             const isActive = tab.id === activeTab
             return (
@@ -48,12 +48,12 @@ export default function TabNav({ activeTab, onTabChange }) {
                 tabIndex={isActive ? 0 : -1}
                 onClick={() => onTabChange(tab.id)}
                 onKeyDown={e => handleKeyDown(e, i)}
-                className="tab-nav-btn relative px-3 sm:px-4 py-3.5 transition-colors flex-shrink-0"
+                className="tab-nav-btn relative px-2.5 py-3.5 transition-colors flex-shrink-0"
                 style={{
                   color: isActive ? '#8B1A1A' : '#6f6d67',
                   fontWeight: isActive ? 400 : 300,
-                  fontSize: '12px',
-                  letterSpacing: '0.06em',
+                  fontSize: '11px',
+                  letterSpacing: '0.05em',
                   textTransform: 'uppercase',
                 }}
               >

@@ -2,7 +2,9 @@ import { useEffect } from 'react'
 import { createPortal } from 'react-dom'
 import PlatformRadar from './PlatformRadar'
 import ScoreBar from './ScoreBar'
+import LowerConfidenceBadge from '../LowerConfidenceBadge'
 import scoring from '../../data/scoring.json'
+import { isLowerConfidence, platformNote } from '../../data/confidence'
 import evidence from '../../data/evidence.json'
 import platforms from '../../data/platforms.json'
 
@@ -205,10 +207,11 @@ export default function DetailPanel({ platformId, onClose }) {
             <div
               style={{ background: '#ffffff', border: '1px solid #e5e4e2', overflow: 'hidden' }}
             >
-              <div className="px-5 py-3 border-b" style={{ borderColor: '#e5e4e2' }}>
+              <div className="px-5 py-3 border-b flex items-center justify-between gap-2 flex-wrap" style={{ borderColor: '#e5e4e2' }}>
                 <p style={{ color: '#8B1A1A', fontSize: 10, letterSpacing: '0.1em', fontWeight: 400, textTransform: 'uppercase' }}>
                   Dimension Scores
                 </p>
+                {isLowerConfidence(platform.id) && <LowerConfidenceBadge note={platformNote(platform.id)} small />}
               </div>
               <div className="px-4 py-3 space-y-2">
                 {scoring.dimensions.map(d => (

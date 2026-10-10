@@ -1,6 +1,8 @@
 import { useState, useMemo, useEffect, useRef } from 'react'
 import platforms from '../data/platforms.json'
 import scoring from '../data/scoring.json'
+import { isLowerConfidence, evidenceDepth, platformNote } from '../data/confidence'
+import LowerConfidenceBadge from './LowerConfidenceBadge'
 
 // ── Constants ──────────────────────────────────────────────────────────────────
 
@@ -72,7 +74,7 @@ const TIE_BAND = 3
 
 // Stamped onto each logged recommendation so a row ties to the engine that produced it.
 // No shared version constant exists yet; keep in step with Header.jsx VERSION on release.
-const APP_VERSION = 'v4.3'
+const APP_VERSION = 'v4.4'
 
 // Platforms that deliver validated absolute quantification in physical concentration units.
 // Nomic nELISA reports ELISA-calibrated pg/mL. The other scored products are label-free /
@@ -835,7 +837,7 @@ function StepWeights({ weights, toggles, onWeightChange, onToggleChange, onBack,
               {toggles.cnsFocus === 'yes' && (
                 <p className="text-xs p-2" style={{ borderLeft: '2px solid #6b5b95', paddingLeft: 8, color: '#6b5b95', fontWeight: 400 }}>
                   {answers.sampleType === 'csf'
-                    ? 'Strong sensitivity and specificity boost applied: NULISA\'s attomolar detection limit and FDA-cleared pTau-217 assay make it the benchmark for CSF pTau and CNS biomarker studies.'
+                    ? 'Strong sensitivity and specificity boost applied: NULISA\'s attomolar detection limit and well-validated pTau217 measurement (research use only) make it the benchmark for CSF pTau and CNS biomarker studies.'
                     : 'Sensitivity and specificity weights boosted to reflect requirements for low-abundance CNS biomarker detection and phospho-epitope discrimination. Select No if neuroscience is one component of a broader multi-domain study (e.g., UK Biobank). This boost is intended for studies where CNS biology is the primary scientific question.'}
                 </p>
               )}
@@ -944,6 +946,7 @@ function ResultCard({ result, rank, isTopTier, topTierCount, eligibleResults, we
                 {platform.name}
               </span>
               <span className="text-xs" style={{ color: '#6f6d67', fontWeight: 400 }}>{platform.company.split(' ')[0]}</span>
+              {isLowerConfidence(platform.id) && <LowerConfidenceBadge note={platformNote(platform.id)} />}
               {activePathway && pathwayCoveragePct != null ? (
                 <span className="text-xs px-2 py-0.5" style={{
                   background: pathwayCoveragePct >= 99.95 ? '#dcfce7' : pathwayCoveragePct === 0 ? '#fef2f2' : '#fef9c3',
@@ -1098,7 +1101,8 @@ function DownloadResults({ results, answers }) {
       'PLATFORM RANKINGS',
       '-'.repeat(30),
       ...eligible.map((r, i) =>
-        `${i + 1}. ${r.platform.name.padEnd(30)} ${r.displayPct}% match`
+        `${i + 1}. ${r.platform.name.padEnd(30)} ${r.displayPct}% match` +
+        (isLowerConfidence(r.platform.id) ? `  (lower-confidence scores: evidence depth ${evidenceDepth(r.platform.id)}/5)` : '')
       ),
       ...(ineligible.length > 0 ? [
         '',

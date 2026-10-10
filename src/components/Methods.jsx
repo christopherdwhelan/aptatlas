@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import SectionLayout from './SectionLayout'
 import scoring from '../data/scoring.json'
+import { LOW_EVIDENCE_THRESHOLD } from '../data/confidence'
 
 function ContactButton({ email }) {
   const [copied, setCopied] = useState(false)
@@ -435,7 +436,9 @@ export default function Methods() {
           <strong style={{ color: '#141310', fontWeight: 500 }}>Evidence depth varies across platforms. </strong>
           Olink and SomaScan have been compared in large population cohorts (UKB-PPP, ARIC, JHS) with
           tens of thousands of participants. Newer platforms (Nomic nELISA, NULISA, Seer Proteograph) have less
-          published comparative data; scores for these platforms carry greater uncertainty.
+          published comparative data; scores for these platforms carry greater uncertainty. Platforms with an
+          evidence depth of {LOW_EVIDENCE_THRESHOLD} or less are flagged as lower confidence wherever their scores
+          appear. The flag does not change any score or recommendation.
         </div>
       </SectionCard>
 
@@ -467,7 +470,9 @@ export default function Methods() {
           elsewhere in the Atlas (Platform Comparison, Evidence Base) but plays no role in any Help Me
           Choose recommendation. In Help Me Combine, evidence depth is one of eight selectable measurement
           properties but defaults to a weight of zero, so it is likewise excluded unless a user
-          explicitly opts in via "Customize measurement properties."
+          explicitly opts in via "Customize measurement properties." Platforms with an evidence depth of{' '}
+          {LOW_EVIDENCE_THRESHOLD} or less are flagged as lower confidence in both engines' results; the flag
+          does not change any score or recommendation.
         </p>
 
         <p className="text-sm mb-2" style={{ color: '#141310', fontWeight: 500 }}>Systematic bias simulation</p>
@@ -1025,6 +1030,8 @@ export default function Methods() {
         <SectionHeading>Version History</SectionHeading>
         <div className="space-y-0">
           {[
+            { version: 'v4.4', date: 'October 10, 2026', notes: 'Display: platforms with an evidence depth of 2/5 or lower are now flagged as lower confidence wherever their scores appear (Platform Comparison cards, detail panels and table; the Overview; and Help Me Choose and Help Me Combine results), with a note that their scores are provisional. The flag is computed from the evidence-depth score, so it follows any future score change. No score, weight or recommendation changed.' },
+            { version: 'v4.3.1', date: 'October 9, 2026', notes: 'Text correction: removed statements that Alamar NULISA\'s p-tau217 assay is FDA-cleared. NULISA\'s p-tau217 assays are for research use only; the Overview, Help Me Choose, and NULISA platform profile now describe its attomolar sensitivity and well-validated blood p-tau217 measurement instead. Also corrected the Help Me Combine description of the FDA-approved biomarker set from 217 to 216 proteins, the distinct-protein count its coverage values have used since v4.2. No score, weight, or recommendation changed.' },
             { version: 'v4.3', date: 'October 9, 2026', notes: 'Added the Unassayed Proteome tab: the 5,850 human proteins in UniProtKB/Swiss-Prot (entries reviewed manually by UniProt\'s curators) that are not on the catalogue of any of the six platforms (the 20,190 human Swiss-Prot proteins minus the 14,340 on at least one platform, counted by canonical accession as in Protein Coverage). A toggle widens the list to the 9,072 proteins on none of the four affinity catalogues; the extra 3,222 are on a mass spectrometry list only. For each protein the tab shows whether two tissue proteomes that used no commercial platform detected it (the GTEx tissue proteome, Jiang et al. 2020, Cell; Wang et al. 2019, Mol Syst Biol), with localization from UniProt, protein class and drug-target status from ChEMBL, and focused-paper counts from NCBI gene2pubmed. The list can be searched, filtered, sorted, and downloaded as CSV. A Protein Coverage search for one of these proteins now shows its status and tissue detection and links to the new tab. No score, weight, or recommendation changed.' },
             { version: 'v4.2', date: 'October 7, 2026', notes: 'Coverage now counts each distinct reviewed human protein once. Previously, proteins listed by different platforms under different identifier formats (isoforms, mass spectrometry protein groups, unreviewed accessions) were counted more than once. The Atlas union changes from 15,123 identifiers to 14,340 distinct proteins; Help Me Combine coverage values and the fairness sweep were regenerated; the NULISA osteopontin accession was corrected. No scores or weights changed.' },
             { version: 'v4.1', date: 'September 25, 2026', notes: 'Help Me Choose: the automatic per-visit log now also records any protein targets entered or Reactome pathway selected, and the app version, so every logged recommendation can be reproduced exactly from its recorded inputs. Previously these inputs affected the recommendation (through the protein-target weight and coverage filter) but were not recorded. The Results-page disclosure now lists them. Also corrected the eligibility label for the incidental (DIA-MS) PTM filter, which previously read "Requires systematic PTM enrichment", and described the excluded platforms as affinity-based rather than antibody-based. No score, weight, or recommendation logic changed.' },

@@ -17,7 +17,7 @@ This repository accompanies the APT preprint (Whelan and Smith-Byrne, bioRxiv 20
 - `public/unassayed/`: the Unassayed Proteome list, as CSV and as the JSON the app loads. It holds the 9,072 human Swiss-Prot proteins on none of the four affinity catalogues; 5,850 of them are on none of the six platforms and the other 3,222 are on a mass spectrometry list only. Each row gives detection in two tissue proteomes (the GTEx tissue proteome, Jiang et al. 2020, and Wang et al. 2019), localization and names from UniProt, protein class and drug-target status from ChEMBL, and focused-paper counts from NCBI gene2pubmed.
 - `public/choose/`: Help Me Choose reproducibility bundle. Engine specification, the anonymised real-world respondent set, the fairness script, and its output CSVs.
 - `public/combine/`: Help Me Combine reproducibility bundle. Engine specification, the priority-sweep script, and its outputs.
-- `figures/`: the platform radar figure and its generator.
+- `figures/`: the platform radar figure and its generator, and `compute_figure4_niches_v3.py`, which recomputes the Figure 4A niche win-shares from the Help Me Choose engine.
 
 The live data-collection backend (per-visit logging, submission handling, and the admin API endpoints) is intentionally omitted from this archive. The admin dashboard UI component is present but is non-functional without that backend.
 
@@ -31,6 +31,9 @@ cd public/choose && python3 regen_fairness.py
 
 # Help Me Combine: priority sweep and coverage bootstrap confidence intervals
 cd public/combine && python3 regen_fairness.py
+
+# Figure 4A niche win-shares (run from the repository root; imports public/choose/regen_fairness.py)
+python3 figures/compute_figure4_niches_v3.py
 ```
 
 Each script reads its `*_engine_spec.json`, which embeds the platform scores (byte-verified against `src/data/scoring.json`), and rewrites the result CSVs in place. Every script documents its full methodology in a header comment.

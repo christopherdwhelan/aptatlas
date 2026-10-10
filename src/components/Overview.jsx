@@ -2,7 +2,9 @@ import { useState } from 'react'
 import { AnimatedAptIcon } from './AptIcon'
 import KpiCard from './KpiCard'
 import DetailModal from './Comparison/DetailModal'
+import { ConfidenceTip } from './LowerConfidenceBadge'
 import platforms from '../data/platforms.json'
+import { isLowerConfidence, platformNote } from '../data/confidence'
 import evidence from '../data/evidence.json'
 import allPlatforms from '../data/all_platforms.json'
 
@@ -61,7 +63,7 @@ const KEY_FINDINGS = [
     accent: 'purple',
   },
   {
-    text: 'NULISA fills a specialized niche: attomolar sensitivity and FDA-cleared p-tau217 detection make it the leading choice for Alzheimer\'s and neuroinflammation studies.',
+    text: 'NULISA fills a specialized niche: attomolar sensitivity and well-validated blood p-tau217 measurement (research use only) make it the leading choice for Alzheimer\'s and neuroinflammation studies.',
     accent: 'gold',
   },
 ]
@@ -446,6 +448,8 @@ export default function Overview({ onNavigateToProteins }) {
 }
 
 function PlatformMiniCard({ platform, onViewProteins, onSelect }) {
+  const evidenceLabel = platform.evidenceDepth.split(' ')[0]
+  const evidenceColor = platform.evidenceDepth.startsWith('High') ? '#8B1A1A' : platform.evidenceDepth.startsWith('Moderate') ? '#d97706' : '#6f6d67'
   return (
     <div
       onClick={() => onSelect(platform)}
@@ -493,14 +497,13 @@ function PlatformMiniCard({ platform, onViewProteins, onSelect }) {
         </div>
         <div className="flex justify-between text-xs">
           <span style={{ color: '#6f6d67', fontWeight: 400 }}>Evidence</span>
-          <span
-            style={{
-              color: platform.evidenceDepth.startsWith('High') ? '#8B1A1A' : platform.evidenceDepth.startsWith('Moderate') ? '#d97706' : '#6f6d67',
-              fontWeight: 400,
-            }}
-          >
-            {platform.evidenceDepth.split(' ')[0]}
-          </span>
+          {isLowerConfidence(platform.id) ? (
+            <ConfidenceTip note={platformNote(platform.id)} style={{ color: evidenceColor, fontWeight: 400, borderBottom: '1px dotted #b8b6b0' }}>
+              {evidenceLabel}
+            </ConfidenceTip>
+          ) : (
+            <span style={{ color: evidenceColor, fontWeight: 400 }}>{evidenceLabel}</span>
+          )}
         </div>
       </div>
 

@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import PlatformRadar from './PlatformRadar'
+import LowerConfidenceBadge from '../LowerConfidenceBadge'
 import scoring from '../../data/scoring.json'
+import { isLowerConfidence, platformNote } from '../../data/confidence'
 
 const TECH_LABELS = {
   'olink-explore-ht':       'PEA · Dual Antibody',
@@ -51,13 +53,16 @@ export default function PlatformCard({ platform, onViewDetails }) {
           </span>
         </div>
 
-        {/* Technology badge */}
-        <span
-          className="inline-block text-xs px-2 py-0.5 mt-1 border"
-          style={{ color: '#52504a', borderColor: '#e5e4e2', background: '#fafaf9', fontWeight: 400 }}
-        >
-          {TECH_LABELS[platform.id]}
-        </span>
+        {/* Technology badge, plus the lower-confidence flag when evidence depth is low */}
+        <div className="flex flex-wrap items-center gap-1.5 mt-1">
+          <span
+            className="inline-block text-xs px-2 py-0.5 border"
+            style={{ color: '#52504a', borderColor: '#e5e4e2', background: '#fafaf9', fontWeight: 400 }}
+          >
+            {TECH_LABELS[platform.id]}
+          </span>
+          {isLowerConfidence(platform.id) && <LowerConfidenceBadge note={platformNote(platform.id)} />}
+        </div>
       </div>
 
       {/* Key stats */}

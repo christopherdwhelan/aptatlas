@@ -2,7 +2,9 @@ import { useEffect } from 'react'
 import { createPortal } from 'react-dom'
 import PlatformRadar from './PlatformRadar'
 import ScoreBar from './ScoreBar'
+import LowerConfidenceBadge from '../LowerConfidenceBadge'
 import scoring from '../../data/scoring.json'
+import { isLowerConfidence, platformNote } from '../../data/confidence'
 
 export default function DetailModal({ platform, onClose }) {
   // Close on Escape
@@ -102,7 +104,12 @@ export default function DetailModal({ platform, onClose }) {
               <PlatformRadar platformId={platform.id} color={platform.color} caption />
             </Section>
 
-            <Section title="Dimension Scores">
+            <Section title={
+              <span className="inline-flex items-center gap-2 flex-wrap">
+                Dimension Scores
+                {isLowerConfidence(platform.id) && <LowerConfidenceBadge note={platformNote(platform.id)} small />}
+              </span>
+            }>
               <div className="space-y-2">
                 {scoring.dimensions.map(d => (
                   <div key={d.id} className="flex items-center justify-between gap-2">

@@ -3,6 +3,7 @@ import {
   ResponsiveContainer, Tooltip,
 } from 'recharts'
 import scoring from '../../data/scoring.json'
+import { isLowerConfidence, evidenceDepth } from '../../data/confidence'
 
 const SHORT_LABELS = {
   proteome_coverage: 'Coverage',
@@ -32,10 +33,11 @@ const SHORT_DESCRIPTIONS = {
   pqtl_accuracy: 'Reliability for genetic (pQTL) studies.',
 }
 
-function MetricTooltip({ active, payload }) {
+function MetricTooltip({ active, payload, lowEvidence }) {
   if (!active || !payload || !payload.length) return null
   const row = payload[0].payload
   const isLevel = row.id === 'quantification_type'
+  const flagged = lowEvidence != null && row.id !== 'evidence_depth'
   return (
     <div style={{
       background: 'rgba(255,255,255,0.82)',
@@ -52,6 +54,9 @@ function MetricTooltip({ active, payload }) {
         <div style={{ color: '#6C7280', fontWeight: 400, fontSize: 10, marginTop: 1, lineHeight: 1.3 }}>{row.desc}</div>
       )}
       <div style={{ color: '#1F2430', fontSize: 10, marginTop: 3 }}>{isLevel ? `Level: ${row.value}` : `Score: ${row.value} / 5`}</div>
+      {flagged && (
+        <div style={{ color: '#6C7280', fontSize: 9, marginTop: 1, lineHeight: 1.3 }}>Lower confidence: evidence depth {lowEvidence}/5</div>
+      )}
       <div style={{ color: '#A9A89F', fontSize: 9, marginTop: 1 }}>See Methods for more</div>
     </div>
   )
@@ -87,7 +92,7 @@ export default function PlatformRadar({ platformId, color, caption = false }) {
             dot={{ r: 2.5, fill: color, strokeWidth: 0 }}
             isAnimationActive={false}
           />
-          <Tooltip content={<MetricTooltip />} />
+          <Tooltip content={<MetricTooltip lowEvidence={isLowerConfidence(platformId) ? evidenceDepth(platformId) : null} />} />
         </RadarChart>
       </ResponsiveContainer>
       {caption && (
