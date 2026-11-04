@@ -1,7 +1,6 @@
 {
   "name": "aptatlas-mcp",
   "version": "4.6.0",
-  "private": true,
   "description": "MCP server for the Atlas of Proteomic Technologies: platform data, recommendation engines, protein coverage and evidence claims. For research use only.",
   "type": "module",
   "bin": {
