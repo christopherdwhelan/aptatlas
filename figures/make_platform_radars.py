@@ -128,7 +128,6 @@ pdf = os.path.join(HERE, 'platform_radars.pdf')
 png = os.path.join(HERE, 'platform_radars_600dpi.png')
 fig.savefig(pdf, facecolor='white')
 fig.savefig(png, dpi=600, facecolor='white')
-fig.savefig('/private/tmp/claude-501/-Users-chrisdwhelan-Documents-Synoptic-Code/9819e518-87dd-444e-ac4d-f77a594a7a8b/scratchpad/radar_preview.png', dpi=150, facecolor='white')
 
 wpx = fig.get_size_inches()[0] * 25.4
 print(f'\nFigure width: {fig.get_size_inches()[0]:.3f} in = {wpx:.1f} mm')

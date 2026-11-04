@@ -1,7 +1,9 @@
-import { useState, useMemo, useEffect, useRef } from 'react'
+import { useId, useState, useMemo, useEffect, useRef } from 'react'
 import data from '../data/helpMeCombine.json'
 import { isLowerConfidence, includesNote } from '../data/confidence'
 import LowerConfidenceBadge from './LowerConfidenceBadge'
+import RadioGroup from './RadioGroup'
+import RouteLink from './RouteLink'
 
 // ── Data helpers ────────────────────────────────────────────────────────────
 const PLATS = data.platforms
@@ -88,7 +90,7 @@ const DEFAULT_QWEIGHTS = Object.fromEntries(QUALITY_DIMS.map(d => [d.key, d.def]
 const COVERAGE_TIPS = {
   drug_targets: 'The ~1,450 human proteins targeted by an approved or clinical-phase drug (ChEMBL). Answers: how much of the druggable proteome can the pair measure?',
   proteome_canonical: 'All 20,190 reviewed human protein-coding genes (SwissProt), the full theoretical proteome. Most are not yet measurable by any platform.',
-  proteome_atlas_union: 'The 14,340 distinct proteins measurable by at least one platform in this Atlas, that is, what is realistically detectable today.',
+  proteome_atlas_union: `The ${data.universe.proteome_atlas_union.toLocaleString('en-US')} distinct proteins measurable by at least one platform in this Atlas, that is, what is realistically detectable today.`,
   fda_biomarkers: 'The 216 human proteins with an FDA-approved biomarker assay (Bhowmick et al. 2021, J Proteome Res). Answers: how much of the clinically-actionable, regulator-recognized biomarker space can the pair measure?',
   ptm_proteoforms: 'Post-translational modifications and proteoforms. Mass spec only; affinity panels cannot resolve them, so this is shown as a capability flag, not a percentage.',
 }
@@ -310,23 +312,28 @@ function tierTooltip(pair, tier, norm, rows, mode, qWeights) {
 function Section({ label, subtitle, children }) {
   return (
     <div className="mb-5">
-      <p className="uppercase" style={{ color: '#8B1A1A', fontSize: 10, letterSpacing: '0.08em', fontWeight: 500, marginBottom: subtitle ? 3 : 10 }}>{label}</p>
-      {subtitle && <p className="text-xs mb-2.5" style={{ color: '#6f6d67', fontWeight: 400 }}>{subtitle}</p>}
+      <p className="uppercase" style={{ color: 'var(--color-brand-500)', fontSize: 10, letterSpacing: '0.08em', fontWeight: 500, marginBottom: subtitle ? 3 : 10 }}>{label}</p>
+      {subtitle && <p className="text-xs mb-2.5" style={{ color: 'var(--color-surface-400)', fontWeight: 400 }}>{subtitle}</p>}
       {children}
     </div>
   )
 }
 
-function Tooltip({ text, children, width = 230 }) {
+// Opens on hover and keyboard focus; `tappable` also opens it by tap for content that is not a button.
+function Tooltip({ text, children, width = 230, tappable }) {
   const [show, setShow] = useState(false)
   if (!text) return children
   return (
     <span style={{ position: 'relative', display: 'inline-flex' }}
-      onMouseEnter={() => setShow(true)} onMouseLeave={() => setShow(false)}>
+      onMouseEnter={() => setShow(true)} onMouseLeave={() => setShow(false)}
+      onFocus={() => setShow(true)} onBlur={() => setShow(false)}
+      onKeyDown={e => { if (e.key === 'Escape') setShow(false) }}
+      onClick={tappable ? () => setShow(s => !s) : undefined}
+      tabIndex={tappable ? 0 : undefined} role={tappable ? 'button' : undefined}>
       {children}
       {show && (
-        <span style={{
-          position: 'absolute', top: '100%', left: 0, marginTop: 6, width,
+        <span role="tooltip" style={{
+          position: 'absolute', top: '100%', left: 0, marginTop: 6, width, maxWidth: 'calc(100vw - 48px)',
           background: '#fff', border: '1px solid #e5e4e2', borderRadius: 6, padding: '8px 10px',
           fontSize: 11, lineHeight: 1.4, color: '#52504a', fontWeight: 400,
           boxShadow: '0 2px 10px rgba(31,36,48,0.10)', zIndex: 40, pointerEvents: 'none',
@@ -338,62 +345,68 @@ function Tooltip({ text, children, width = 230 }) {
   )
 }
 
-function Segmented({ options, value, onChange, stacked }) {
+function Segmented({ label, options, value, onChange, stacked }) {
   // Stacked = mutually-exclusive, full-width choices (e.g. "Where are you starting?"):
   // rendered as radio cards with the tip always visible as sub-text, matching Help Me
   // Choose's RadioCard, rather than hidden behind a hover-only tooltip.
   if (stacked) {
     return (
-      <div className="flex flex-col gap-2">
+      <RadioGroup className="flex flex-col gap-2" label={label}>
         {options.map(o => {
           const active = value === o.value
           return (
-            <button key={o.value} onClick={() => onChange(o.value)}
+            <button key={o.value} onClick={() => onChange(o.value)} role="radio" aria-checked={active}
               className="text-left border transition-all w-full"
-              style={{ padding: '12px 16px', borderColor: active ? '#8B1A1A' : '#e5e4e2', background: '#ffffff' }}>
+              style={{ padding: '12px 16px', borderColor: active ? 'var(--color-brand-500)' : '#e5e4e2', background: '#ffffff' }}>
               <div className="flex items-start gap-3">
                 <div className="w-4 h-4 rounded-full border-2 mt-0.5 flex-shrink-0"
-                  style={{ borderColor: active ? '#8B1A1A' : '#d0cfcc', background: active ? '#8B1A1A' : 'transparent' }} />
+                  style={{ borderColor: active ? 'var(--color-brand-500)' : '#d0cfcc', background: active ? 'var(--color-brand-500)' : 'transparent' }} />
                 <div>
                   <p className="text-sm leading-snug" style={{ color: '#141310', fontWeight: 400 }}>{o.label}</p>
-                  {o.tip && <p className="text-xs mt-0.5" style={{ color: '#6f6d67', fontWeight: 400 }}>{o.tip}</p>}
+                  {o.tip && <p className="text-xs mt-0.5" style={{ color: 'var(--color-surface-400)', fontWeight: 400 }}>{o.tip}</p>}
                 </div>
               </div>
             </button>
           )
         })}
-      </div>
+      </RadioGroup>
     )
   }
+  const selectedTip = options.find(o => o.value === value)?.tip
   return (
-    <div className="flex flex-wrap gap-2">
+    <>
+    <RadioGroup className="flex flex-wrap gap-2" label={label}>
       {options.map(o => {
         const active = value === o.value
         return (
           <Tooltip key={o.value} text={o.tip}>
-            <button onClick={() => onChange(o.value)}
+            <button onClick={() => onChange(o.value)} role="radio" aria-checked={active}
               className="px-3 py-2 text-sm border transition-all"
-              style={{ background: active ? '#8B1A1A' : '#ffffff', color: active ? '#fff' : '#52504a', borderColor: active ? '#8B1A1A' : '#e5e4e2', fontWeight: 400 }}>
+              style={{ background: active ? 'var(--color-brand-500)' : '#ffffff', color: active ? '#fff' : '#52504a', borderColor: active ? 'var(--color-brand-500)' : '#e5e4e2', fontWeight: 400 }}>
               {o.label}
             </button>
           </Tooltip>
         )
       })}
-    </div>
+    </RadioGroup>
+    {/* The selected option's explanation stays on screen, so it needs no hover. */}
+    {selectedTip && <p className="text-xs mt-1.5" style={{ color: 'var(--color-surface-400)', fontWeight: 400 }}>{selectedTip}</p>}
+    </>
   )
 }
 
 function WeightSlider({ axis, value, onChange }) {
+  const id = useId()
   return (
     <div className="mb-3.5">
       <div className="flex items-center justify-between mb-0.5">
-        <label className="text-sm" style={{ color: '#141310', fontWeight: 400 }}>{axis.label}</label>
-        <span className="text-xs w-8 text-right" style={{ color: value > 0 ? '#8B1A1A' : '#b3b1ab', fontWeight: 500 }}>{value.toFixed(1)}</span>
+        <label htmlFor={id} className="text-sm" style={{ color: '#141310', fontWeight: 400 }}>{axis.label}</label>
+        <span className="text-xs w-8 text-right" style={{ color: value > 0 ? 'var(--color-brand-500)' : 'var(--color-label)', fontWeight: 500 }}>{value.toFixed(1)}</span>
       </div>
-      <p className="text-xs mb-1.5" style={{ color: '#6f6d67', fontWeight: 400 }}>{axis.hint}</p>
-      <input type="range" min={0} max={axis.max} step={0.5} value={value}
+      <p className="text-xs mb-1.5" style={{ color: 'var(--color-surface-400)', fontWeight: 400 }}>{axis.hint}</p>
+      <input id={id} type="range" min={0} max={axis.max} step={0.5} value={value}
         onChange={e => onChange(axis.key, parseFloat(e.target.value))}
-        className="w-full h-1.5 appearance-none cursor-pointer" style={{ accentColor: '#8B1A1A' }} />
+        className="w-full h-1.5 appearance-none cursor-pointer" style={{ accentColor: 'var(--color-brand-500)' }} />
     </div>
   )
 }
@@ -402,7 +415,7 @@ function TierBadge({ pair, tier, norm, rows, mode, qWeights }) {
   const t = TIER_STYLE[tier] || TIER_STYLE[4]
   const tip = tierTooltip(pair, tier, norm, rows, mode, qWeights)
   return (
-    <Tooltip text={tip} width={320}>
+    <Tooltip text={tip} width={320} tappable>
       <span className="text-xs px-2 py-0.5 cursor-help" style={{ background: t.bg, color: t.fg, fontWeight: 500 }}>{t.label}</span>
     </Tooltip>
   )
@@ -411,9 +424,9 @@ function TierBadge({ pair, tier, norm, rows, mode, qWeights }) {
 function Stat({ label, value, sub }) {
   return (
     <div style={{ background: '#fafaf9', padding: '10px 12px' }}>
-      <p className="text-xs mb-0.5" style={{ color: '#6f6d67', fontWeight: 400, minHeight: 32 }}>{label}</p>
+      <p className="text-xs mb-0.5" style={{ color: 'var(--color-surface-400)', fontWeight: 400, minHeight: 32 }}>{label}</p>
       <p style={{ color: '#141310', fontWeight: 500, fontSize: 18 }}>{value}</p>
-      {sub && <p className="text-xs mt-0.5" style={{ color: '#6f6d67', fontWeight: 400 }}>{sub}</p>}
+      {sub && <p className="text-xs mt-0.5" style={{ color: 'var(--color-surface-400)', fontWeight: 400 }}>{sub}</p>}
     </div>
   )
 }
@@ -430,12 +443,12 @@ function WhyBreakdown({ scored, weights, pairLabel }) {
   return (
     <div className="bg-white mb-4" style={{ border: '1px solid #e5e4e2', padding: '14px 18px' }}>
       <button onClick={() => setOpen(o => !o)} className="flex items-center justify-between w-full">
-        <span className="uppercase" style={{ color: '#8B1A1A', fontSize: 10, letterSpacing: '0.08em', fontWeight: 500 }}>Why this ranks here</span>
-        <span className="text-xs" style={{ color: '#6f6d67', fontWeight: 400 }}>{open ? 'Hide' : 'Show'}</span>
+        <span className="uppercase" style={{ color: 'var(--color-brand-500)', fontSize: 10, letterSpacing: '0.08em', fontWeight: 500 }}>Why this ranks here</span>
+        <span className="text-xs" style={{ color: 'var(--color-surface-400)', fontWeight: 400 }}>{open ? 'Hide' : 'Show'}</span>
       </button>
       {open && (
         <div className="mt-3">
-          <p className="text-xs mb-3" style={{ color: '#6f6d67', fontWeight: 400 }}>
+          <p className="text-xs mb-3" style={{ color: 'var(--color-surface-400)', fontWeight: 400 }}>
             Under your current weights, {pairLabel}'s score is each axis's weight times how well this pair does on that
             axis relative to the other pairs. Bars show each axis's share of the total; axes at weight zero are omitted.
           </p>
@@ -443,10 +456,10 @@ function WhyBreakdown({ scored, weights, pairLabel }) {
             <div key={p.key} className="flex items-center gap-3 mb-2">
               <span className="text-xs" style={{ color: '#141310', fontWeight: 400, width: 148, flexShrink: 0 }}>{p.label}</span>
               <div className="flex-1 h-2" style={{ background: '#f0efec', minWidth: 40 }}>
-                <div style={{ width: `${Math.round(p.share * 100)}%`, height: '100%', background: '#8B1A1A' }} />
+                <div style={{ width: `${Math.round(p.share * 100)}%`, height: '100%', background: 'var(--color-brand-500)' }} />
               </div>
               <span className="text-xs text-right" style={{ color: '#52504a', fontWeight: 500, width: 36, flexShrink: 0 }}>{Math.round(p.share * 100)}%</span>
-              <span className="text-xs" style={{ color: '#b3b1ab', fontWeight: 400, width: 74, flexShrink: 0 }}>×{p.weight}, {p.norm >= 0.8 ? 'top' : p.norm >= 0.5 ? 'mid' : 'low'}</span>
+              <span className="text-xs" style={{ color: 'var(--color-label)', fontWeight: 400, width: 74, flexShrink: 0 }}>×{p.weight}, {p.norm >= 0.8 ? 'top' : p.norm >= 0.5 ? 'mid' : 'low'}</span>
             </div>
           ))}
         </div>
@@ -460,26 +473,26 @@ function QualityDims({ qWeights, onChange }) {
   const anyChanged = QUALITY_DIMS.some(d => qWeights[d.key] !== d.def)
   return (
     <div className="mb-4" style={{ marginTop: -6 }}>
-      <button onClick={() => setOpen(o => !o)} className="text-xs" style={{ color: '#8B1A1A', fontWeight: 400 }}>
+      <button onClick={() => setOpen(o => !o)} className="text-xs" style={{ color: 'var(--color-brand-500)', fontWeight: 400 }}>
         {open ? '▾' : '▸'} Customize measurement properties{!open && anyChanged ? ' (edited)' : ''}
       </button>
       {open && (
         <div className="mt-2 pl-3" style={{ borderLeft: '2px solid #f0efec' }}>
-          <p className="text-xs mb-1" style={{ color: '#6f6d67', fontWeight: 400 }}>
+          <p className="text-xs mb-1" style={{ color: 'var(--color-surface-400)', fontWeight: 400 }}>
             Weight each property that feeds the combined measurement score (0 to 3); the pair is scored as the average of its two platforms on each.
           </p>
           {['Intrinsic', 'Maturity'].map(group => (
             <div key={group}>
-              <p className="uppercase mt-2 mb-1" style={{ color: '#a8a69d', fontSize: 10, letterSpacing: '0.05em', fontWeight: 500 }}>
+              <p className="uppercase mt-2 mb-1" style={{ color: 'var(--color-label)', fontSize: 10, letterSpacing: '0.05em', fontWeight: 500 }}>
                 {group === 'Intrinsic' ? 'Intrinsic (measurement)' : 'Maturity (adoption, off by default)'}
               </p>
               {QUALITY_DIMS.filter(d => d.group === group).map(d => (
-                <div key={d.key} className="flex items-center gap-2 mb-1.5">
-                  <label className="text-xs" style={{ color: '#141310', fontWeight: 400, width: 96, flexShrink: 0 }}>{d.label}</label>
-                  <input type="range" min={0} max={3} step={0.5} value={qWeights[d.key]}
+                <div key={d.key} className="flex items-center gap-2 mb-3.5">
+                  <label htmlFor={`qweight-${d.key}`} className="text-xs" style={{ color: '#141310', fontWeight: 400, width: 96, flexShrink: 0 }}>{d.label}</label>
+                  <input id={`qweight-${d.key}`} type="range" min={0} max={3} step={0.5} value={qWeights[d.key]}
                     onChange={e => onChange(d.key, parseFloat(e.target.value))}
-                    className="flex-1 h-1.5 appearance-none cursor-pointer" style={{ accentColor: '#8B1A1A' }} />
-                  <span className="text-xs text-right" style={{ color: qWeights[d.key] > 0 ? '#8B1A1A' : '#b3b1ab', fontWeight: 500, width: 22, flexShrink: 0 }}>{qWeights[d.key].toFixed(1)}</span>
+                    className="flex-1 h-1.5 appearance-none cursor-pointer" style={{ accentColor: 'var(--color-brand-500)' }} />
+                  <span className="text-xs text-right" style={{ color: qWeights[d.key] > 0 ? 'var(--color-brand-500)' : 'var(--color-label)', fontWeight: 500, width: 22, flexShrink: 0 }}>{qWeights[d.key].toFixed(1)}</span>
                 </div>
               ))}
             </div>
@@ -525,7 +538,7 @@ function PathwaySearchInput({ activePathway, onSelectPathway, onClearPathway }) 
   if (activePathway) {
     return (
       <span className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs"
-        style={{ background: 'rgba(139,26,26,0.08)', color: '#8B1A1A', fontWeight: 400, border: '1px solid rgba(139,26,26,0.2)' }}>
+        style={{ background: 'rgba(139,26,26,0.08)', color: 'var(--color-brand-500)', fontWeight: 400, border: '1px solid rgba(139,26,26,0.2)' }}>
         Pathway: {activePathway.name} ({activePathway.n} genes)
         <button onClick={onClearPathway}
           className="ml-0.5 leading-none hover:opacity-60" style={{ fontSize: 14, lineHeight: 1 }}>×</button>
@@ -557,7 +570,7 @@ function PathwaySearchInput({ activePathway, onSelectPathway, onClearPathway }) 
               onMouseLeave={e => e.currentTarget.style.background = ''}
             >
               <span className="min-w-0 truncate">{p.name}</span>
-              <span className="text-xs flex-shrink-0" style={{ color: '#6f6d67' }}>{p.n} genes</span>
+              <span className="text-xs flex-shrink-0" style={{ color: 'var(--color-surface-400)' }}>{p.n} genes</span>
             </button>
           ))}
         </div>
@@ -572,15 +585,15 @@ function PriorityPicker({ selected, onToggle }) {
     <div>
       {PRIORITY_GROUPS.map(group => (
         <div key={group} className="mb-2.5">
-          <p className="uppercase mb-1.5" style={{ color: '#a8a69d', fontSize: 10, letterSpacing: '0.05em', fontWeight: 500 }}>{group}</p>
+          <p className="uppercase mb-1.5" style={{ color: 'var(--color-label)', fontSize: 10, letterSpacing: '0.05em', fontWeight: 500 }}>{group}</p>
           <div className="flex flex-wrap gap-1.5">
             {PRIORITIES.filter(p => p.group === group).map(p => {
               const active = selected.includes(p.key)
               const disabled = full && !active
               return (
-                <button key={p.key} onClick={() => onToggle(p.key)} disabled={disabled}
+                <button key={p.key} onClick={() => onToggle(p.key)} disabled={disabled} aria-pressed={active}
                   className="px-3 py-2 text-sm border transition-all"
-                  style={{ background: active ? '#8B1A1A' : '#ffffff', color: active ? '#fff' : disabled ? '#c9c7c0' : '#52504a', borderColor: active ? '#8B1A1A' : '#e5e4e2', cursor: disabled ? 'default' : 'pointer', fontWeight: 400 }}>
+                  style={{ background: active ? 'var(--color-brand-500)' : '#ffffff', color: active ? '#fff' : disabled ? '#c9c7c0' : '#52504a', borderColor: active ? 'var(--color-brand-500)' : '#e5e4e2', cursor: disabled ? 'default' : 'pointer', fontWeight: 400 }}>
                   {p.label}
                 </button>
               )
@@ -596,7 +609,7 @@ function AdvancedWeights({ weights, qWeights, setW, setQW }) {
   const [open, setOpen] = useState(false)
   return (
     <div className="mt-3" style={{ borderTop: '1px solid #f0efec', paddingTop: 12 }}>
-      <button onClick={() => setOpen(o => !o)} className="text-sm flex items-center gap-1.5" style={{ color: '#8B1A1A', fontWeight: 500 }}>
+      <button onClick={() => setOpen(o => !o)} className="text-sm flex items-center gap-1.5" style={{ color: 'var(--color-brand-500)', fontWeight: 500 }}>
         <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"
           style={{ transform: open ? 'rotate(90deg)' : 'none', transition: 'transform 0.15s', flexShrink: 0 }}>
           <polyline points="9 6 15 12 9 18" />
@@ -605,7 +618,7 @@ function AdvancedWeights({ weights, qWeights, setW, setQW }) {
       </button>
       {open && (
         <div className="mt-3">
-          <p className="text-xs mb-3" style={{ color: '#6f6d67', fontWeight: 400 }}>
+          <p className="text-xs mb-3" style={{ color: 'var(--color-surface-400)', fontWeight: 400 }}>
             Your priorities set these weights; adjust any directly. Changing a priority above resets them.
           </p>
           {AXES.filter(a => !a.hidden).map(a => (
@@ -766,7 +779,7 @@ export default function HelpMeCombine() {
         <div className="lg:col-span-2">
           <div className="bg-white" style={{ border: '1px solid #e5e4e2', padding: '18px 18px 8px' }}>
             <Section label="Where are you starting?">
-              <Segmented stacked value={mode} onChange={setMode} options={[
+              <Segmented stacked label="Where are you starting?" value={mode} onChange={setMode} options={[
                 { value: 'anchor', label: 'I already know my first platform', tip: MODE_TIPS.anchor },
                 { value: 'discovery', label: "I haven't decided on either platform yet", tip: MODE_TIPS.discovery },
               ]} />
@@ -774,8 +787,8 @@ export default function HelpMeCombine() {
 
             {mode === 'anchor' && (
               <Section label="Your first platform">
-                <select value={anchor} onChange={e => setAnchor(e.target.value)}
-                  className="w-full text-sm px-3 py-2" style={{ border: '1px solid #e5e4e2', color: anchor ? '#141310' : '#6f6d67', background: '#fff' }}>
+                <select value={anchor} onChange={e => setAnchor(e.target.value)} aria-label="Your first platform"
+                  className="w-full text-sm px-3 py-2" style={{ border: '1px solid #e5e4e2', color: anchor ? '#141310' : 'var(--color-surface-400)', background: '#fff' }}>
                   <option value="" disabled>Choose a platform...</option>
                   {ANCHOR_NAMES.map(n => <option key={n} value={n}>{n}</option>)}
                 </select>
@@ -783,16 +796,16 @@ export default function HelpMeCombine() {
             )}
 
             <Section label="Coverage denominator" subtitle="Which reference set to measure coverage against; this changes what 'coverage' means for every pair below.">
-              <Segmented value={covMode} onChange={setCovMode}
+              <Segmented label="Coverage denominator" value={covMode} onChange={setCovMode}
                 options={MODES.map(m => ({ value: m.key, label: m.label, tip: COVERAGE_TIPS[m.key] }))} />
               {modeObj?.denominator && (
-                <p className="text-xs mt-1.5" style={{ color: '#6f6d67', fontWeight: 400 }}>{modeObj.denominator.toLocaleString()} targets in this universe.</p>
+                <p className="text-xs mt-1.5" style={{ color: 'var(--color-surface-400)', fontWeight: 400 }}>{modeObj.denominator.toLocaleString('en-US')} targets in this universe.</p>
               )}
             </Section>
 
             <div className="flex items-center justify-between mb-2">
-              <p className="uppercase" style={{ color: '#8B1A1A', fontSize: 10, letterSpacing: '0.08em', fontWeight: 500 }}>What matters most? Pick up to {MAX_PRIORITIES}</p>
-              <button onClick={resetW} className="text-xs" style={{ color: '#6f6d67', fontWeight: 400 }}>Reset</button>
+              <p className="uppercase" style={{ color: 'var(--color-brand-500)', fontSize: 10, letterSpacing: '0.08em', fontWeight: 500 }}>What matters most? Pick up to {MAX_PRIORITIES}</p>
+              <button onClick={resetW} className="text-xs" style={{ color: 'var(--color-surface-400)', fontWeight: 400 }}>Reset</button>
             </div>
             <PriorityPicker selected={priorities} onToggle={togglePriority} />
             <AdvancedWeights weights={weights} qWeights={qWeights} setW={setW} setQW={setQW} />
@@ -807,23 +820,20 @@ export default function HelpMeCombine() {
               </Section>
             </div>
           </div>
-          <p className="text-xs mt-2" style={{ color: '#b3b1ab', fontWeight: 400 }}>
-            Tiers reflect robustness across many weightings; the score below reflects your current weights.
-          </p>
         </div>
 
         {/* ── Results ── */}
         <div className="lg:col-span-3">
           {showResults && (
-            <p className="text-xs mb-3" style={{ color: '#6f6d67', fontWeight: 400 }}>
+            <p className="text-xs mb-3" style={{ color: 'var(--color-surface-400)', fontWeight: 400 }}>
               We log anonymized usage data, including your approximate location and the choices on the left, to improve this tool.
             </p>
           )}
           {!showResults ? (
             <div className="bg-white" style={{ border: '1px dashed #d5d5d0', padding: '18px', minHeight: 260 }}>
-              <p className="uppercase mb-2.5" style={{ color: '#8B1A1A', fontSize: 10, letterSpacing: '0.08em', fontWeight: 500 }}>Your Result</p>
+              <p className="uppercase mb-2.5" style={{ color: 'var(--color-brand-500)', fontSize: 10, letterSpacing: '0.08em', fontWeight: 500 }}>Your Result</p>
               <p className="text-sm mb-1" style={{ color: '#141310', fontWeight: 500 }}>A few choices, then your recommendation</p>
-              <p className="text-sm mb-5" style={{ color: '#6f6d67', fontWeight: 400 }}>Make each selection on the left. The recommendation appears only once all of them are set, so nothing is pre-decided for you.</p>
+              <p className="text-sm mb-5" style={{ color: 'var(--color-surface-400)', fontWeight: 400 }}>Make each selection on the left. The recommendation appears only once all of them are set, so nothing is pre-decided for you.</p>
               <div className="space-y-2">
                 {setupSteps.map((s, i) => (
                   <div key={i} className="flex items-center gap-3 px-3 py-2.5" style={{ background: s.done ? 'rgba(128,171,122,0.08)' : '#f7f6f4', borderRadius: 6 }}>
@@ -832,7 +842,7 @@ export default function HelpMeCombine() {
                       display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
                       background: s.done ? '#80AB7A' : '#ffffff',
                       border: s.done ? 'none' : '1.5px solid #d0cfcc',
-                      color: s.done ? '#fff' : '#8B1A1A',
+                      color: s.done ? '#fff' : 'var(--color-brand-500)',
                     }}>
                       {s.done ? (
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12" /></svg>
@@ -840,7 +850,7 @@ export default function HelpMeCombine() {
                     </span>
                     <div className="flex-1 min-w-0">
                       <span className="text-[15px]" style={{ color: s.done ? '#141310' : '#52504a', fontWeight: 500 }}>{i + 1}. {s.label}</span>
-                      {s.val && <span className="block text-xs mt-0.5" style={{ color: '#6f6d67', fontWeight: 400 }}>{s.val}</span>}
+                      {s.val && <span className="block text-xs mt-0.5" style={{ color: 'var(--color-surface-400)', fontWeight: 400 }}>{s.val}</span>}
                     </div>
                   </div>
                 ))}
@@ -848,7 +858,7 @@ export default function HelpMeCombine() {
             </div>
           ) : isPTM ? (
             <div className="bg-white" style={{ border: '1px solid #e5e4e2', padding: '18px' }}>
-              <p className="uppercase mb-2.5" style={{ color: '#8B1A1A', fontSize: 10, letterSpacing: '0.08em', fontWeight: 500 }}>Your Result</p>
+              <p className="uppercase mb-2.5" style={{ color: 'var(--color-brand-500)', fontSize: 10, letterSpacing: '0.08em', fontWeight: 500 }}>Your Result</p>
               <p className="text-sm mb-3" style={{ color: '#141310', fontWeight: 500 }}>PTMs and proteoforms are mass-spec only</p>
               <p className="text-sm mb-4" style={{ color: '#52504a', fontWeight: 400 }}>
                 Affinity panels cannot resolve post-translational modifications or proteoforms. A mass-spec run can be re-mined for them, so any pair that includes a mass-spectrometry platform (Seer Proteograph XT or Biognosys TrueDiscovery) carries this capability. This is a capability flag, not a coverage percentage.
@@ -857,7 +867,7 @@ export default function HelpMeCombine() {
                 {rows.map(({ pair }) => (
                   <div key={pair.a + pair.b} className="flex items-center justify-between text-sm px-3 py-2" style={{ background: '#fafaf9' }}>
                     <span style={{ color: '#141310', fontWeight: 400 }}>{pair.a} + {pair.b}</span>
-                    <span style={{ color: pairPTM(pair) ? '#4F6B4A' : '#b3b1ab', fontWeight: 500 }}>{pairPTM(pair) ? 'PTM capable' : 'no PTM'}</span>
+                    <span style={{ color: pairPTM(pair) ? '#4F6B4A' : 'var(--color-label)', fontWeight: 500 }}>{pairPTM(pair) ? 'PTM capable' : 'no PTM'}</span>
                   </div>
                 ))}
               </div>
@@ -866,11 +876,11 @@ export default function HelpMeCombine() {
             <>
               {/* Headline */}
               {coLeaders.length >= 2 ? (
-                <div className="bg-white mb-4" style={{ borderTop: '2px solid #8B1A1A', borderRight: '1px solid #e5e4e2', borderBottom: '1px solid #e5e4e2', borderLeft: '1px solid #e5e4e2', padding: '18px' }}>
-                  <p className="uppercase mb-2.5" style={{ color: '#8B1A1A', fontSize: 10, letterSpacing: '0.08em', fontWeight: 500 }}>Your Result</p>
+                <div className="bg-white mb-4" style={{ borderTop: '2px solid var(--color-brand-500)', borderRight: '1px solid #e5e4e2', borderBottom: '1px solid #e5e4e2', borderLeft: '1px solid #e5e4e2', padding: '18px' }}>
+                  <p className="uppercase mb-2.5" style={{ color: 'var(--color-brand-500)', fontSize: 10, letterSpacing: '0.08em', fontWeight: 500 }}>Your Result</p>
                   <div className="flex items-center gap-2 mb-3 flex-wrap">
                     <span className="text-xs px-2 py-0.5" style={{ background: 'rgba(124,134,168,0.14)', color: '#4A5373', fontWeight: 500 }}>Co-leading, statistical tie</span>
-                    <span className="text-xs" style={{ color: '#6f6d67', fontWeight: 400 }}>{mode === 'anchor' ? `Best partners for ${anchor}` : 'Best overall pairs'}</span>
+                    <span className="text-xs" style={{ color: 'var(--color-surface-400)', fontWeight: 400 }}>{mode === 'anchor' ? `Best partners for ${anchor}` : 'Best overall pairs'}</span>
                     <PairFlag flagged={anchorFlagged} />
                   </div>
                   <p className="mb-2" style={{ color: '#141310', fontWeight: 500, fontSize: 20 }}>
@@ -886,11 +896,11 @@ export default function HelpMeCombine() {
                       <div key={pair.a + pair.b} className="flex items-center gap-x-4 gap-y-1 flex-wrap py-2" style={{ borderTop: '1px solid #f0efec' }}>
                         <span className="text-sm" style={{ color: '#141310', fontWeight: 500, minWidth: 150 }}>{mode === 'anchor' ? partnerOf(pair) : `${pair.a} + ${pair.b}`}</span>
                         <PairFlag flagged={flaggedIn(pair, rowSkip)} small />
-                        <span className="text-xs" style={{ color: '#8B1A1A', fontWeight: 500 }}>{Math.round(composite * 100)}% score (your weights)</span>
+                        <span className="text-xs" style={{ color: 'var(--color-brand-500)', fontWeight: 500 }}>{Math.round(composite * 100)}% score (your weights)</span>
                         <span className="text-xs" style={{ color: '#52504a', fontWeight: 400 }}>{pairCoverage(pair, covMode)}% coverage</span>
                         <span className="text-xs" style={{ color: '#52504a', fontWeight: 400 }}>+{pair.net_new_targets} net-new</span>
                         <span className="text-xs" style={{ color: '#52504a', fontWeight: 400 }}>{pair.joint_volume_uL} µL</span>
-                        <span className="text-xs" style={{ color: pairPTM(pair) ? '#4F6B4A' : '#b3b1ab', fontWeight: 400 }}>{pairPTM(pair) ? 'PTM capable' : 'no PTMs'}</span>
+                        <span className="text-xs" style={{ color: pairPTM(pair) ? '#4F6B4A' : 'var(--color-label)', fontWeight: 400 }}>{pairPTM(pair) ? 'PTM capable' : 'no PTMs'}</span>
                         {activePathway && pathwayCoveragePct != null && (
                           <span className="text-xs" style={{ color: '#52504a', fontWeight: 400 }}>{pathwayCoveragePct.toFixed(1)}% of {activePathway.name}</span>
                         )}
@@ -899,15 +909,18 @@ export default function HelpMeCombine() {
                   </div>
                 </div>
               ) : top ? (
-                <div className="bg-white mb-4" style={{ borderTop: '2px solid #8B1A1A', borderRight: '1px solid #e5e4e2', borderBottom: '1px solid #e5e4e2', borderLeft: '1px solid #e5e4e2', padding: '18px' }}>
-                  <p className="uppercase mb-2.5" style={{ color: '#8B1A1A', fontSize: 10, letterSpacing: '0.08em', fontWeight: 500 }}>Your Result</p>
+                <div className="bg-white mb-4" style={{ borderTop: '2px solid var(--color-brand-500)', borderRight: '1px solid #e5e4e2', borderBottom: '1px solid #e5e4e2', borderLeft: '1px solid #e5e4e2', padding: '18px' }}>
+                  <p className="uppercase mb-2.5" style={{ color: 'var(--color-brand-500)', fontSize: 10, letterSpacing: '0.08em', fontWeight: 500 }}>Your Result</p>
                   <div className="flex items-center gap-2 mb-3 flex-wrap">
                     <TierBadge pair={top.pair} tier={top.pair.tier} norm={top.norm} rows={rows} mode={covMode} qWeights={qWeights} />
-                    <span className="text-xs" style={{ color: '#6f6d67', fontWeight: 400 }}>
+                    <span className="text-xs" style={{ color: 'var(--color-surface-400)', fontWeight: 400 }}>
                       {mode === 'anchor' ? `Best partner for ${anchor}` : 'Best overall pair'}
                     </span>
                     <PairFlag flagged={flaggedIn(top.pair)} />
                   </div>
+                  <p className="text-xs mb-3" style={{ color: 'var(--color-surface-400)', fontWeight: 400 }}>
+                    Tiers reflect robustness across many weightings; the score below reflects your current weights.
+                  </p>
                   <p className="mb-2" style={{ color: '#141310', fontWeight: 500, fontSize: 20 }}>
                     {mode === 'anchor' ? `${anchor} + ${partnerOf(top.pair)}` : `${top.pair.a} + ${top.pair.b}`}
                   </p>
@@ -939,7 +952,7 @@ export default function HelpMeCombine() {
                     </p>
                   )}
                   {pairPTM(top.pair) && (
-                    <p className="text-xs mt-2" style={{ color: '#6f6d67', fontWeight: 400 }}>
+                    <p className="text-xs mt-2" style={{ color: 'var(--color-surface-400)', fontWeight: 400 }}>
                       Includes mass spectrometry: this pair can also be re-mined for PTMs and proteoforms.
                     </p>
                   )}
@@ -955,7 +968,7 @@ export default function HelpMeCombine() {
               <div className="bg-white" style={{ border: '1px solid #e5e4e2', padding: '14px 18px' }}>
                 <div className="flex items-center justify-between mb-1 flex-wrap gap-2">
                   <div className="flex items-center gap-2 flex-wrap">
-                    <p className="uppercase" style={{ color: '#8B1A1A', fontSize: 10, letterSpacing: '0.08em', fontWeight: 500 }}>
+                    <p className="uppercase" style={{ color: 'var(--color-brand-500)', fontSize: 10, letterSpacing: '0.08em', fontWeight: 500 }}>
                       {mode === 'anchor' ? `Partners for ${anchor}` : 'All pairs'}
                     </p>
                     <PairFlag flagged={anchorFlagged} small />
@@ -964,28 +977,28 @@ export default function HelpMeCombine() {
                     <div className="flex items-center gap-1.5 text-xs">
                       <button onClick={() => setSortByPathway(false)}
                         className="px-2 py-1 border transition-all"
-                        style={{ background: !sortByPathway ? '#8B1A1A' : '#fff', color: !sortByPathway ? '#fff' : '#6f6d67', borderColor: !sortByPathway ? '#8B1A1A' : '#e5e4e2', fontWeight: 400 }}>
+                        style={{ background: !sortByPathway ? 'var(--color-brand-500)' : '#fff', color: !sortByPathway ? '#fff' : 'var(--color-surface-400)', borderColor: !sortByPathway ? 'var(--color-brand-500)' : '#e5e4e2', fontWeight: 400 }}>
                         Ranked by composite
                       </button>
                       <button onClick={() => setSortByPathway(true)}
                         className="px-2 py-1 border transition-all"
-                        style={{ background: sortByPathway ? '#8B1A1A' : '#fff', color: sortByPathway ? '#fff' : '#6f6d67', borderColor: sortByPathway ? '#8B1A1A' : '#e5e4e2', fontWeight: 400 }}>
+                        style={{ background: sortByPathway ? 'var(--color-brand-500)' : '#fff', color: sortByPathway ? '#fff' : 'var(--color-surface-400)', borderColor: sortByPathway ? 'var(--color-brand-500)' : '#e5e4e2', fontWeight: 400 }}>
                         Ranked by pathway coverage
                       </button>
                     </div>
                   )}
                 </div>
                 {activePathway && (
-                  <p className="text-xs mb-3" style={{ color: '#6f6d67', fontWeight: 400 }}>
+                  <p className="text-xs mb-3" style={{ color: 'var(--color-surface-400)', fontWeight: 400 }}>
                     Pathway coverage of <strong>{activePathway.name}</strong> ({activePathway.n} genes) is shown for reference: it is not one of the seven scored axes and never changes a pair's composite score. The toggle above re-orders the list below; it does not rescore it.
                   </p>
                 )}
                 <div className="flex items-center gap-3 text-xs pb-1.5 mb-1" style={{ borderBottom: '1px solid #e5e4e2' }}>
                   <span className="w-4 flex-shrink-0" />
                   <span className="flex-1 min-w-0" />
-                  <span className="w-14 flex-shrink-0 text-right" style={{ color: '#b3b1ab', fontWeight: 400 }}>Coverage</span>
-                  <span className="w-10 flex-shrink-0 text-right" style={{ color: '#b3b1ab', fontWeight: 400 }}>Score</span>
-                  {activePathway && <span className="w-14 flex-shrink-0 text-right" style={{ color: '#b3b1ab', fontWeight: 400 }}>Pathway</span>}
+                  <span className="w-14 flex-shrink-0 text-right" style={{ color: 'var(--color-label)', fontWeight: 400 }}>Coverage</span>
+                  <span className="w-10 flex-shrink-0 text-right" style={{ color: 'var(--color-label)', fontWeight: 400 }}>Score</span>
+                  {activePathway && <span className="w-14 flex-shrink-0 text-right" style={{ color: 'var(--color-label)', fontWeight: 400 }}>Pathway</span>}
                   <span className="w-20 flex-shrink-0" />
                   <span className="hidden sm:inline flex-shrink-0" style={{ width: 108 }} />
                 </div>
@@ -997,20 +1010,20 @@ export default function HelpMeCombine() {
                     return (
                       <div key={pair.a + pair.b} className="py-1.5" style={{ borderBottom: i < rows.length - 1 ? '1px solid #f0efec' : 'none' }}>
                       <div className="flex items-center gap-3 text-sm">
-                        <span className="w-4 flex-shrink-0 text-xs" style={{ color: '#b3b1ab', fontWeight: 500 }}>{i + 1}</span>
+                        <span className="w-4 flex-shrink-0 text-xs" style={{ color: 'var(--color-label)', fontWeight: 500 }}>{i + 1}</span>
                         <span className="flex-1 min-w-0" title={pairName}
                           style={{ color: '#141310', fontWeight: 400, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>
                           {pairName}
                         </span>
                         <span className="w-14 flex-shrink-0 text-right text-xs" style={{ color: '#52504a', fontWeight: 400 }}>{cvg}%</span>
-                        <span className="w-10 flex-shrink-0 text-right text-xs" style={{ color: '#8B1A1A', fontWeight: 500 }}>{Math.round(composite * 100)}%</span>
+                        <span className="w-10 flex-shrink-0 text-right text-xs" style={{ color: 'var(--color-brand-500)', fontWeight: 500 }}>{Math.round(composite * 100)}%</span>
                         {activePathway && (
                           <span className="w-14 flex-shrink-0 text-right text-xs" style={{ color: pathwayCoveragePct != null ? '#52504a' : '#c9c7c0', fontWeight: 400 }}>
                             {pathwayCoveragePct != null ? `${pathwayCoveragePct.toFixed(1)}%` : '—'}
                           </span>
                         )}
                         <div className="w-20 flex-shrink-0 h-1.5" style={{ background: '#f0efec' }}>
-                          <div style={{ width: `${Math.round(composite * 100)}%`, height: '100%', background: '#8B1A1A' }} />
+                          <div style={{ width: `${Math.round(composite * 100)}%`, height: '100%', background: 'var(--color-brand-500)' }} />
                         </div>
                         <span className="hidden sm:inline flex-shrink-0" style={{ width: 108 }}><TierBadge pair={pair} tier={pair.tier} norm={norm} rows={rows} mode={covMode} qWeights={qWeights} /></span>
                       </div>
@@ -1024,7 +1037,7 @@ export default function HelpMeCombine() {
               </div>
 
               {/* Honest-limits */}
-              <p className="text-xs mt-4" style={{ color: '#b3b1ab', fontWeight: 400 }}>
+              <p className="text-xs mt-4" style={{ color: 'var(--color-label)', fontWeight: 400 }}>
                 No pair is universally best; the ranking depends on your weights. Coverage counts are list membership and over-count usable coverage. Combined measurement score and cost are ordinal expert estimates. Treat this as a transparent, re-weightable decision aid, not a verdict.
               </p>
             </>
@@ -1041,11 +1054,11 @@ export default function HelpMeCombine() {
             fairness analysis above are downloadable from the Reproducibility tab.
           </p>
         </div>
-        <a href="#reproducibility"
+        <RouteLink tab="reproducibility"
           className="flex-shrink-0 px-4 py-2.5 text-sm border hover:opacity-90 transition-all"
-          style={{ background: '#8B1A1A', color: '#fff', borderColor: '#8B1A1A', fontWeight: 400 }}>
+          style={{ background: 'var(--color-brand-500)', color: '#fff', borderColor: 'var(--color-brand-500)', fontWeight: 400 }}>
           Open Reproducibility →
-        </a>
+        </RouteLink>
       </section>
     </div>
   )

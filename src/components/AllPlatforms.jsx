@@ -1,6 +1,8 @@
-import { useState, useEffect, useMemo, useRef } from 'react'
+import { Fragment, useState, useEffect, useMemo, useRef } from 'react'
 import { createPortal } from 'react-dom'
 import catalog from '../data/all_platforms.json'
+import ScrollFade from './ScrollFade'
+import useDialog from './useDialog'
 
 // ── Maps ─────────────────────────────────────────────────────────────────────
 
@@ -38,14 +40,14 @@ const TIER_META = {
 
 // integration_status → chip. Text + color (never hue alone), from the existing palette.
 const STATUS_META = {
-  'Integrated':                       { label: 'Integrated',        color: '#8B1A1A', bg: 'rgba(139,26,26,0.08)', border: 'rgba(139,26,26,0.25)' },
-  'Integration-ready':                { label: 'Integration-ready', color: '#8B1A1A', bg: 'transparent',          border: 'rgba(139,26,26,0.35)' },
-  'Targeted panel':                   { label: 'Targeted panel',    color: '#6f6d67', bg: '#f3f2f0',          border: '#e5e4e2' },
-  'Profiled / reference':             { label: 'Profiled / reference', color: '#6f6d67', bg: '#f3f2f0',           border: '#e5e4e2' },
-  'Emerging, not yet scored':        { label: 'Emerging',          color: '#6f6d67', bg: 'transparent',          border: '#d0cfcc' },
-  'Retired':                          { label: 'Retired',           color: '#a3a19d', bg: 'transparent',          border: '#e5e4e2', strike: true },
-  'Enabling instrument (not ranked)': { label: 'Enabling',          color: '#6f6d67', bg: '#f3f2f0',              border: '#e5e4e2' },
-  'Enabling sample-prep (not ranked)':{ label: 'Enabling',          color: '#6f6d67', bg: '#f3f2f0',              border: '#e5e4e2' },
+  'Integrated':                       { label: 'Integrated',        color: 'var(--color-brand-500)', bg: 'rgba(139,26,26,0.08)', border: 'rgba(139,26,26,0.25)' },
+  'Integration-ready':                { label: 'Integration-ready', color: 'var(--color-brand-500)', bg: 'transparent',          border: 'rgba(139,26,26,0.35)' },
+  'Targeted panel':                   { label: 'Targeted panel',    color: 'var(--color-surface-400)', bg: '#f3f2f0',          border: '#e5e4e2' },
+  'Profiled / reference':             { label: 'Profiled / reference', color: 'var(--color-surface-400)', bg: '#f3f2f0',           border: '#e5e4e2' },
+  'Emerging, not yet scored':        { label: 'Emerging',          color: 'var(--color-surface-400)', bg: 'transparent',          border: '#d0cfcc' },
+  'Retired':                          { label: 'Retired',           color: 'var(--color-label)', bg: 'transparent',          border: '#e5e4e2', strike: true },
+  'Enabling instrument (not ranked)': { label: 'Enabling',          color: 'var(--color-surface-400)', bg: '#f3f2f0',              border: '#e5e4e2' },
+  'Enabling sample-prep (not ranked)':{ label: 'Enabling',          color: 'var(--color-surface-400)', bg: '#f3f2f0',              border: '#e5e4e2' },
 }
 
 const AVAIL_LABEL = {
@@ -60,7 +62,7 @@ const AVAIL_LABEL = {
 // ── Small presentational helpers ─────────────────────────────────────────────
 
 function StatusChip({ status }) {
-  const m = STATUS_META[status] || { label: status, color: '#6f6d67', bg: '#f3f2f0', border: '#e5e4e2' }
+  const m = STATUS_META[status] || { label: status, color: 'var(--color-surface-400)', bg: '#f3f2f0', border: '#e5e4e2' }
   return (
     <span
       className="inline-block whitespace-nowrap"
@@ -121,16 +123,16 @@ function ReadinessBar({ value, row }) {
   // never placed on the integration-readiness candidate ladder.
   if (value == null && row?.readiness_note === 'integrated') {
     return <span className="text-xs" title="Fully scored on all ten axes in Platform Comparison; not ranked on the readiness ladder"
-      style={{ color: '#8B1A1A', fontWeight: 500 }}>
+      style={{ color: 'var(--color-brand-500)', fontWeight: 500 }}>
       Integrated{row.combined_with ? ` (combined with ${row.combined_with})` : ''}
     </span>
   }
-  if (value == null) return <span className="text-xs" style={{ color: '#a3a19d', fontWeight: 300 }}>{notScoredReason(row)}</span>
+  if (value == null) return <span className="text-xs" style={{ color: 'var(--color-label)', fontWeight: 300 }}>{notScoredReason(row)}</span>
   const pct = Math.max(0, Math.min(100, (value / 3) * 100))
   return (
     <div className="flex items-center gap-2" title={`Integration-readiness ${value} of 3`}>
       <div className="h-1.5 flex-1 min-w-[48px] overflow-hidden" style={{ background: '#f3f2f0' }}>
-        <div className="h-full" style={{ width: `${pct}%`, background: '#8B1A1A' }} />
+        <div className="h-full" style={{ width: `${pct}%`, background: 'var(--color-brand-500)' }} />
       </div>
       <span className="text-xs tabular-nums" style={{ color: '#141310', fontWeight: 400 }}>{value.toFixed(2).replace(/\.?0+$/, '')}</span>
     </div>
@@ -140,7 +142,7 @@ function ReadinessBar({ value, row }) {
 function AvailCell({ row }) {
   const deployable = row.currently_deployable
   return (
-    <span className="inline-flex items-center gap-1 text-xs" style={{ color: deployable ? '#4F6B4A' : '#6f6d67', fontWeight: 300 }}>
+    <span className="inline-flex items-center gap-1 text-xs" style={{ color: deployable ? '#4F6B4A' : 'var(--color-surface-400)', fontWeight: 300 }}>
       <span aria-hidden>{deployable ? '✓' : '✗'}</span>
       {AVAIL_LABEL[row.availability_status] || row.availability_status}
     </span>
@@ -173,7 +175,7 @@ function externalLinks(row, d) {
 function Section({ title, children }) {
   return (
     <div>
-      <p style={{ fontSize: 10, fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#6f6d67', marginBottom: 6 }}>{title}</p>
+      <p style={{ fontSize: 10, fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--color-surface-400)', marginBottom: 6 }}>{title}</p>
       {children}
     </div>
   )
@@ -182,40 +184,28 @@ function Spec({ label, value }) {
   if (!value) return null
   return (
     <div className="flex gap-3 py-2 border-b last:border-0" style={{ borderColor: '#e5e4e2' }}>
-      <span className="text-xs flex-shrink-0" style={{ color: '#6f6d67', fontWeight: 300, width: 132 }}>{label}</span>
+      <span className="text-xs flex-shrink-0" style={{ color: 'var(--color-surface-400)', fontWeight: 300, width: 132 }}>{label}</span>
       <span className="text-xs leading-relaxed" style={{ color: '#52504a', fontWeight: 300 }}>{value}</span>
     </div>
   )
 }
 
 function DetailPanel({ row, onClose, onCompareInDepth }) {
-  const closeRef = useRef(null)
-  useEffect(() => {
-    const handler = (e) => { if (e.key === 'Escape') onClose() }
-    window.addEventListener('keydown', handler)
-    document.body.style.overflow = 'hidden'
-    const prevFocus = document.activeElement
-    closeRef.current?.focus()
-    return () => {
-      window.removeEventListener('keydown', handler)
-      document.body.style.overflow = ''
-      if (prevFocus && typeof prevFocus.focus === 'function') prevFocus.focus()
-    }
-  }, [onClose])
+  const headingId = 'allplatforms-detail-heading'
+  const { closeRef, dialogProps } = useDialog(onClose, headingId)
 
   if (!row) return null
   const d = row.detail || {}
   const appId = APP_ID_BY_NAME[row.platform]
   const isLineage = SOMASCAN_LINEAGE.has(row.platform)
-  const headingId = 'allplatforms-detail-heading'
 
   return createPortal(
     <>
       <div className="fixed inset-0 z-40" style={{ background: 'rgba(15,23,42,0.45)', backdropFilter: 'blur(3px)' }} onMouseDown={onClose} />
       <div
-        className="apt-panel-slide fixed top-0 right-0 bottom-0 z-50 flex flex-col overflow-hidden"
+        {...dialogProps}
+        className="apt-panel-slide apt-dialog-panel fixed top-0 right-0 bottom-0 z-50 flex flex-col overflow-hidden"
         style={{ width: 'min(720px, 92vw)', background: '#fafaf9' }}
-        role="dialog" aria-modal="true" aria-labelledby={headingId}
         onMouseDown={e => e.stopPropagation()} onWheel={e => e.stopPropagation()}
       >
         {/* Header */}
@@ -231,7 +221,7 @@ function DetailPanel({ row, onClose, onCompareInDepth }) {
           <button
             ref={closeRef}
             onClick={onClose} aria-label="Close"
-            className="flex-shrink-0 w-8 h-8 flex items-center justify-center"
+            className="apt-dialog-close flex-shrink-0 w-8 h-8 flex items-center justify-center"
             style={{ color: '#52504a', background: '#fafaf9', border: '1px solid #e5e4e2' }}
             onMouseEnter={e => e.currentTarget.style.background = '#f3f2f0'}
             onMouseLeave={e => e.currentTarget.style.background = '#fafaf9'}
@@ -241,23 +231,23 @@ function DetailPanel({ row, onClose, onCompareInDepth }) {
         </div>
 
         {/* Body */}
-        <div className="flex-1 overflow-y-auto px-6 py-5 space-y-4">
+        <ScrollFade wrapperClassName="flex-1 min-h-0" className="h-full overflow-y-auto px-6 py-5 space-y-4" fadeColor="#fafaf9" tabIndex={0}>
           {d.overview && (
-            <div style={{ background: '#ffffff', border: '1px solid #e5e4e2', borderLeft: '3px solid #8B1A1A', padding: '14px 18px' }}>
-              <p style={{ fontSize: 10, fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#8B1A1A', marginBottom: 8 }}>
+            <div style={{ background: '#ffffff', border: '1px solid #e5e4e2', borderLeft: '3px solid var(--color-brand-500)', padding: '14px 18px' }}>
+              <p style={{ fontSize: 10, fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--color-brand-500)', marginBottom: 8 }}>
                 About {row.platform.split(/[(/]/)[0].trim()}
               </p>
               <p className="text-sm leading-relaxed" style={{ color: '#3a3833', fontWeight: 300 }}>{d.overview.about}</p>
               {d.overview.best_for && (
                 <p className="text-xs leading-relaxed mt-3" style={{ color: '#52504a', fontWeight: 400 }}>
-                  <span style={{ color: '#8B1A1A', fontWeight: 500 }}>Best for: </span>{d.overview.best_for}
+                  <span style={{ color: 'var(--color-brand-500)', fontWeight: 500 }}>Best for: </span>{d.overview.best_for}
                 </p>
               )}
               {(d.overview.strengths?.length || d.overview.limitations?.length) && (
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-3 pt-3" style={{ borderTop: '1px solid #f3f2f0' }}>
                   {d.overview.strengths?.length > 0 && (
                     <div>
-                      <p style={{ fontSize: 10, fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.06em', color: '#6f6d67', marginBottom: 4 }}>Strengths</p>
+                      <p style={{ fontSize: 10, fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--color-surface-400)', marginBottom: 4 }}>Strengths</p>
                       <ul className="text-xs leading-relaxed" style={{ color: '#52504a', fontWeight: 300, listStyle: 'none', padding: 0, margin: 0 }}>
                         {d.overview.strengths.map((s, i) => (
                           <li key={i} className="flex gap-1.5 mt-1"><span aria-hidden style={{ color: '#4F6B4A' }}>+</span><span>{s}</span></li>
@@ -267,10 +257,10 @@ function DetailPanel({ row, onClose, onCompareInDepth }) {
                   )}
                   {d.overview.limitations?.length > 0 && (
                     <div>
-                      <p style={{ fontSize: 10, fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.06em', color: '#6f6d67', marginBottom: 4 }}>Limitations</p>
+                      <p style={{ fontSize: 10, fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--color-surface-400)', marginBottom: 4 }}>Limitations</p>
                       <ul className="text-xs leading-relaxed" style={{ color: '#52504a', fontWeight: 300, listStyle: 'none', padding: 0, margin: 0 }}>
                         {d.overview.limitations.map((s, i) => (
-                          <li key={i} className="flex gap-1.5 mt-1"><span aria-hidden style={{ color: '#a3a19d' }}>–</span><span>{s}</span></li>
+                          <li key={i} className="flex gap-1.5 mt-1"><span aria-hidden style={{ color: 'var(--color-label)' }}>–</span><span>{s}</span></li>
                         ))}
                       </ul>
                     </div>
@@ -282,18 +272,18 @@ function DetailPanel({ row, onClose, onCompareInDepth }) {
           {row.apt_readiness_rank_v1 != null && (
             <div style={{ background: '#ffffff', border: '1px solid #e5e4e2', padding: '12px 16px' }}>
               <div className="flex items-center justify-between gap-3 mb-1.5">
-                <span style={{ fontSize: 10, fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#6f6d67' }}>Integration-readiness</span>
-                <span className="text-xs" style={{ color: '#6f6d67', fontWeight: 300 }}>maturity {row.maturity_score} · validation {row.validation_score} · {TIER_META[row.integration_tier]?.short || row.integration_tier}</span>
+                <span style={{ fontSize: 10, fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--color-surface-400)' }}>Integration-readiness</span>
+                <span className="text-xs" style={{ color: 'var(--color-surface-400)', fontWeight: 300 }}>maturity {row.maturity_score} · validation {row.validation_score} · {TIER_META[row.integration_tier]?.short || row.integration_tier}</span>
               </div>
               <ReadinessBar value={row.apt_readiness_rank_v1} row={row} />
             </div>
           )}
 
           {(appId || isLineage) && (
-            <div style={{ background: 'rgba(139,26,26,0.05)', borderLeft: '3px solid #8B1A1A', padding: '10px 14px' }}>
+            <div style={{ background: 'rgba(139,26,26,0.05)', borderLeft: '3px solid var(--color-brand-500)', padding: '10px 14px' }}>
               {appId ? (
                 <>
-                  <button onClick={() => onCompareInDepth?.(appId)} className="text-sm hover:underline" style={{ color: '#8B1A1A', fontWeight: 400, cursor: 'pointer' }}>
+                  <button onClick={() => onCompareInDepth?.(appId)} className="text-sm hover:underline" style={{ color: 'var(--color-brand-500)', fontWeight: 400, cursor: 'pointer' }}>
                     Compare in depth in Platform Comparison →
                   </button>
                   {appId === 'nulisa' && (
@@ -352,7 +342,7 @@ function DetailPanel({ row, onClose, onCompareInDepth }) {
                         {pub.label ? ' · ' : ''}
                         <a href={`https://doi.org/${pub.doi}`} target="_blank" rel="noopener noreferrer"
                           onClick={(e) => { e.stopPropagation(); const w = window.open(`https://doi.org/${pub.doi}`, '_blank', 'noopener,noreferrer'); if (w) e.preventDefault() }}
-                          className="hover:underline break-all" style={{ color: '#8B1A1A', cursor: 'pointer' }}>
+                          className="hover:underline break-all" style={{ color: 'var(--color-brand-500)', cursor: 'pointer' }}>
                           doi:{pub.doi}<span aria-hidden style={{ marginLeft: 2 }}>↗</span>
                         </a>
                       </>
@@ -360,7 +350,7 @@ function DetailPanel({ row, onClose, onCompareInDepth }) {
                   </li>
                 ))}
               </ul>
-              <p className="text-xs mt-1" style={{ color: '#a3a19d', fontWeight: 300 }}>
+              <p className="text-xs mt-1" style={{ color: 'var(--color-label)', fontWeight: 300 }}>
                 Independently verified where a DOI is shown. Vendor or preprint sources are labelled as such.
               </p>
             </Section>
@@ -369,7 +359,7 @@ function DetailPanel({ row, onClose, onCompareInDepth }) {
               <p className="text-xs leading-relaxed" style={{ color: '#52504a', fontWeight: 300 }}>
                 {d.key_citation_short}
                 {d.key_citation_doi && (
-                  <>{' '}<a href={`https://doi.org/${d.key_citation_doi}`} target="_blank" rel="noopener noreferrer" onClick={(e) => { e.stopPropagation(); const w = window.open(`https://doi.org/${d.key_citation_doi}`, '_blank', 'noopener,noreferrer'); if (w) e.preventDefault() }} className="hover:underline" style={{ color: '#8B1A1A', cursor: 'pointer' }}>doi:{d.key_citation_doi}</a></>
+                  <>{' '}<a href={`https://doi.org/${d.key_citation_doi}`} target="_blank" rel="noopener noreferrer" onClick={(e) => { e.stopPropagation(); const w = window.open(`https://doi.org/${d.key_citation_doi}`, '_blank', 'noopener,noreferrer'); if (w) e.preventDefault() }} className="hover:underline" style={{ color: 'var(--color-brand-500)', cursor: 'pointer' }}>doi:{d.key_citation_doi}</a></>
                 )}
               </p>
             </Section>
@@ -379,21 +369,21 @@ function DetailPanel({ row, onClose, onCompareInDepth }) {
               <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
                 {externalLinks(row, d).map((lnk, i) => (
                   <li key={i} className="flex items-baseline gap-2 py-1">
-                    <span className="text-xs flex-shrink-0" style={{ color: '#6f6d67', fontWeight: 300, width: 132 }}>{lnk.label}</span>
+                    <span className="text-xs flex-shrink-0" style={{ color: 'var(--color-surface-400)', fontWeight: 300, width: 132 }}>{lnk.label}</span>
                     <a href={lnk.href} target="_blank" rel="noopener noreferrer"
                       onClick={(e) => { e.stopPropagation(); const w = window.open(lnk.href, '_blank', 'noopener,noreferrer'); if (w) e.preventDefault() }}
-                      className="text-xs hover:underline break-all" style={{ color: '#8B1A1A', fontWeight: 300, cursor: 'pointer' }}>
+                      className="text-xs hover:underline break-all" style={{ color: 'var(--color-brand-500)', fontWeight: 300, cursor: 'pointer' }}>
                       {lnk.href.replace(/^https?:\/\//, '').replace(/\/$/, '')}
                       <span aria-hidden style={{ marginLeft: 3 }}>↗</span>
                     </a>
                   </li>
                 ))}
               </ul>
-              <p className="text-xs mt-1.5" style={{ color: '#a3a19d', fontWeight: 300 }}>Links open in a new tab; verify current specifications with the vendor.</p>
+              <p className="text-xs mt-1.5" style={{ color: 'var(--color-label)', fontWeight: 300 }}>Links open in a new tab; verify current specifications with the vendor.</p>
             </Section>
           )}
           <div className="h-2" />
-        </div>
+        </ScrollFade>
       </div>
 
       <style>{`
@@ -412,17 +402,17 @@ function DetailPanel({ row, onClose, onCompareInDepth }) {
 // APT-assessed (full ten-axis) → Preliminary (readiness-only) → Targeted panels
 // → Emerging (unscored) → Enabling (instruments / sample-prep, never ranked).
 const LEVEL_META = {
-  'APT-assessed': { order: 0, label: 'APT-assessed', color: '#8B1A1A', bg: 'rgba(139,26,26,0.08)', border: 'rgba(139,26,26,0.25)',
+  'APT-assessed': { order: 0, label: 'APT-assessed', color: 'var(--color-brand-500)', bg: 'rgba(139,26,26,0.08)', border: 'rgba(139,26,26,0.25)',
     rubric: 'Full ten-axis Platform Comparison score.' },
-  'Preliminary':  { order: 1, label: 'Emerging',      color: '#8B1A1A', bg: 'transparent',           border: 'rgba(139,26,26,0.35)',
+  'Preliminary':  { order: 1, label: 'Emerging',      color: 'var(--color-brand-500)', bg: 'transparent',           border: 'rgba(139,26,26,0.35)',
     rubric: 'Integration-readiness score only, may be integrated into a future APT version.' },
-  'Targeted':     { order: 2, label: 'Targeted',      color: '#6f6d67', bg: '#f3f2f0',              border: '#e5e4e2',
+  'Targeted':     { order: 2, label: 'Targeted',      color: 'var(--color-surface-400)', bg: '#f3f2f0',              border: '#e5e4e2',
     rubric: 'Targeted or configurable panel with no fixed large content list; not eligible for the integrated tier. Not ranked.' },
-  'Emerging':     { order: 3, label: 'Early',         color: '#6f6d67', bg: 'transparent',          border: '#d0cfcc',
+  'Emerging':     { order: 3, label: 'Early',         color: 'var(--color-surface-400)', bg: 'transparent',          border: '#d0cfcc',
     rubric: 'Early technology, pre-commercial or awaiting independent validation. Carries a low readiness score.' },
-  'Enabling':     { order: 4, label: 'Enabling',      color: '#6f6d67', bg: '#f3f2f0',              border: '#e5e4e2',
+  'Enabling':     { order: 4, label: 'Enabling',      color: 'var(--color-surface-400)', bg: '#f3f2f0',              border: '#e5e4e2',
     rubric: 'Instrument or sample-prep chemistry that services run on; never ranked.' },
-  'Retired':      { order: 5, label: 'Retired',       color: '#a3a19d', bg: 'transparent',          border: '#e5e4e2', strike: true,
+  'Retired':      { order: 5, label: 'Retired',       color: 'var(--color-label)', bg: 'transparent',          border: '#e5e4e2', strike: true,
     rubric: 'Discontinued or superseded by a newer product. Kept for reference; not scored or ranked.' },
 }
 function levelOf(p) {
@@ -448,7 +438,7 @@ function LevelChip({ level, combinedWith }) {
       {combinedWith && (
         <span className="inline-block whitespace-nowrap" title={`Assessed jointly with ${combinedWith}`} style={{
           fontSize: 8.5, letterSpacing: '0.02em', fontWeight: 400, padding: '1px 5px',
-          color: '#6f6d67', background: '#f3f2f0', border: '1px dotted #c8c6c1' }}>
+          color: 'var(--color-surface-400)', background: '#f3f2f0', border: '1px dotted #c8c6c1' }}>
           +&nbsp;{combinedWith}
         </span>
       )}
@@ -469,7 +459,7 @@ function PlatformName({ row, onOpen }) {
         onMouseEnter={() => { setHover(true); show() }} onMouseLeave={() => { setHover(false); hide() }}
         onFocus={show} onBlur={hide}
         className="text-left underline-offset-2"
-        style={{ color: hover ? '#8B1A1A' : '#141310', fontWeight: 400, cursor: 'pointer',
+        style={{ color: hover ? 'var(--color-brand-500)' : '#141310', fontWeight: 400, cursor: 'pointer',
           textDecoration: hover ? 'underline' : 'none' }}>
         {row.platform}
       </button>
@@ -499,7 +489,7 @@ function SortIcon({ dir }) {
 
 // ── Sortable columns ─────────────────────────────────────────────────────────
 
-const TH = { fontSize: 10, fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.06em', color: '#6f6d67', background: '#ffffff' }
+const TH = { fontSize: 10, fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--color-surface-400)', background: '#ffffff' }
 
 // col: field key; get: value accessor; type drives the comparator; sortable toggles the header
 const COLUMNS = [
@@ -521,7 +511,67 @@ const COLUMNS = [
     hint: 'The validated sample types, for example plasma, serum, CSF, tissue, or cell lysate.' },
   { key: 'avail',      label: 'Availability', type: 'str',   sortable: true,  min: 150, get: p => p.availability_status,
     hint: 'Current commercial availability, verified against vendor sources: generally available, early access, superseded, retired, or pre-commercial.' },
+  { key: 'cost',       label: 'Cost note',    type: 'str',   sortable: false, min: 150, get: p => p.detail?.cost_tier,
+    hint: 'What is known about cost, in words. Not every platform has a note, so this cannot be filtered yet.' },
 ]
+
+const DEFAULT_COLUMNS = ['platform', 'vendor', 'level', 'readiness', 'chemistry', 'plex']
+const TECHNOLOGY_GROUPS = ['Affinity', 'Mass spectrometry', 'Single-molecule & sequencing (emerging)']
+
+function textCell(value) {
+  return <td className="px-3 py-2.5 align-top text-xs leading-snug" style={{ color: '#52504a', fontWeight: 300 }}>{value || '-'}</td>
+}
+
+// Table cell for each column, in the order of COLUMNS
+const CELLS = {
+  platform: (r, onOpen) => (
+    <td className="px-3 py-2.5 sticky left-0 z-10 align-top" style={{ background: '#ffffff' }}>
+      <PlatformName row={r} onOpen={onOpen} />
+      {r.runs_on && <p className="text-xs mt-0.5" style={{ color: 'var(--color-label)', fontWeight: 300 }}>runs on → {r.runs_on}</p>}
+    </td>
+  ),
+  vendor: r => <td className="px-3 py-2.5 align-top text-xs" style={{ color: '#52504a', fontWeight: 300 }}>{r.vendor || '-'}</td>,
+  level: r => <td className="px-3 py-2.5 align-top"><LevelChip level={levelOf(r)} combinedWith={r.combined_with} /></td>,
+  tier: r => <td className="px-3 py-2.5 align-top"><TierChip tier={r.integration_tier} /></td>,
+  readiness: r => <td className="px-3 py-2.5 align-top"><ReadinessBar value={r.apt_readiness_rank_v1} row={r} /></td>,
+  chemistry: r => textCell(r.detail?.chemistry),
+  plex: r => textCell(r.detail?.plex_or_depth),
+  matrix: r => textCell(r.detail?.matrix),
+  avail: r => <td className="px-3 py-2.5 align-top"><AvailCell row={r} /></td>,
+  cost: r => textCell(r.detail?.cost_tier),
+}
+
+function ColumnsControl({ visible, onToggle }) {
+  const [open, setOpen] = useState(false)
+  return (
+    <div className="relative hidden sm:block" onBlur={e => { if (!e.currentTarget.contains(e.relatedTarget)) setOpen(false) }}>
+      <button
+        onClick={() => setOpen(o => !o)}
+        aria-expanded={open}
+        className="text-xs"
+        style={{ border: '1px solid #e5e4e2', padding: '4px 10px', background: '#fff', color: '#52504a' }}
+      >
+        Columns ({visible.length} of {COLUMNS.length})
+      </button>
+      {open && (
+        <div className="absolute z-40 mt-1 py-1.5" style={{ background: '#fff', border: '1px solid #e5e4e2', boxShadow: '0 4px 12px rgba(20,19,16,0.08)', minWidth: 190 }}>
+          {COLUMNS.map(c => (
+            <label key={c.key} className="flex items-center gap-2 px-3 py-1 text-xs" style={{ color: c.sticky ? 'var(--color-label)' : '#52504a', cursor: c.sticky ? 'default' : 'pointer' }}>
+              <input
+                type="checkbox"
+                checked={visible.includes(c.key)}
+                disabled={c.sticky}
+                onChange={() => onToggle(c.key)}
+                style={{ accentColor: 'var(--color-brand-500)' }}
+              />
+              {c.label}
+            </label>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
 
 function comparator(colKey, dir) {
   const s = dir === 'asc' ? 1 : -1
@@ -588,13 +638,34 @@ function HeaderCell({ col, sortCol, sortDir, onClick }) {
   )
 }
 
-export default function AllPlatforms({ onCompareInDepth }) {
-  const [detailRow, setDetailRow] = useState(null)
+export default function AllPlatforms({ initialPlatform, onCompareInDepth }) {
+  const [detailRow, setDetailRow] = useState(() => catalog.platforms.find(p => p.platform === initialPlatform) ?? null)
   const [sortCol, setSortCol] = useState('readiness')
   const [sortDir, setSortDir] = useState('desc')
   const [grouped, setGrouped] = useState(false)
   const [deployableOnly, setDeployableOnly] = useState(false)
+  const [technology, setTechnology] = useState('all')
+  const [visibleColumns, setVisibleColumns] = useState(DEFAULT_COLUMNS)
+  const [moreColumnsRight, setMoreColumnsRight] = useState(false)
+  const tableScroller = useRef(null)
   const { meta, platforms } = catalog
+
+  const columns = COLUMNS.filter(c => visibleColumns.includes(c.key))
+  const tableMinWidth = columns.reduce((sum, c) => sum + c.min, 0)
+  const toggleColumn = (key) => setVisibleColumns(v => (v.includes(key) ? v.filter(k => k !== key) : [...v, key]))
+
+  const updateTableFade = () => {
+    const el = tableScroller.current
+    if (el) setMoreColumnsRight(el.scrollWidth - el.scrollLeft - el.clientWidth > 4)
+  }
+  useEffect(() => {
+    const el = tableScroller.current
+    if (!el) return undefined
+    const observer = new ResizeObserver(updateTableFade)
+    observer.observe(el)
+    if (el.firstElementChild) observer.observe(el.firstElementChild)
+    return () => observer.disconnect()
+  }, [])
 
   const clickHeader = (key) => {
     const col = COLUMNS.find(c => c.key === key)
@@ -610,6 +681,7 @@ export default function AllPlatforms({ onCompareInDepth }) {
   const view = useMemo(() => {
     let rows = platforms
     if (deployableOnly) rows = rows.filter(p => p.currently_deployable)
+    if (technology !== 'all') rows = rows.filter(p => p.technology_group === technology)
     const active = comparator(sortCol, sortDir)
     if (!grouped || sortCol === 'readiness') return [{ level: null, rows: [...rows].sort(active) }]
     const byLevel = {}
@@ -617,7 +689,7 @@ export default function AllPlatforms({ onCompareInDepth }) {
     return Object.keys(byLevel)
       .sort((a, b) => LEVEL_META[a].order - LEVEL_META[b].order)
       .map(L => ({ level: L, rows: byLevel[L].sort(active) }))
-  }, [platforms, deployableOnly, sortCol, sortDir, grouped])
+  }, [platforms, deployableOnly, technology, sortCol, sortDir, grouped])
 
   const nShown = view.reduce((n, g) => n + g.rows.length, 0)
 
@@ -628,7 +700,7 @@ export default function AllPlatforms({ onCompareInDepth }) {
         <h2 className="text-lg" style={{ color: '#141310', fontWeight: 600 }}>All Platforms</h2>
         <p className="text-sm mt-0.5" style={{ color: '#52504a', fontWeight: 300 }}>
           As of September 2026, the Atlas of Proteomic Technologies (APT) has collated evidence for
-          {' '}{meta.n_total} protein measurement platforms. Six of these platforms are sufficiently
+          {' '}{platforms.length} protein measurement platforms. Six of these platforms are sufficiently
           documented in the peer-reviewed literature to enable full evaluation and cross-platform
           comparisons. Another {meta.n_preliminary} are emerging technologies that may be integrated
           into future APT versions. A further {meta.n_emerging} are early technologies not yet
@@ -640,48 +712,69 @@ export default function AllPlatforms({ onCompareInDepth }) {
 
       {/* Controls */}
       <div className="flex items-center justify-between gap-4 flex-wrap">
-        <div className="flex items-center gap-3 flex-wrap">
+        <div className="flex items-center gap-3 flex-wrap w-full sm:w-auto">
           <label className="flex items-center gap-1.5 text-xs cursor-pointer" style={{ color: '#52504a', fontWeight: 300 }}>
-            <input type="checkbox" checked={grouped} onChange={e => setGrouped(e.target.checked)} style={{ accentColor: '#8B1A1A' }} />
+            <input type="checkbox" checked={grouped} onChange={e => setGrouped(e.target.checked)} style={{ accentColor: 'var(--color-brand-500)' }} />
             Group by level
           </label>
           <label className="flex items-center gap-1.5 text-xs cursor-pointer" style={{ color: '#52504a', fontWeight: 300 }}>
-            <input type="checkbox" checked={deployableOnly} onChange={e => setDeployableOnly(e.target.checked)} style={{ accentColor: '#8B1A1A' }} />
+            <input type="checkbox" checked={deployableOnly} onChange={e => setDeployableOnly(e.target.checked)} style={{ accentColor: 'var(--color-brand-500)' }} />
             Currently deployable only
           </label>
+          <label className="flex items-center gap-1.5 text-xs w-full sm:w-auto" style={{ color: '#52504a', fontWeight: 300 }}>
+            Technology
+            <select value={technology} onChange={e => setTechnology(e.target.value)}
+              className="text-xs flex-1 min-w-0 sm:flex-none" style={{ border: '1px solid #e5e4e2', padding: '4px 8px', background: '#fff', color: '#52504a' }}>
+              <option value="all">All ({platforms.length})</option>
+              {TECHNOLOGY_GROUPS.map(g => (
+                <option key={g} value={g}>{g} ({platforms.filter(p => p.technology_group === g).length})</option>
+              ))}
+            </select>
+          </label>
+          <ColumnsControl visible={visibleColumns} onToggle={toggleColumn} />
         </div>
         {/* Mobile sort control */}
         <div className="sm:hidden flex items-center gap-2">
-          <select value={sortCol} onChange={e => setSortCol(e.target.value)}
+          <select value={sortCol} onChange={e => setSortCol(e.target.value)} aria-label="Sort platforms by"
             className="text-xs" style={{ border: '1px solid #e5e4e2', padding: '4px 8px', background: '#fff', color: '#52504a' }}>
             {COLUMNS.filter(c => c.sortable).map(c => <option key={c.key} value={c.key}>{c.label}</option>)}
           </select>
           <button onClick={() => setSortDir(d => d === 'desc' ? 'asc' : 'desc')}
-            className="text-xs" style={{ border: '1px solid #e5e4e2', padding: '4px 8px', background: '#fff', color: '#8B1A1A' }}>
+            aria-label={sortDir === 'desc' ? 'Sorted descending; switch to ascending' : 'Sorted ascending; switch to descending'}
+            className="text-xs" style={{ border: '1px solid #e5e4e2', padding: '4px 8px', background: '#fff', color: 'var(--color-brand-500)' }}>
             {sortDir === 'desc' ? '↓' : '↑'}
           </button>
         </div>
-        <span className="text-xs tabular-nums" style={{ color: '#a3a19d', fontWeight: 300 }}>{nShown} of {meta.n_total} shown</span>
+        <span className="text-xs tabular-nums" style={{ color: 'var(--color-label)', fontWeight: 300 }}>{nShown} of {platforms.length} shown</span>
       </div>
 
       {/* Desktop: one sortable table. The wrapper is a bounded scroll region so the
           header row can freeze (position: sticky top-0) while the body scrolls under it,
           and the first column stays frozen horizontally. */}
-      <div className="hidden sm:block overflow-auto" style={{ border: '1px solid #e5e4e2', maxHeight: 'calc(100vh - 220px)' }}>
-        <table className="w-full text-sm border-collapse" style={{ minWidth: 1120 }}>
-          <thead>
-            <tr>
-              {COLUMNS.map(c => (
-                <HeaderCell key={c.key} col={c} sortCol={sortCol} sortDir={sortDir} onClick={clickHeader} />
+      <div className="hidden sm:block relative">
+        <div ref={tableScroller} onScroll={updateTableFade} className="apt-table-scroll overflow-auto" style={{ border: '1px solid #e5e4e2', maxHeight: 'calc(100vh - 220px)' }}>
+          <table className="w-full text-sm border-collapse" style={{ minWidth: tableMinWidth }}>
+            <thead>
+              <tr>
+                {columns.map(c => (
+                  <HeaderCell key={c.key} col={c} sortCol={sortCol} sortDir={sortDir} onClick={clickHeader} />
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {view.map(group => (
+                <FragmentGroup key={group.level ?? 'flat'} group={group} columns={columns} onOpen={setDetailRow} />
               ))}
-            </tr>
-          </thead>
-          <tbody>
-            {view.map(group => (
-              <FragmentGroup key={group.level ?? 'flat'} group={group} onOpen={setDetailRow} />
-            ))}
-          </tbody>
-        </table>
+            </tbody>
+          </table>
+        </div>
+        {moreColumnsRight && (
+          <div
+            className="absolute top-0 right-3 pointer-events-none"
+            style={{ bottom: 12, width: 40, zIndex: 25, background: 'linear-gradient(to right, transparent, rgba(255,255,255,0.95))' }}
+            aria-hidden="true"
+          />
+        )}
       </div>
 
       {/* Mobile: cards in the same computed order */}
@@ -695,8 +788,8 @@ export default function AllPlatforms({ onCompareInDepth }) {
                   <span className="text-sm" style={{ color: '#141310', fontWeight: 400 }}>{r.platform}</span>
                   <LevelChip level={levelOf(r)} combinedWith={r.combined_with} />
                 </div>
-                {r.vendor && <p className="text-xs" style={{ color: '#6f6d67', fontWeight: 300 }}>{r.vendor}</p>}
-                {r.runs_on && <p className="text-xs mt-0.5" style={{ color: '#a3a19d', fontWeight: 300 }}>runs on → {r.runs_on}</p>}
+                {r.vendor && <p className="text-xs" style={{ color: 'var(--color-surface-400)', fontWeight: 300 }}>{r.vendor}</p>}
+                {r.runs_on && <p className="text-xs mt-0.5" style={{ color: 'var(--color-label)', fontWeight: 300 }}>runs on → {r.runs_on}</p>}
                 <div className="flex items-center gap-2 flex-wrap mt-2">
                   <TierChip tier={r.integration_tier} />
                   <AvailCell row={r} />
@@ -710,8 +803,8 @@ export default function AllPlatforms({ onCompareInDepth }) {
       </div>
 
       {/* How to read this — legend, placed below the table */}
-      <div style={{ background: '#fafaf9', border: '1px solid #e5e4e2', borderLeft: '3px solid #8B1A1A', padding: '16px 20px', marginTop: 4 }}>
-        <p style={{ fontSize: 10, fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#8B1A1A', marginBottom: 10 }}>How to read this table</p>
+      <div style={{ background: '#fafaf9', border: '1px solid #e5e4e2', borderLeft: '3px solid var(--color-brand-500)', padding: '16px 20px', marginTop: 4 }}>
+        <p style={{ fontSize: 10, fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--color-brand-500)', marginBottom: 10 }}>How to read this table</p>
         <p className="text-xs leading-relaxed" style={{ color: '#52504a', fontWeight: 300, marginBottom: 12, maxWidth: '78ch' }}>
           Every column is sortable. The <strong style={{ fontWeight: 500 }}>Level</strong> column captures how far a
           platform has progressed through APT&rsquo;s evaluation, and <strong style={{ fontWeight: 500 }}>Readiness for APT</strong> scores
@@ -745,33 +838,22 @@ export default function AllPlatforms({ onCompareInDepth }) {
 }
 
 // Desktop group: an optional level subheader row spanning the table, then the rows.
-function FragmentGroup({ group, onOpen }) {
+function FragmentGroup({ group, columns, onOpen }) {
   const m = group.level ? LEVEL_META[group.level] : null
   return (
     <>
       {group.level && (
         <tr>
-          <td colSpan={COLUMNS.length} style={{ background: '#fafaf9', borderTop: '1px solid #e5e4e2', borderBottom: '1px solid #e5e4e2', borderLeft: '3px solid #8B1A1A', padding: '7px 12px' }}>
+          <td colSpan={columns.length} style={{ background: '#fafaf9', borderTop: '1px solid #e5e4e2', borderBottom: '1px solid #e5e4e2', borderLeft: '3px solid var(--color-brand-500)', padding: '7px 12px' }}>
             <span className="text-xs" style={{ color: '#141310', fontWeight: 600, letterSpacing: '0.02em' }}>{m.label}</span>
-            <span className="text-xs ml-3" style={{ color: '#6f6d67', fontWeight: 300 }}>{m.rubric}</span>
-            <span className="text-xs ml-3 tabular-nums" style={{ color: '#a3a19d', fontWeight: 400 }}>{group.rows.length}</span>
+            <span className="text-xs ml-3" style={{ color: 'var(--color-surface-400)', fontWeight: 300 }}>{m.rubric}</span>
+            <span className="text-xs ml-3 tabular-nums" style={{ color: 'var(--color-label)', fontWeight: 400 }}>{group.rows.length}</span>
           </td>
         </tr>
       )}
       {group.rows.map(r => (
         <tr key={r.platform} style={{ borderBottom: '1px solid #f3f2f0', background: '#ffffff' }}>
-          <td className="px-3 py-2.5 sticky left-0 z-10 align-top" style={{ background: '#ffffff' }}>
-            <PlatformName row={r} onOpen={onOpen} />
-            {r.runs_on && <p className="text-xs mt-0.5" style={{ color: '#a3a19d', fontWeight: 300 }}>runs on → {r.runs_on}</p>}
-          </td>
-          <td className="px-3 py-2.5 align-top text-xs" style={{ color: '#52504a', fontWeight: 300 }}>{r.vendor || '-'}</td>
-          <td className="px-3 py-2.5 align-top"><LevelChip level={levelOf(r)} combinedWith={r.combined_with} /></td>
-          <td className="px-3 py-2.5 align-top"><TierChip tier={r.integration_tier} /></td>
-          <td className="px-3 py-2.5 align-top"><ReadinessBar value={r.apt_readiness_rank_v1} row={r} /></td>
-          <td className="px-3 py-2.5 align-top text-xs leading-snug" style={{ color: '#52504a', fontWeight: 300 }}>{r.detail?.chemistry || '-'}</td>
-          <td className="px-3 py-2.5 align-top text-xs leading-snug" style={{ color: '#52504a', fontWeight: 300 }}>{r.detail?.plex_or_depth || '-'}</td>
-          <td className="px-3 py-2.5 align-top text-xs leading-snug" style={{ color: '#52504a', fontWeight: 300 }}>{r.detail?.matrix || '-'}</td>
-          <td className="px-3 py-2.5 align-top"><AvailCell row={r} /></td>
+          {columns.map(c => <Fragment key={c.key}>{CELLS[c.key](r, onOpen)}</Fragment>)}
         </tr>
       ))}
     </>
@@ -781,9 +863,9 @@ function FragmentGroup({ group, onOpen }) {
 function GroupHeaderMobile({ level, count }) {
   const m = LEVEL_META[level]
   return (
-    <div style={{ background: '#fafaf9', border: '1px solid #e5e4e2', borderLeft: '3px solid #8B1A1A', padding: '7px 12px' }}>
+    <div style={{ background: '#fafaf9', border: '1px solid #e5e4e2', borderLeft: '3px solid var(--color-brand-500)', padding: '7px 12px' }}>
       <span className="text-xs" style={{ color: '#141310', fontWeight: 600 }}>{m.label}</span>
-      <span className="text-xs ml-2 tabular-nums" style={{ color: '#a3a19d', fontWeight: 400 }}>{count}</span>
+      <span className="text-xs ml-2 tabular-nums" style={{ color: 'var(--color-label)', fontWeight: 400 }}>{count}</span>
     </div>
   )
 }

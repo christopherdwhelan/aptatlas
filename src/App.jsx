@@ -13,33 +13,36 @@ import HelpMeChoose from './components/HelpMeChoose'
 import HelpMeCombine from './components/HelpMeCombine'
 import Methods from './components/Methods'
 import Reproducibility from './components/Reproducibility'
+import NotFound from './components/NotFound'
+import { currentTab, goToTab, onNavigate } from './navigation'
+import { applyHead } from './routeMeta'
+import { NOT_FOUND_TAB } from './routes'
 
-const VALID_TABS = ['overview', 'platforms', 'comparison', 'evidence', 'proteins', 'unassayed', 'chooser', 'combine', 'methods', 'reproducibility']
-
-function getTabFromHash() {
-  // The chooser wizard encodes its step as `#chooser/2` etc.; the tab is the part
-  // before the slash, so step changes keep the same tab (and don't remount the wizard).
-  const base = window.location.hash.slice(1).split('/')[0]
-  return VALID_TABS.includes(base) ? base : 'overview'
-}
-
-export default function App() {
-  const [activeTab, setActiveTab] = useState(getTabFromHash)
+// initialTab is set only when prerendering, where there is no URL to read.
+export default function App({ initialTab }) {
+  const [activeTab, setActiveTab] = useState(() => initialTab ?? currentTab())
   const [proteinFilter, setProteinFilter] = useState(null)
   // Search and scope handed to the Unassayed Proteome tab by a Protein Coverage lookup;
   // cleared when the tab is opened directly from the nav.
   const [unassayedInit, setUnassayedInit] = useState(null)
+  // Catalogue row to open when All Platforms is reached from the Overview search.
+  const [platformToOpen, setPlatformToOpen] = useState(null)
 
-  // Keep URL hash in sync when tab changes programmatically
+  // Keep the URL in sync when the page changes programmatically
   const handleTabChange = (tabId) => {
     setActiveTab(tabId)
-    window.location.hash = tabId
+    goToTab(tabId)
     track('tab_view', { tab: tabId })
   }
 
   const navigateToProteins = (platformId) => {
     setProteinFilter(platformId)
     handleTabChange('proteins')
+  }
+
+  const navigateToPlatform = (name) => {
+    setPlatformToOpen(name)
+    handleTabChange('platforms')
   }
 
   const navigateToUnassayed = (search, scope) => {
@@ -57,26 +60,25 @@ export default function App() {
     }, 240)
   }
 
-  // Sync tab state if user navigates via back/forward
-  useEffect(() => {
-    const onHashChange = () => {
-      const tab = getTabFromHash()
-      setActiveTab(tab)
-    }
-    window.addEventListener('hashchange', onHashChange)
-    return () => window.removeEventListener('hashchange', onHashChange)
-  }, [])
+  // Follow Back/Forward and links elsewhere on the site
+  useEffect(() => onNavigate(() => {
+    const tab = currentTab()
+    setActiveTab(tab)
+    if (tab !== 'platforms') setPlatformToOpen(null)
+  }), [])
+
+  useEffect(() => { applyHead(activeTab) }, [activeTab])
 
   return (
     <div className="min-h-screen flex flex-col" style={{ background: '#ffffff' }}>
       <Header onVersionClick={navigateToChangelog} />
-      <TabNav activeTab={activeTab} onTabChange={(tabId) => { setUnassayedInit(null); handleTabChange(tabId) }} />
+      <TabNav activeTab={activeTab} onTabChange={(tabId) => { setUnassayedInit(null); setPlatformToOpen(null); handleTabChange(tabId) }} />
 
       <main className="flex-1 max-w-screen-xl mx-auto w-full px-4 sm:px-6 py-5 sm:py-6">
         {/* key={activeTab} triggers remount → CSS fade animation plays on each switch */}
-        <div key={activeTab} className="tab-content" role="tabpanel" id="tabpanel" aria-labelledby={`tab-${activeTab}`}>
-          {activeTab === 'overview'    && <Overview onNavigateToProteins={navigateToProteins} />}
-          {activeTab === 'platforms'   && <AllPlatforms onCompareInDepth={() => handleTabChange('comparison')} />}
+        <div key={activeTab} className="tab-content" role="tabpanel" id="tabpanel" aria-labelledby={activeTab === NOT_FOUND_TAB ? undefined : `tab-${activeTab}`}>
+          {activeTab === 'overview'    && <Overview onNavigateToProteins={navigateToProteins} onOpenPlatform={navigateToPlatform} />}
+          {activeTab === 'platforms'   && <AllPlatforms initialPlatform={platformToOpen} onCompareInDepth={() => handleTabChange('comparison')} />}
           {activeTab === 'comparison'  && <Comparison />}
           {activeTab === 'evidence'    && <EvidenceBase />}
           {activeTab === 'proteins'    && <ProteinBrowser key={proteinFilter} initialPlatform={proteinFilter} onOpenUnassayed={navigateToUnassayed} />}
@@ -85,26 +87,28 @@ export default function App() {
           {activeTab === 'combine'     && <HelpMeCombine />}
           {activeTab === 'methods'     && <Methods />}
           {activeTab === 'reproducibility' && <Reproducibility />}
+          {activeTab === NOT_FOUND_TAB && <NotFound />}
         </div>
       </main>
 
       <footer className="px-4 sm:px-6 pt-4 pb-6 mt-auto" style={{ background: '#ffffff', borderTop: '1px solid #e5e4e2' }}>
         <div className="max-w-screen-xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
-          <p className="text-xs text-center sm:text-left" style={{ color: '#6f6d67', fontWeight: 400 }}>
+          <p className="text-xs text-center sm:text-left" style={{ color: 'var(--color-surface-400)', fontWeight: 400 }}>
             © 2026 Ignition Scientific LLC&nbsp;&middot;&nbsp;
             <a href="https://ignitionscientific.com" target="_blank" rel="noopener noreferrer"
-              style={{ color: '#8B1A1A' }}>
+              style={{ color: 'var(--color-brand-500)' }}>
               ignitionscientific.com
             </a>
           </p>
-          <p className="text-xs text-center sm:text-right" style={{ color: '#6f6d67', fontWeight: 400 }}>
+          <p className="text-xs text-center sm:text-right" style={{ color: 'var(--color-surface-400)', fontWeight: 400 }}>
             For research use only. Not for clinical decision making.
           </p>
         </div>
         <div className="max-w-screen-xl mx-auto mt-2">
-          <p className="text-[11px] leading-relaxed text-center" style={{ color: '#6f6d67', fontWeight: 400 }}>
+          <p className="text-[11px] leading-relaxed text-center" style={{ color: 'var(--color-surface-400)', fontWeight: 400 }}>
             An independent resource, provided free of charge; not sponsored by, affiliated with, or endorsed by any platform or vendor named. Scores and recommendations reflect the authors' assessment of published literature, offered as opinion to guide study-design decisions, not definitive or commercial rankings, and not procurement, legal, or investment advice. Product and company names are trademarks of their respective owners, used for identification and comparison only. Provided without warranty; verify specifications and pricing with vendors. Believe something is inaccurate?{' '}
-            <a href="mailto:chris@ignitionscientific.com" style={{ color: '#8B1A1A' }}>Email us</a>{' '}and we will review it. See Methods for full disclosure.
+            <a href="mailto:chris@ignitionscientific.com" style={{ color: 'var(--color-brand-500)' }}>Email us</a>{' '}and we will review it. See Methods for full disclosure. Need help with study design?{' '}
+            <a href="mailto:chris@ignitionscientific.com" style={{ color: 'var(--color-brand-500)' }}>Contact Ignition Scientific</a>.
           </p>
         </div>
       </footer>

@@ -1,7 +1,8 @@
 @import url('https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap');
 @import "tailwindcss";
 
-@theme {
+/* static: inline styles read these through var(), which Tailwind cannot always see. */
+@theme static {
   --font-sans: 'Myriad Pro', 'Source Sans 3', ui-sans-serif, system-ui, sans-serif;
 
   /* Brand palette - Ignition Scientific */
@@ -22,8 +23,8 @@
   --color-teal-200: #f8b8b8;
   --color-teal-300: #f08080;
   --color-teal-400: #c84040;
-  --color-teal-500: #8B1A1A;
-  --color-teal-600: #8B1A1A;
+  --color-teal-500: var(--color-brand-500);
+  --color-teal-600: var(--color-brand-500);
   --color-teal-700: #631111;
   --color-teal-800: #4a0d0d;
   --color-teal-900: #320808;
@@ -45,6 +46,10 @@
   --color-gold-300: #fcd34d;
   --color-gold-400: #f59e0b;
   --color-gold-500: #d97706;
+  /* Amber for text: #d97706 stays for borders and icons. */
+  --color-amber-text: #a35d00;
+  /* Blue headings on tinted panels; the fill stays #0891B2. */
+  --color-info-text: #06738d;
   --color-gold-600: #b45309;
   --color-gold-700: #92400e;
 
@@ -62,6 +67,8 @@
   --color-surface-200: #e5e4e2;
   --color-surface-300: #d0cfcc;
   --color-surface-400: #6f6d67;
+  /* Small grey labels: section eyebrows, table captions, secondary notes. */
+  --color-label: #74726c;
   --color-surface-500: #52504a;
   --color-surface-600: #3a3834;
   --color-surface-700: #2a2824;
@@ -103,7 +110,7 @@ body {
   /* 'backwards' (not 'both'): the fade-up entrance still plays, but the final
      transform does NOT persist. 'both' left translateY(0) applied permanently,
      which made .tab-content a containing block and trapped fixed overlays
-     (DetailPanel/DetailModal) inside it. */
+     (DetailPanel) inside it. */
   animation: tabFadeIn 0.18s ease-out backwards;
 }
 
@@ -134,11 +141,25 @@ main :is(h1, h2, h3):not(.text-2xl):not(.text-3xl),
   .apt-panel-slide { animation: none; }
 }
 
+/* Detail panels fill the screen on phones, with a full-size close button. */
+@media (max-width: 599px) {
+  .apt-dialog-panel { width: 100vw !important; }
+  .apt-dialog-close { width: 44px !important; height: 44px !important; }
+}
+
+/* iPhones and iPads zoom the page when a field with smaller text takes focus. */
+@media (max-width: 1024px) {
+  input:not([type="checkbox"], [type="radio"], [type="range"]), select, textarea { font-size: 16px !important; }
+}
+
+/* Text-sized links and buttons: at least a 24px target without changing how the text looks. */
+.apt-tap { display: inline-flex; align-items: center; min-height: 24px; }
+
 /* Focus-visible baseline (finding #1): keyboard focus always shows a crimson ring.
    Elements previously used focus:outline-none with no replacement. */
-.tab-nav-btn:focus-visible { outline: 2px solid #8B1A1A; outline-offset: -2px; }
+.tab-nav-btn:focus-visible { outline: 2px solid var(--color-brand-500); outline-offset: -2px; }
 :where(a, button, input, select, textarea, [tabindex="0"]):focus-visible {
-  outline: 2px solid #8B1A1A;
+  outline: 2px solid var(--color-brand-500);
   outline-offset: 2px;
   border-radius: 2px;
 }
@@ -151,7 +172,7 @@ main :is(h1, h2, h3):not(.text-2xl):not(.text-3xl),
 
 /* Global link */
 a {
-  color: #8B1A1A;
+  color: var(--color-brand-500);
   text-underline-offset: 3px;
   text-decoration-thickness: 0.5px;
 }
@@ -165,26 +186,39 @@ a:hover {
 .tab-scroll { -ms-overflow-style: none; scrollbar-width: none; }
 
 /* Range input cross-browser */
+/* The input is a 24px target drawn as a 3px track; the negative margin keeps layouts as they were. */
 input[type="range"] {
   -webkit-appearance: none;
   appearance: none;
-  background: #e5e4e2;
-  height: 3px;
+  background: transparent;
+  height: 24px;
+  margin-block: -10.5px;
   border-radius: 0;
-  outline: none;
 }
+/* Keyboard focus rings the thumb, so the ring stays clear of nearby text. */
+input[type="range"]:focus-visible { outline: none; }
+input[type="range"]:focus-visible::-webkit-slider-thumb { box-shadow: 0 0 0 2px var(--color-brand-500); }
+input[type="range"]:focus-visible::-moz-range-thumb { box-shadow: 0 0 0 2px var(--color-brand-500); }
+input[type="range"]::-webkit-slider-runnable-track { height: 3px; background: #e5e4e2; }
+input[type="range"]::-moz-range-track { height: 3px; background: #e5e4e2; }
 input[type="range"]::-webkit-slider-thumb {
   -webkit-appearance: none;
   width: 14px; height: 14px;
+  margin-top: -5.5px;
   border-radius: 50%;
-  background: #8B1A1A;
+  background: var(--color-brand-500);
   cursor: pointer;
   border: 2px solid #fff;
 }
 input[type="range"]::-moz-range-thumb {
   width: 14px; height: 14px;
   border-radius: 50%;
-  background: #8B1A1A;
+  background: var(--color-brand-500);
   cursor: pointer;
   border: 2px solid #fff;
 }
+
+/* All Platforms table: scrollbars stay visible, including where the OS hides them */
+.apt-table-scroll::-webkit-scrollbar { width: 12px; height: 12px; }
+.apt-table-scroll::-webkit-scrollbar-track { background: #fafaf9; }
+.apt-table-scroll::-webkit-scrollbar-thumb { background: #d0cfcc; border: 3px solid #fafaf9; }

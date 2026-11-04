@@ -1,8 +1,11 @@
 import { useState, useMemo, useEffect, useRef } from 'react'
+import RadioGroup from './RadioGroup'
 import platforms from '../data/platforms.json'
 import scoring from '../data/scoring.json'
 import { isLowerConfidence, evidenceDepth, platformNote } from '../data/confidence'
 import LowerConfidenceBadge from './LowerConfidenceBadge'
+import RouteLink from './RouteLink'
+import { chooserStepFromUrl, goToChooserStep, onNavigate, resetChooserUrl } from '../navigation'
 
 // ── Constants ──────────────────────────────────────────────────────────────────
 
@@ -61,7 +64,7 @@ const PLATFORM_BEST_WHEN = {
   'illumina-protein-prep':  'maximum proteome breadth (9,500+ proteins) or highest measurement precision are the top priority.',
   'nulisa':                 'detecting ultra-low-abundance proteins is essential, e.g. CNS biomarkers or neuroinflammation markers at attomolar levels.',
   'nomic-omni':             'absolute quantification, low cost per sample, or high throughput are primary drivers, especially for large or serial studies.',
-  'seer-proteograph':       'unbiased deep discovery is needed across diverse matrices, pQTL studies requiring zero epitope-binding artifacts, or non-European ancestry cohorts.',
+  'seer-proteograph':       'unbiased deep discovery is needed across diverse matrices, pQTL studies where antibody epitope-binding artefacts are a concern, or pQTL discovery in non-European ancestry cohorts.',
   'biognosys-truediscovery':'validation across the widest range of sample matrices is needed (plasma, tissue, CSF, cell lysates), or when MS-based absolute quantification (TrueSignature) is required.',
 }
 
@@ -74,7 +77,7 @@ const TIE_BAND = 3
 
 // Stamped onto each logged recommendation so a row ties to the engine that produced it.
 // No shared version constant exists yet; keep in step with Header.jsx VERSION on release.
-const APP_VERSION = 'v4.4'
+const APP_VERSION = 'v4.5'
 
 // Platforms that deliver validated absolute quantification in physical concentration units.
 // Nomic nELISA reports ELISA-calibrated pg/mL. The other scored products are label-free /
@@ -321,10 +324,10 @@ function getGainsAndMisses(result, weights) {
     cost:        s => s >= 5 ? 'Ultra-low cost tier' : s >= 4 ? 'Low cost tier' : null,
     coverage:    s => s >= 5 ? '9,500+ proteins measured' : s >= 4 ? '~5,400 proteins measured' : null,
     precision:   s => s >= 5 ? 'Best-in-class precision (CV ~5%)' : s >= 4 ? 'Strong precision (CV ~12%)' : null,
-    specificity: s => s >= 5 ? 'Highest target specificity (dual-capture / 99.99%)' : s >= 4 ? 'High specificity (cis-pQTL supported)' : null,
+    specificity: s => s >= 5 ? 'Highest target specificity (dual-capture)' : s >= 4 ? 'High specificity (cis-pQTL supported)' : null,
     sensitivity: s => s >= 5 ? 'Attomolar sensitivity: detects ultra-low-abundance proteins' : s >= 4 ? 'Strong sensitivity for low-abundance targets' : null,
-    throughput:  s => s >= 5 ? 'High throughput (>1,000 samples/day)' : s >= 4 ? 'Good throughput for large cohorts' : null,
-    pqtl:        s => s >= 5 ? 'Gold standard for pQTL studies: MS-based, zero epitope-binding artifacts' : s >= 4 ? 'Strong pQTL reliability (low epitope-binding risk)' : null,
+    throughput:  s => s >= 5 ? 'High throughput, demonstrated at scale in published studies' : s >= 4 ? 'Good throughput for large cohorts' : null,
+    pqtl:        s => s >= 5 ? 'Strongest pQTL reliability: MS-based, not subject to antibody epitope-binding artefacts' : s >= 4 ? 'Strong pQTL reliability (low epitope-binding risk)' : null,
   }
   const MISS_TEXT = {
     cost:        s => s <= 2 ? 'Moderate-to-high cost tier' : s <= 3 ? 'Mid-range cost vs cheaper alternatives' : null,
@@ -368,22 +371,25 @@ function ProgressBar({ step }) {
         const done   = s.id < step
         return (
           <div key={s.id} className="flex items-center" style={{ flex: i < steps.length - 1 ? '1' : 'none' }}>
-            <div className="flex items-center gap-2 flex-shrink-0">
+            <div className="flex items-center gap-2 flex-shrink-0" aria-current={active ? 'step' : undefined}>
               <span
-                className="text-xs font-mono"
-                style={{ color: done ? '#8B1A1A' : active ? '#141310' : '#d0cfcc', fontVariantNumeric: 'tabular-nums' }}
-              >
-                {String(s.id).padStart(2, '0')}
-              </span>
-              <span
-                className="text-xs"
+                className="flex items-center justify-center text-xs tabular-nums flex-shrink-0"
                 style={{
-                  color: active ? '#141310' : done ? '#8B1A1A' : '#d0cfcc',
-                  fontWeight: active ? 400 : 300,
-                  borderBottom: active ? '1px solid #141310' : 'none',
-                  paddingBottom: active ? 1 : 0,
+                  width: 20, height: 20, borderRadius: '50%',
+                  background: active ? 'var(--color-brand-500)' : 'transparent',
+                  color: active ? '#fff' : done ? 'var(--color-brand-500)' : 'var(--color-label)',
+                  border: `1px solid ${active || done ? 'var(--color-brand-500)' : '#d0cfcc'}`,
+                  fontWeight: active ? 500 : 400,
                 }}
               >
+                {done ? (
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-label="Completed">
+                    <polyline points="20 6 9 17 4 12" />
+                  </svg>
+                ) : s.id}
+              </span>
+              {/* Below 640px only the current step's label fits; the others stay readable by screen readers. */}
+              <span className={`text-xs${active ? '' : ' sr-only sm:not-sr-only'}`} style={{ color: active ? '#141310' : done ? '#52504a' : 'var(--color-label)', fontWeight: active ? 500 : 400 }}>
                 {s.label}
               </span>
             </div>
@@ -407,7 +413,7 @@ function RadioCard({ option, selected, onSelect, compact }) {
       className="text-left border transition-all w-full"
       style={{
         padding: compact ? '10px 14px' : '12px 16px',
-        borderColor: active ? '#8B1A1A' : '#e5e4e2',
+        borderColor: active ? 'var(--color-brand-500)' : '#e5e4e2',
         background: '#ffffff',
         cursor: 'pointer',
       }}
@@ -415,12 +421,12 @@ function RadioCard({ option, selected, onSelect, compact }) {
       <div className="flex items-start gap-3">
         <div
           className="w-4 h-4 rounded-full border-2 mt-0.5 flex-shrink-0"
-          style={{ borderColor: active ? '#8B1A1A' : '#d0cfcc', background: active ? '#8B1A1A' : 'transparent' }}
+          style={{ borderColor: active ? 'var(--color-brand-500)' : '#d0cfcc', background: active ? 'var(--color-brand-500)' : 'transparent' }}
         />
         <div>
           <p className="text-sm leading-snug" style={{ color: '#141310', fontWeight: 400 }}>{option.label}</p>
           {(option.desc || option.sub) && (
-            <p className="text-xs mt-0.5" style={{ color: '#6f6d67', fontWeight: 400 }}>{option.desc || option.sub}</p>
+            <p className="text-xs mt-0.5" style={{ color: 'var(--color-surface-400)', fontWeight: 400 }}>{option.desc || option.sub}</p>
           )}
         </div>
       </div>
@@ -459,7 +465,7 @@ function ProteinSearchInput({ proteins, selected, onAdd, onRemove }) {
           {selected.map(gene => (
             <span key={gene}
               className="inline-flex items-center gap-1 px-2.5 py-1 text-xs"
-              style={{ background: 'rgba(139,26,26,0.08)', color: '#8B1A1A', fontWeight: 400, border: '1px solid rgba(139,26,26,0.2)' }}
+              style={{ background: 'rgba(139,26,26,0.08)', color: 'var(--color-brand-500)', fontWeight: 400, border: '1px solid rgba(139,26,26,0.2)' }}
             >
               {gene}
               <button onClick={() => onRemove(gene)}
@@ -500,7 +506,7 @@ function ProteinSearchInput({ proteins, selected, onAdd, onRemove }) {
         </div>
       )}
       {proteins.length === 0 && (
-        <p className="text-xs mt-1" style={{ color: '#6f6d67', fontWeight: 400 }}>Loading protein list…</p>
+        <p className="text-xs mt-1" style={{ color: 'var(--color-surface-400)', fontWeight: 400 }}>Loading protein list…</p>
       )}
     </div>
   )
@@ -573,7 +579,7 @@ function PathwaySearchInput({ activePathway, onSelectPathway, onClearPathway }) 
               onMouseLeave={e => e.currentTarget.style.background = ''}
             >
               <span className="min-w-0 truncate">{p.name}</span>
-              <span className="text-xs flex-shrink-0" style={{ color: '#6f6d67' }}>{p.n} genes</span>
+              <span className="text-xs flex-shrink-0" style={{ color: 'var(--color-surface-400)' }}>{p.n} genes</span>
             </button>
           ))}
         </div>
@@ -605,7 +611,7 @@ function StepContext({
   return (
     <div>
       <div className="mb-7">
-        <h2 className="text-2xl font-light mb-1" style={{ color: '#141310' }}>Tell us about your study</h2>
+        <h2 data-step-heading tabIndex={-1} className="text-2xl font-light mb-1" style={{ color: '#141310', outline: 'none' }}>Tell us about your study</h2>
         <p className="text-sm" style={{ color: '#52504a', fontWeight: 400 }}>
           Your answers calibrate the recommendation engine. All questions are neutral; the results are driven entirely by your priorities.
         </p>
@@ -613,36 +619,36 @@ function StepContext({
 
       <div className="mb-6">
         <p className="text-sm mb-3" style={{ color: '#141310', fontWeight: 400 }}>What is your primary research goal?</p>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2" role="radiogroup" aria-label="Primary research goal">
+        <RadioGroup className="grid grid-cols-1 sm:grid-cols-2 gap-2" label="Primary research goal">
           {GOAL_OPTIONS.map(opt => (
             <RadioCard key={opt.id} option={opt} selected={answers.primaryGoal} onSelect={v => onChange('primaryGoal', v)} />
           ))}
-        </div>
+        </RadioGroup>
       </div>
 
       <div className="mb-6">
         <p className="text-sm mb-3" style={{ color: '#141310', fontWeight: 400 }}>What is your primary sample type?</p>
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2" role="radiogroup" aria-label="Primary sample type">
+        <RadioGroup className="grid grid-cols-2 sm:grid-cols-3 gap-2" label="Primary sample type">
           {SAMPLE_OPTIONS.map(opt => (
             <RadioCard key={opt.id} option={opt} selected={answers.sampleType} onSelect={v => onChange('sampleType', v)} compact />
           ))}
-        </div>
+        </RadioGroup>
       </div>
 
       <div className="mb-6">
         <p className="text-sm mb-3" style={{ color: '#141310', fontWeight: 400 }}>Approximate number of samples</p>
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2" role="radiogroup" aria-label="Approximate number of samples">
+        <RadioGroup className="grid grid-cols-2 sm:grid-cols-4 gap-2" label="Approximate number of samples">
           {SIZE_OPTIONS.map(opt => (
             <RadioCard key={opt.id} option={opt} selected={answers.studySize} onSelect={v => onChange('studySize', v)} compact />
           ))}
-        </div>
+        </RadioGroup>
       </div>
 
       <div className="mb-7 p-4" style={{ background: '#fafaf9', border: '1px solid #e5e4e2' }}>
-        <p className="text-xs uppercase tracking-widest mb-1" style={{ color: '#6f6d67', fontSize: 10, letterSpacing: '0.08em', fontWeight: 400 }}>
+        <p className="text-xs uppercase tracking-widest mb-1" style={{ color: 'var(--color-surface-400)', fontSize: 10, letterSpacing: '0.08em', fontWeight: 400 }}>
           Optional: Protein Coverage Preferences
         </p>
-        <p className="text-xs mb-3" style={{ color: '#6f6d67', fontWeight: 400 }}>
+        <p className="text-xs mb-3" style={{ color: 'var(--color-surface-400)', fontWeight: 400 }}>
           {activePathway
             ? `${proteinTargets.length} genes from this pathway are set as your targets. Platforms covering more of them will rank higher.`
             : 'Add up to 20 proteins you need to measure, or select a Reactome pathway below to populate the list automatically. Platforms that cover more of your targets will rank higher.'}
@@ -654,7 +660,7 @@ function StepContext({
           onRemove={removeProtein}
         />
         <div className="mt-2.5 pt-2.5" style={{ borderTop: '1px solid #e5e4e2' }}>
-          <p className="text-xs mb-1.5" style={{ color: '#6f6d67', fontWeight: 400 }}>Or select a Reactome pathway:</p>
+          <p className="text-xs mb-1.5" style={{ color: 'var(--color-surface-400)', fontWeight: 400 }}>Or select a Reactome pathway:</p>
           <PathwaySearchInput
             activePathway={activePathway}
             onSelectPathway={onSelectPathway}
@@ -663,15 +669,16 @@ function StepContext({
         </div>
       </div>
 
-      <div className="flex justify-end">
+      <div className="flex items-center justify-end gap-3 flex-wrap">
+        {!canAdvance && <span className="text-xs" style={{ color: 'var(--color-surface-400)', fontWeight: 400 }}>Answer the questions above to continue</span>}
         <button
           onClick={onNext}
           disabled={!canAdvance}
           className="px-6 py-2.5 text-sm transition-all border"
           style={{
-            background: canAdvance ? '#8B1A1A' : '#f3f2f0',
-            color: canAdvance ? '#fff' : '#6f6d67',
-            borderColor: canAdvance ? '#8B1A1A' : '#e5e4e2',
+            background: canAdvance ? 'var(--color-brand-500)' : '#f3f2f0',
+            color: canAdvance ? '#fff' : 'var(--color-surface-400)',
+            borderColor: canAdvance ? 'var(--color-brand-500)' : '#e5e4e2',
             fontWeight: 400,
             cursor: canAdvance ? 'pointer' : 'not-allowed',
           }}
@@ -692,18 +699,18 @@ function PrioritySlider({ def, value, onChange }) {
       <div className="flex items-center justify-between mb-1">
         <label className="text-sm" htmlFor={`slider-${def.id}`} style={{ color: '#141310', fontWeight: 400 }}>{def.label}</label>
         <div className="flex items-center gap-2">
-          <span className="text-xs" style={{ color: '#6f6d67', fontWeight: 400 }}>{LEVEL_LABELS[value]}</span>
+          <span className="text-xs" style={{ color: 'var(--color-surface-400)', fontWeight: 400 }}>{LEVEL_LABELS[value]}</span>
           <div
             className="w-6 h-6 flex items-center justify-center text-xs"
-            style={{ background: '#8B1A1A', color: '#fff', fontWeight: 500 }}
+            style={{ background: 'var(--color-brand-500)', color: '#fff', fontWeight: 500 }}
           >
             {value}
           </div>
         </div>
       </div>
-      <p className="text-xs mb-2" style={{ color: '#6f6d67', fontWeight: 400 }}>{def.hint}</p>
+      <p className="text-xs mb-2" style={{ color: 'var(--color-surface-400)', fontWeight: 400 }}>{def.hint}</p>
       {def.subhint && (
-        <p className="text-xs mb-2" style={{ color: '#a3a19d', fontWeight: 400, lineHeight: 1.45 }}>{def.subhint}</p>
+        <p className="text-xs mb-2" style={{ color: 'var(--color-label)', fontWeight: 400, lineHeight: 1.45 }}>{def.subhint}</p>
       )}
       <input
         id={`slider-${def.id}`}
@@ -712,7 +719,7 @@ function PrioritySlider({ def, value, onChange }) {
         aria-valuetext={LEVEL_LABELS[value]}
         onChange={e => onChange(def.id, parseInt(e.target.value))}
         className="w-full h-1.5 appearance-none cursor-pointer"
-        style={{ accentColor: '#8B1A1A' }}
+        style={{ accentColor: 'var(--color-brand-500)' }}
       />
       <div className="flex justify-between mt-1">
         <span className="text-xs" style={{ color: '#52504a', fontWeight: 400 }}>{def.low}</span>
@@ -726,7 +733,7 @@ function ToggleGroup({ label, options, value, onChange }) {
   return (
     <div className="mb-4">
       <p className="text-sm mb-2.5" style={{ color: '#141310', fontWeight: 400 }}>{label}</p>
-      <div className="flex gap-2 flex-wrap" role="radiogroup" aria-label={label}>
+      <RadioGroup className="flex gap-2 flex-wrap" label={label}>
         {options.map(opt => {
           const active = value === opt.id
           return (
@@ -737,9 +744,9 @@ function ToggleGroup({ label, options, value, onChange }) {
               aria-checked={active}
               className="px-4 py-1.5 text-xs border transition-all"
               style={{
-                background: active ? '#8B1A1A' : '#ffffff',
+                background: active ? 'var(--color-brand-500)' : '#ffffff',
                 color: active ? '#fff' : '#52504a',
-                borderColor: active ? '#8B1A1A' : '#e5e4e2',
+                borderColor: active ? 'var(--color-brand-500)' : '#e5e4e2',
                 fontWeight: 400,
                 cursor: 'pointer',
               }}
@@ -748,7 +755,7 @@ function ToggleGroup({ label, options, value, onChange }) {
             </button>
           )
         })}
-      </div>
+      </RadioGroup>
     </div>
   )
 }
@@ -765,7 +772,7 @@ function StepWeights({ weights, toggles, onWeightChange, onToggleChange, onBack,
   return (
     <div>
       <div className="mb-7">
-        <h2 className="text-2xl font-light mb-1" style={{ color: '#141310' }}>Set your priorities</h2>
+        <h2 data-step-heading tabIndex={-1} className="text-2xl font-light mb-1" style={{ color: '#141310', outline: 'none' }}>Set your priorities</h2>
         <p className="text-sm" style={{ color: '#52504a', fontWeight: 400 }}>
           All sliders start at 3 (medium). Your choices directly drive the ranking; there are no hidden defaults that favor any platform.
         </p>
@@ -773,7 +780,7 @@ function StepWeights({ weights, toggles, onWeightChange, onToggleChange, onBack,
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10">
         <div>
-          <p className="uppercase mb-4" style={{ fontSize: 10, letterSpacing: '0.08em', color: '#6f6d67', fontWeight: 400 }}>
+          <p className="uppercase mb-4" style={{ fontSize: 10, letterSpacing: '0.08em', color: 'var(--color-surface-400)', fontWeight: 400 }}>
             How important is each dimension?
           </p>
           {SLIDER_DEFS.map(def => (
@@ -782,7 +789,7 @@ function StepWeights({ weights, toggles, onWeightChange, onToggleChange, onBack,
         </div>
 
         <div>
-          <p className="uppercase mb-4" style={{ fontSize: 10, letterSpacing: '0.08em', color: '#6f6d67', fontWeight: 400 }}>
+          <p className="uppercase mb-4" style={{ fontSize: 10, letterSpacing: '0.08em', color: 'var(--color-surface-400)', fontWeight: 400 }}>
             Binary requirements
           </p>
           <div className="p-4 mb-4" style={{ background: '#fafaf9', border: '1px solid #e5e4e2' }}>
@@ -797,7 +804,7 @@ function StepWeights({ weights, toggles, onWeightChange, onToggleChange, onBack,
               onChange={v => onToggleChange('absoluteQuant', v)}
             />
             {toggles.absoluteQuant === 'yes' && (
-              <p className="text-xs p-2 mb-1" style={{ borderLeft: '2px solid #8B1A1A', paddingLeft: 8, color: '#8B1A1A', fontWeight: 400 }}>
+              <p className="text-xs p-2 mb-1" style={{ borderLeft: '2px solid var(--color-brand-500)', paddingLeft: 8, color: 'var(--color-brand-500)', fontWeight: 400 }}>
                 Hard filter active: platforms with only relative quantification (Olink, SomaSeq) will be marked ineligible.
               </p>
             )}
@@ -813,7 +820,7 @@ function StepWeights({ weights, toggles, onWeightChange, onToggleChange, onBack,
                 onChange={v => onToggleChange('ptmDetection', v)}
               />
               {toggles.ptmDetection === 'incidental' && (
-                <p className="text-xs p-2" style={{ borderLeft: '2px solid #8B1A1A', paddingLeft: 8, color: '#8B1A1A', fontWeight: 400 }}>
+                <p className="text-xs p-2" style={{ borderLeft: '2px solid var(--color-brand-500)', paddingLeft: 8, color: 'var(--color-brand-500)', fontWeight: 400 }}>
                   Seer XT and TrueDiscovery can capture PTMs and isoforms as incidental signal from unbiased DIA-MS; no systematic enrichment performed. Other platforms are marked ineligible.
                 </p>
               )}
@@ -837,7 +844,7 @@ function StepWeights({ weights, toggles, onWeightChange, onToggleChange, onBack,
               {toggles.cnsFocus === 'yes' && (
                 <p className="text-xs p-2" style={{ borderLeft: '2px solid #6b5b95', paddingLeft: 8, color: '#6b5b95', fontWeight: 400 }}>
                   {answers.sampleType === 'csf'
-                    ? 'Strong sensitivity and specificity boost applied: NULISA\'s attomolar detection limit and well-validated pTau217 measurement (research use only) make it the benchmark for CSF pTau and CNS biomarker studies.'
+                    ? 'Strong sensitivity and specificity boost applied, reflecting NULISA\'s attomolar detection limit and blood p-tau217 measurement (research use only). CSF data for its CNS panel are so far limited.'
                     : 'Sensitivity and specificity weights boosted to reflect requirements for low-abundance CNS biomarker detection and phospho-epitope discrimination. Select No if neuroscience is one component of a broader multi-domain study (e.g., UK Biobank). This boost is intended for studies where CNS biology is the primary scientific question.'}
                 </p>
               )}
@@ -861,8 +868,8 @@ function StepWeights({ weights, toggles, onWeightChange, onToggleChange, onBack,
             </div>
           </div>
 
-          <div className="p-4" style={{ borderLeft: '3px solid #8B1A1A' }}>
-            <p className="text-xs mb-1.5" style={{ color: '#8B1A1A', fontWeight: 400 }}>How scoring works</p>
+          <div className="p-4" style={{ borderLeft: '3px solid var(--color-brand-500)' }}>
+            <p className="text-xs mb-1.5" style={{ color: 'var(--color-brand-500)', fontWeight: 400 }}>How scoring works</p>
             <p className="text-xs leading-relaxed" style={{ color: '#52504a', fontWeight: 400 }}>
               Each slider weight multiplies the platform's base score (1–5) for that dimension. Study context (goal, sample type, size) adds small adjustments to reflect real-world constraints. All 6 platforms are always shown; none are hidden.
             </p>
@@ -881,8 +888,9 @@ function StepWeights({ weights, toggles, onWeightChange, onToggleChange, onBack,
           style={{ borderColor: '#e5e4e2', color: '#52504a', background: '#ffffff', fontWeight: 400, cursor: 'pointer' }}>
           ← Back
         </button>
+        {!mandatoryDone && <span className="ml-auto mr-3"><span className="text-xs" style={{ color: 'var(--color-surface-400)', fontWeight: 400 }}>Answer the questions above to continue</span></span>}
         <button onClick={handleSubmit} className="px-6 py-2.5 text-sm border"
-          style={{ background: mandatoryDone ? '#8B1A1A' : '#f3f2f0', color: mandatoryDone ? '#fff' : '#6f6d67', borderColor: mandatoryDone ? '#8B1A1A' : '#e5e4e2', fontWeight: 400, cursor: mandatoryDone ? 'pointer' : 'not-allowed' }}>
+          style={{ background: mandatoryDone ? 'var(--color-brand-500)' : '#f3f2f0', color: mandatoryDone ? '#fff' : 'var(--color-surface-400)', borderColor: mandatoryDone ? 'var(--color-brand-500)' : '#e5e4e2', fontWeight: 400, cursor: mandatoryDone ? 'pointer' : 'not-allowed' }}>
           See Results →
         </button>
       </div>
@@ -918,7 +926,7 @@ function ResultCard({ result, rank, isTopTier, topTierCount, eligibleResults, we
     >
       {highlight && (
         <div className="px-5 pt-3 pb-0">
-          <span className="uppercase" style={{ fontSize: 10, letterSpacing: '0.08em', color: '#8B1A1A', fontWeight: 400 }}>
+          <span className="uppercase" style={{ fontSize: 10, letterSpacing: '0.08em', color: 'var(--color-brand-500)', fontWeight: 400 }}>
             ★ {tied ? 'Top tier (essentially tied)' : 'Top recommendation'}
           </span>
         </div>
@@ -930,8 +938,8 @@ function ResultCard({ result, rank, isTopTier, topTierCount, eligibleResults, we
           <div
             className="w-8 h-8 flex items-center justify-center text-sm flex-shrink-0 mt-0.5"
             style={{
-              background: isIneligible ? '#f3f2f0' : highlight ? '#8B1A1A' : rank <= 3 ? 'rgba(139,26,26,0.08)' : '#f3f2f0',
-              color:      isIneligible ? '#6f6d67' : highlight ? '#fff'    : rank <= 3 ? '#8B1A1A' : '#52504a',
+              background: isIneligible ? '#f3f2f0' : highlight ? 'var(--color-brand-500)' : rank <= 3 ? 'rgba(139,26,26,0.08)' : '#f3f2f0',
+              color:      isIneligible ? 'var(--color-surface-400)' : highlight ? '#fff'    : rank <= 3 ? 'var(--color-brand-500)' : '#52504a',
               fontWeight: 500,
             }}
           >
@@ -942,10 +950,10 @@ function ResultCard({ result, rank, isTopTier, topTierCount, eligibleResults, we
             {/* Platform header */}
             <div className="flex items-center gap-2 flex-wrap mb-1">
               <span className="w-3 h-3 rounded-full inline-block flex-shrink-0" style={{ background: platform.color }} />
-              <span className="text-base" style={{ color: isIneligible ? '#6f6d67' : '#141310', fontWeight: 400 }}>
+              <span className="text-base" style={{ color: isIneligible ? 'var(--color-surface-400)' : '#141310', fontWeight: 400 }}>
                 {platform.name}
               </span>
-              <span className="text-xs" style={{ color: '#6f6d67', fontWeight: 400 }}>{platform.company.split(' ')[0]}</span>
+              <span className="text-xs" style={{ color: 'var(--color-surface-400)', fontWeight: 400 }}>{platform.company.split(' ')[0]}</span>
               {isLowerConfidence(platform.id) && <LowerConfidenceBadge note={platformNote(platform.id)} />}
               {activePathway && pathwayCoveragePct != null ? (
                 <span className="text-xs px-2 py-0.5" style={{
@@ -965,7 +973,7 @@ function ResultCard({ result, rank, isTopTier, topTierCount, eligibleResults, we
                 </span>
               )}
               {isIneligible && (
-                <span className="text-xs px-2 py-0.5" style={{ background: '#fef3c7', color: '#d97706', fontWeight: 400 }}>
+                <span className="text-xs px-2 py-0.5" style={{ background: '#fef3c7', color: 'var(--color-amber-text)', fontWeight: 400 }}>
                   {filterLabel}
                 </span>
               )}
@@ -981,16 +989,16 @@ function ResultCard({ result, rank, isTopTier, topTierCount, eligibleResults, we
               <div className="flex items-baseline gap-1.5 mt-2 mb-3">
                 <span
                   className="font-light leading-none"
-                  style={{ fontSize: 38, color: highlight ? '#8B1A1A' : '#141310' }}
+                  style={{ fontSize: 38, color: highlight ? 'var(--color-brand-500)' : '#141310' }}
                 >
                   {displayPct}
                 </span>
-                <span className="text-sm font-light" style={{ color: highlight ? '#8B1A1A' : '#52504a' }}>%</span>
-                <span className="text-xs ml-1" style={{ color: '#6f6d67', fontWeight: 400 }}>match</span>
+                <span className="text-sm font-light" style={{ color: highlight ? 'var(--color-brand-500)' : '#52504a' }}>%</span>
+                <span className="text-xs ml-1" style={{ color: 'var(--color-surface-400)', fontWeight: 400 }}>match</span>
               </div>
             )}
 
-            <p className="text-sm leading-relaxed" style={{ color: isIneligible ? '#6f6d67' : '#52504a', fontWeight: 400 }}>
+            <p className="text-sm leading-relaxed" style={{ color: isIneligible ? 'var(--color-surface-400)' : '#52504a', fontWeight: 400 }}>
               {explanation}
             </p>
 
@@ -1009,11 +1017,11 @@ function ResultCard({ result, rank, isTopTier, topTierCount, eligibleResults, we
                   <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-4">
                     {gains.length > 0 && (
                       <div>
-                        <p className="text-xs mb-2" style={{ color: '#8B1A1A', fontWeight: 400 }}>What you'd gain</p>
+                        <p className="text-xs mb-2" style={{ color: 'var(--color-brand-500)', fontWeight: 400 }}>What you'd gain</p>
                         <ul className="space-y-1">
                           {gains.map((g, i) => (
                             <li key={i} className="flex items-start gap-1.5 text-xs leading-snug" style={{ color: '#52504a', fontWeight: 400 }}>
-                              <span style={{ color: '#8B1A1A', flexShrink: 0 }}>✓</span> {g}
+                              <span style={{ color: 'var(--color-brand-500)', flexShrink: 0 }}>✓</span> {g}
                             </li>
                           ))}
                         </ul>
@@ -1021,7 +1029,7 @@ function ResultCard({ result, rank, isTopTier, topTierCount, eligibleResults, we
                     )}
                     {misses.length > 0 && (
                       <div>
-                        <p className="text-xs mb-2" style={{ color: '#d97706', fontWeight: 400 }}>What you'd trade off</p>
+                        <p className="text-xs mb-2" style={{ color: 'var(--color-amber-text)', fontWeight: 400 }}>What you'd trade off</p>
                         <ul className="space-y-1">
                           {misses.map((m, i) => (
                             <li key={i} className="flex items-start gap-1.5 text-xs leading-snug" style={{ color: '#52504a', fontWeight: 400 }}>
@@ -1033,7 +1041,7 @@ function ResultCard({ result, rank, isTopTier, topTierCount, eligibleResults, we
                     )}
                     {!isTopTier && (
                       <div className="sm:col-span-2 pt-3" style={{ borderTop: '1px solid #e5e4e2' }}>
-                        <p className="text-xs" style={{ color: '#6f6d67', fontWeight: 400 }}>
+                        <p className="text-xs" style={{ color: 'var(--color-surface-400)', fontWeight: 400 }}>
                           <span style={{ color: '#52504a', fontWeight: 400 }}>When this would rank #1: </span>
                           {PLATFORM_BEST_WHEN[platform.id]}
                         </p>
@@ -1046,7 +1054,7 @@ function ResultCard({ result, rank, isTopTier, topTierCount, eligibleResults, we
 
             {/* Ineligible: when it would qualify */}
             {isIneligible && (
-              <p className="text-xs mt-2" style={{ color: '#6f6d67', fontWeight: 400 }}>
+              <p className="text-xs mt-2" style={{ color: 'var(--color-surface-400)', fontWeight: 400 }}>
                 <span style={{ color: '#52504a', fontWeight: 400 }}>When this would be eligible: </span>
                 {PLATFORM_BEST_WHEN[platform.id]}
               </p>
@@ -1067,8 +1075,8 @@ const SIZE_LABELS   = { small: '<100 samples', medium: '100–1,000', large: '1,
 function ProfileChip({ label, value }) {
   return (
     <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs"
-      style={{ border: '1px solid rgba(139,26,26,0.25)', color: '#8B1A1A', background: 'transparent', fontWeight: 400 }}>
-      <span style={{ color: '#6f6d67', fontWeight: 400 }}>{label}:</span> {value}
+      style={{ border: '1px solid rgba(139,26,26,0.25)', color: 'var(--color-brand-500)', background: 'transparent', fontWeight: 400 }}>
+      <span style={{ color: 'var(--color-surface-400)', fontWeight: 400 }}>{label}:</span> {value}
     </span>
   )
 }
@@ -1147,7 +1155,7 @@ function DownloadResults({ results, answers }) {
         <button
           onClick={handleDownload}
           className="flex-shrink-0 flex items-center gap-2 px-4 py-2.5 text-sm transition-all border hover:opacity-90"
-          style={{ background: '#8B1A1A', color: '#fff', borderColor: '#8B1A1A', fontWeight: 400, cursor: 'pointer' }}
+          style={{ background: 'var(--color-brand-500)', color: '#fff', borderColor: 'var(--color-brand-500)', fontWeight: 400, cursor: 'pointer' }}
         >
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
             <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
@@ -1232,7 +1240,7 @@ function StepAboutYou({ form, onFormChange, results, answers, weights, toggles, 
   return (
     <div>
       <div className="mb-7">
-        <h2 className="text-2xl font-light mb-1" style={{ color: '#141310' }}>About you (optional)</h2>
+        <h2 data-step-heading tabIndex={-1} className="text-2xl font-light mb-1" style={{ color: '#141310', outline: 'none' }}>About you (optional)</h2>
         <p className="text-sm" style={{ color: '#52504a', fontWeight: 400 }}>
           This tool is part of an ongoing study on proteomics platform selection. If you're willing, tell us a
           little about yourself and your study below; every field is optional, and you'll see your results
@@ -1242,56 +1250,56 @@ function StepAboutYou({ form, onFormChange, results, answers, weights, toggles, 
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
         <div>
-          <label className="block text-xs mb-1.5" style={{ color: '#52504a', fontWeight: 400 }}>Name</label>
-          <input type="text" value={form.name} placeholder="Your name"
+          <label htmlFor="about-name" className="block text-xs mb-1.5" style={{ color: '#52504a', fontWeight: 400 }}>Name</label>
+          <input type="text" value={form.name} id="about-name" placeholder="Your name"
             onChange={e => setField('name', e.target.value)} className={inputCls} style={inputSty} />
         </div>
         <div>
-          <label className="block text-xs mb-1.5" style={{ color: '#52504a', fontWeight: 400 }}>Email</label>
-          <input type="email" value={form.email} placeholder="you@institution.edu"
+          <label htmlFor="about-email" className="block text-xs mb-1.5" style={{ color: '#52504a', fontWeight: 400 }}>Email</label>
+          <input type="email" value={form.email} id="about-email" placeholder="you@institution.edu"
             onChange={e => setField('email', e.target.value)} className={inputCls} style={inputSty} />
         </div>
         <div>
-          <label className="block text-xs mb-1.5" style={{ color: '#52504a', fontWeight: 400 }}>Institution</label>
-          <input type="text" value={form.institution} placeholder="University / company"
+          <label htmlFor="about-institution" className="block text-xs mb-1.5" style={{ color: '#52504a', fontWeight: 400 }}>Institution</label>
+          <input type="text" value={form.institution} id="about-institution" placeholder="University / company"
             onChange={e => setField('institution', e.target.value)} className={inputCls} style={inputSty} />
         </div>
         <div>
-          <label className="block text-xs mb-1.5" style={{ color: '#52504a', fontWeight: 400 }}>Country</label>
-          <input type="text" value={form.country} placeholder="Country"
+          <label htmlFor="about-country" className="block text-xs mb-1.5" style={{ color: '#52504a', fontWeight: 400 }}>Country</label>
+          <input type="text" value={form.country} id="about-country" placeholder="Country"
             onChange={e => setField('country', e.target.value)} className={inputCls} style={inputSty} />
         </div>
         <div>
-          <label className="block text-xs mb-1.5" style={{ color: '#52504a', fontWeight: 400 }}>Career type</label>
-          <select value={form.careerType} onChange={e => setField('careerType', e.target.value)} className={inputCls} style={inputSty}>
+          <label htmlFor="about-career-type" className="block text-xs mb-1.5" style={{ color: '#52504a', fontWeight: 400 }}>Career type</label>
+          <select value={form.careerType} id="about-career-type" onChange={e => setField('careerType', e.target.value)} className={inputCls} style={inputSty}>
             <option value="">Select…</option>
             {CAREER_TYPES.map(o => <option key={o.id} value={o.id}>{o.label}</option>)}
           </select>
         </div>
         <div>
-          <label className="block text-xs mb-1.5" style={{ color: '#52504a', fontWeight: 400 }}>Career stage</label>
-          <select value={form.careerStage} onChange={e => setField('careerStage', e.target.value)} className={inputCls} style={inputSty}>
+          <label htmlFor="about-career-stage" className="block text-xs mb-1.5" style={{ color: '#52504a', fontWeight: 400 }}>Career stage</label>
+          <select value={form.careerStage} id="about-career-stage" onChange={e => setField('careerStage', e.target.value)} className={inputCls} style={inputSty}>
             <option value="">Select…</option>
             {CAREER_STAGES.map(o => <option key={o.id} value={o.id}>{o.label}</option>)}
           </select>
         </div>
         <div>
-          <label className="block text-xs mb-1.5" style={{ color: '#52504a', fontWeight: 400 }}>Primary area of expertise</label>
-          <select value={form.expertise} onChange={e => setField('expertise', e.target.value)} className={inputCls} style={inputSty}>
+          <label htmlFor="about-expertise" className="block text-xs mb-1.5" style={{ color: '#52504a', fontWeight: 400 }}>Primary area of expertise</label>
+          <select value={form.expertise} id="about-expertise" onChange={e => setField('expertise', e.target.value)} className={inputCls} style={inputSty}>
             <option value="">Select…</option>
             {EXPERTISE_OPTIONS.map(o => <option key={o.id} value={o.id}>{o.label}</option>)}
           </select>
         </div>
         <div>
-          <label className="block text-xs mb-1.5" style={{ color: '#52504a', fontWeight: 400 }}>Familiarity with proteomics</label>
-          <select value={form.familiarity} onChange={e => setField('familiarity', e.target.value)} className={inputCls} style={inputSty}>
+          <label htmlFor="about-familiarity" className="block text-xs mb-1.5" style={{ color: '#52504a', fontWeight: 400 }}>Familiarity with proteomics</label>
+          <select value={form.familiarity} id="about-familiarity" onChange={e => setField('familiarity', e.target.value)} className={inputCls} style={inputSty}>
             <option value="">Select…</option>
             {FAMILIARITY_OPTIONS.map(o => <option key={o.id} value={o.id}>{o.label}</option>)}
           </select>
         </div>
       </div>
 
-      <p className="text-xs mb-6" style={{ color: '#6f6d67', fontWeight: 400 }}>
+      <p className="text-xs mb-6" style={{ color: 'var(--color-surface-400)', fontWeight: 400 }}>
         Whatever you fill in, plus your study configuration and priorities, will be shared with Chris Whelan
         (Royal College of Surgeons &amp; Ignition Scientific) and Karl Smith-Byrne (Oxford) to inform research
         into platform selection patterns and to guide future app updates.
@@ -1308,7 +1316,7 @@ function StepAboutYou({ form, onFormChange, results, answers, weights, toggles, 
             Skip and see results →
           </button>
           <button onClick={handleSubmit} className="px-4 py-2.5 text-sm border"
-            style={{ background: '#8B1A1A', color: '#fff', borderColor: '#8B1A1A', fontWeight: 400, cursor: 'pointer' }}>
+            style={{ background: 'var(--color-brand-500)', color: '#fff', borderColor: 'var(--color-brand-500)', fontWeight: 400, cursor: 'pointer' }}>
             Submit and see results →
           </button>
         </div>
@@ -1360,7 +1368,7 @@ function StepResults({ results, answers, weights, toggles, proteinTargets, activ
   return (
     <div>
       <div className="mb-5">
-        <h2 className="text-2xl font-light mb-1" style={{ color: '#141310' }}>Your platform recommendations</h2>
+        <h2 data-step-heading tabIndex={-1} className="text-2xl font-light mb-1" style={{ color: '#141310', outline: 'none' }}>Your platform recommendations</h2>
         <p className="text-sm mb-4" style={{ color: '#52504a', fontWeight: 400 }}>
           Ranked by match to your stated priorities. All 6 platforms are shown. Expand any card to see gains, trade-offs, and when it would rank #1.
         </p>
@@ -1380,7 +1388,7 @@ function StepResults({ results, answers, weights, toggles, proteinTargets, activ
             <ProfileChip label="Proteins" value={proteinTargets.join(', ')} />
           )}
         </div>
-        <p className="text-xs mt-3" style={{ color: '#6f6d67', fontWeight: 400 }}>
+        <p className="text-xs mt-3" style={{ color: 'var(--color-surface-400)', fontWeight: 400 }}>
           We log anonymized usage data, including your approximate location, the inputs above, and any protein targets or pathway you entered, to improve this tool.
           No name or contact details are included unless you choose to share them in the optional step below.
         </p>
@@ -1388,8 +1396,8 @@ function StepResults({ results, answers, weights, toggles, proteinTargets, activ
 
       {/* Transparency note */}
       <div className="mb-5 px-4 py-3 text-xs"
-        style={{ borderLeft: '3px solid #8B1A1A', color: '#52504a', fontWeight: 400 }}>
-        <strong style={{ color: '#8B1A1A', fontWeight: 500 }}>Transparent scoring: </strong>
+        style={{ borderLeft: '3px solid var(--color-brand-500)', color: '#52504a', fontWeight: 400 }}>
+        <strong style={{ color: 'var(--color-brand-500)', fontWeight: 500 }}>Transparent scoring: </strong>
         Your highest-weighted dimension is <strong>{topDef.label}</strong>. Platforms that score higher on this dimension rank higher, all else equal.
         Expand any card to see exactly how weights mapped to scores.
         {ineligible.length > 0 && ` ${ineligible.length} platform${ineligible.length > 1 ? 's' : ''} did not meet your hard filter and are shown below.`}
@@ -1438,8 +1446,8 @@ function StepResults({ results, answers, weights, toggles, proteinTargets, activ
 
       {/* Top-tier tie notice */}
       {topTierCount > 1 && (
-        <div className="mb-4 px-5 py-4" style={{ borderLeft: '4px solid #8B1A1A', background: 'rgba(139,26,26,0.03)' }}>
-          <p className="text-sm mb-1" style={{ color: '#8B1A1A', fontWeight: 500 }}>
+        <div className="mb-4 px-5 py-4" style={{ borderLeft: '4px solid var(--color-brand-500)', background: 'rgba(139,26,26,0.03)' }}>
+          <p className="text-sm mb-1" style={{ color: 'var(--color-brand-500)', fontWeight: 500 }}>
             Top tier: {topTierCount} platforms are statistically tied for your study
           </p>
           <p className="text-xs leading-relaxed" style={{ color: '#52504a', fontWeight: 400 }}>
@@ -1491,7 +1499,7 @@ function StepResults({ results, answers, weights, toggles, proteinTargets, activ
         <div>
           <div className="flex items-center gap-3 mb-3">
             <div className="flex-1 h-px" style={{ background: '#e5e4e2' }} />
-            <span className="uppercase flex-shrink-0" style={{ fontSize: 10, letterSpacing: '0.08em', color: '#6f6d67', fontWeight: 400 }}>
+            <span className="uppercase flex-shrink-0" style={{ fontSize: 10, letterSpacing: '0.08em', color: 'var(--color-surface-400)', fontWeight: 400 }}>
               Does not meet hard filter
             </span>
             <div className="flex-1 h-px" style={{ background: '#e5e4e2' }} />
@@ -1537,11 +1545,11 @@ function StepResults({ results, answers, weights, toggles, proteinTargets, activ
             every result file behind the fairness analysis above are downloadable from the Reproducibility tab.
           </p>
         </div>
-        <a href="#reproducibility"
+        <RouteLink tab="reproducibility"
           className="flex-shrink-0 px-4 py-2.5 text-sm border hover:opacity-90 transition-all"
-          style={{ background: '#8B1A1A', color: '#fff', borderColor: '#8B1A1A', fontWeight: 400 }}>
+          style={{ background: 'var(--color-brand-500)', color: '#fff', borderColor: 'var(--color-brand-500)', fontWeight: 400 }}>
           Open Reproducibility →
-        </a>
+        </RouteLink>
       </section>
     </div>
   )
@@ -1582,26 +1590,26 @@ export default function HelpMeChoose() {
     }
   }, [activePathway, pathwayCoverage])
 
-  // Wizard step lives in the URL hash (#chooser, #chooser/2 …) so the browser Back/Forward
-  // buttons move between steps instead of leaving the tool. App keys the tab on 'chooser'
-  // (ignoring the step suffix), so the component stays mounted across step changes and
+  // Wizard step lives in the URL (/choose, /choose/2 …) so the browser Back/Forward
+  // buttons move between steps instead of leaving the tool. App keys the page on 'chooser'
+  // (ignoring the step), so the component stays mounted across step changes and
   // answers/sliders are preserved when navigating back.
-  const goToStep = (n) => {
-    window.location.hash = n <= 1 ? 'chooser' : `chooser/${n}`
-  }
+  const goToStep = goToChooserStep
 
   useEffect(() => {
-    // A cold load has no answers, so a deep-linked step is meaningless — normalize to step 1.
-    if (/^#chooser\/[2-4]$/.test(window.location.hash)) {
-      window.history.replaceState(null, '', '#chooser')
-    }
-    const sync = () => {
-      const m = window.location.hash.match(/^#chooser(?:\/([1-4]))?$/)
-      setStep(m && m[1] ? Number(m[1]) : 1)
-    }
-    window.addEventListener('hashchange', sync)
-    return () => window.removeEventListener('hashchange', sync)
+    // A cold load has no answers, so a deep-linked step is meaningless: normalize to step 1.
+    if (chooserStepFromUrl() > 1) resetChooserUrl()
+    return onNavigate(() => setStep(chooserStepFromUrl()))
   }, [])
+
+  // A new step starts at the top of the page, with focus on its heading. Not on first load.
+  const previousStep = useRef(step)
+  useEffect(() => {
+    if (previousStep.current === step) return
+    previousStep.current = step
+    window.scrollTo(0, 0)
+    document.querySelector('[data-step-heading]')?.focus({ preventScroll: true })
+  }, [step])
 
   const handleAnswerChange = (k, v) => setAnswers(a => ({ ...a, [k]: v }))
   const handleWeightChange = (k, v) => setWeights(w => ({ ...w, [k]: v }))
@@ -1632,7 +1640,7 @@ export default function HelpMeChoose() {
   )
 
   const handleReset = () => {
-    window.history.replaceState(null, '', '#chooser')
+    resetChooserUrl()
     setStep(1)
     setAnswers(DEFAULT_ANSWERS)
     setWeights(DEFAULT_WEIGHTS)

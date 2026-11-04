@@ -1,20 +1,27 @@
 import { useState, useMemo, useCallback, useEffect, useRef } from 'react'
 import { loadUnassayed, searchUnassayed, statusLine, detectionLine, STATUS_NONE } from '../data/unassayed'
+import { canonFor, platformsByProtein } from '../data/coverageCounts'
+import { coverage } from '../data/siteStats'
+import platforms from '../data/platforms.json'
+import RadioGroup from './RadioGroup'
 
-const PLATFORM_META = {
-  'olink-explore-ht':      { label: 'Olink Explore HT',       color: '#E85D26', partial: false },
-  'illumina-protein-prep': { label: 'SomaSeq',  color: '#1B8A4E', partial: false },
-  'nulisa':                { label: 'Alamar NULISA',           color: '#7C3AED', partial: false },
-  'nomic-omni':            { label: 'Nomic nELISA',            color: '#0891B2', partial: false },
-  'seer-proteograph':      { label: 'Seer Proteograph XT',    color: '#DC2626', partial: false },
-  'biognosys-truediscovery': { label: 'Biognosys TrueDiscovery', color: '#2563EB', partial: true },
+const PLATFORM_LABELS = {
+  'olink-explore-ht':      { label: 'Olink Explore HT',       partial: false },
+  'illumina-protein-prep': { label: 'SomaSeq',  partial: false },
+  'nulisa':                { label: 'Alamar NULISA',           partial: false },
+  'nomic-omni':            { label: 'Nomic nELISA',            partial: false },
+  'seer-proteograph':      { label: 'Seer Proteograph XT',    partial: false },
+  'biognosys-truediscovery': { label: 'Biognosys TrueDiscovery', partial: true },
 }
+
+// Colours come from platforms.json: `color` for marks, `textColor` for text.
+const PLATFORM_META = Object.fromEntries(Object.entries(PLATFORM_LABELS).map(([id, meta]) => {
+  const { color, textColor } = platforms.find(p => p.id === id)
+  return [id, { ...meta, color, textColor }]
+}))
 
 const ALL_PLATFORM_IDS = Object.keys(PLATFORM_META)
 
-// Canonical Swiss-Prot accessions credited to a platform for an entry, honoring the
-// osteopontin split override (the Q9BX95 row credits P10451 to NULISA, Q9BX95 to Seer).
-const canonFor = (p, pid) => (p.canonical_by_platform && p.canonical_by_platform[pid]) || p.canonical || []
 const PAGE_SIZE = 100
 
 const SHORT_LABELS = {
@@ -24,6 +31,23 @@ const SHORT_LABELS = {
   'nomic-omni':              'Nomic',
   'seer-proteograph':        'Seer XT',
   'biognosys-truediscovery': 'Biognosys',
+}
+
+// Text for an overlap cell: the default grey where it is legible, otherwise near-black or white,
+// whichever the cell's colour (the platform colour at this alpha over white) allows.
+function overlapCellText(hex, alpha) {
+  const channels = [1, 3, 5].map(i => parseInt(hex.slice(i, i + 2), 16) * alpha + 255 * (1 - alpha))
+  const luminance = c => {
+    const [r, g, b] = c.map(v => (v /= 255) <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4)
+    return 0.2126 * r + 0.7152 * g + 0.0722 * b
+  }
+  const bg = luminance(channels)
+  const contrast = text => {
+    const t = luminance(text)
+    return (Math.max(t, bg) + 0.05) / (Math.min(t, bg) + 0.05)
+  }
+  if (contrast([0x52, 0x50, 0x4a]) >= 4.5) return '#52504a'
+  return contrast([0x14, 0x13, 0x10]) >= 4.5 ? '#141310' : '#ffffff'
 }
 
 function hexToRgb(hex) {
@@ -93,7 +117,7 @@ function OverlapHeatmap({ proteins }) {
               <th style={{ width: 90 }} />
               {ALL_PLATFORM_IDS.map(pid => (
                 <th key={pid} style={{
-                  color: PLATFORM_META[pid].color,
+                  color: PLATFORM_META[pid].textColor,
                   fontSize: 10, fontWeight: 500, textAlign: 'center',
                   padding: '0 2px 10px', whiteSpace: 'nowrap', width: 82,
                 }}>
@@ -107,7 +131,7 @@ function OverlapHeatmap({ proteins }) {
             {ALL_PLATFORM_IDS.map(rowPid => (
               <tr key={rowPid}>
                 <td style={{
-                  color: PLATFORM_META[rowPid].color,
+                  color: PLATFORM_META[rowPid].textColor,
                   fontSize: 10, fontWeight: 500, textAlign: 'right',
                   paddingRight: 10, whiteSpace: 'nowrap', verticalAlign: 'middle',
                 }}>
@@ -119,13 +143,14 @@ function OverlapHeatmap({ proteins }) {
                   const val = overlaps[`${rowPid}|${colPid}`] ?? 0
                   const pct = isDiag ? 1 : val / Math.min(totals[rowPid], totals[colPid])
                   const rgb = hexToRgb(PLATFORM_META[rowPid].color)
+                  const alpha = Math.max(0.04, pct * 0.8)
                   const bg = isDiag
                     ? `rgba(${rgb},0.12)`
-                    : `rgba(${rgb},${Math.max(0.04, pct * 0.8)})`
-                  const textColor = !isDiag && pct > 0.55 ? 'white' : isDiag ? PLATFORM_META[rowPid].color : '#52504a'
+                    : `rgba(${rgb},${alpha})`
+                  const textColor = isDiag ? PLATFORM_META[rowPid].textColor : overlapCellText(PLATFORM_META[rowPid].color, alpha)
                   const tooltip = isDiag
-                    ? `${SHORT_LABELS[rowPid]}: ${val.toLocaleString()} proteins total`
-                    : `${SHORT_LABELS[rowPid]} ∩ ${SHORT_LABELS[colPid]}: ${val.toLocaleString()} shared (${Math.round(pct * 100)}% of smaller panel)`
+                    ? `${SHORT_LABELS[rowPid]}: ${val.toLocaleString('en-US')} proteins total`
+                    : `${SHORT_LABELS[rowPid]} ∩ ${SHORT_LABELS[colPid]}: ${val.toLocaleString('en-US')} shared (${Math.round(pct * 100)}% of smaller panel)`
                   return (
                     <td key={colPid} title={tooltip} style={{
                       background: bg,
@@ -138,9 +163,9 @@ function OverlapHeatmap({ proteins }) {
                       minWidth: 66,
                       cursor: 'default',
                     }}>
-                      {val.toLocaleString()}
+                      {val.toLocaleString('en-US')}
                       {!isDiag && (
-                        <div style={{ fontSize: 9, opacity: 0.75, marginTop: 1 }}>
+                        <div style={{ fontSize: 9, marginTop: 1 }}>
                           {Math.round(pct * 100)}%
                         </div>
                       )}
@@ -152,9 +177,9 @@ function OverlapHeatmap({ proteins }) {
           </tbody>
         </table>
       </div>
-      <p className="mt-2 text-[10px]" style={{ color: '#6f6d67' }}>
+      <p className="mt-2 text-[10px]" style={{ color: 'var(--color-surface-400)' }}>
         Diagonal = total proteins per platform. Off-diagonal = shared proteins + % of smaller panel.
-        Color intensity reflects overlap fraction. * Biognosys list is study-dependent (Ahadi 2025 depletion-workflow cohort; a conservative lower bound vs. the ~7,000-protein P2 enrichment figure).
+        Color intensity reflects overlap fraction. * Biognosys list is study-dependent (Kirsher et al. 2025 depletion-workflow cohort; a conservative lower bound vs. the ~7,000-protein P2 enrichment figure).
       </p>
     </div>
   )
@@ -190,7 +215,7 @@ function VennDiagram({ proteins, platformIds }) {
     return { onlyA, onlyB, onlyC, AB, AC, BC, ABC }
   }, [proteins, platformIds])
 
-  const fmt = n => n.toLocaleString()
+  const fmt = n => n.toLocaleString('en-US')
   const ca = PLATFORM_META[platformIds[0]].color
   const cb = PLATFORM_META[platformIds[1]].color
   const cc = platformIds[2] ? PLATFORM_META[platformIds[2]].color : null
@@ -206,7 +231,7 @@ function VennDiagram({ proteins, platformIds }) {
         <text x={100} y={106} textAnchor="middle" fontSize={13} fontWeight={500} fill={ca}>{fmt(onlyA)}</text>
         <text x={240} y={91}  textAnchor="middle" fontSize={10} fontWeight={500} fill={cb}>{SHORT_LABELS[platformIds[1]]}</text>
         <text x={240} y={106} textAnchor="middle" fontSize={13} fontWeight={500} fill={cb}>{fmt(onlyB)}</text>
-        <text x={170} y={94}  textAnchor="middle" fontSize={9}  fill="#6f6d67">shared</text>
+        <text x={170} y={94}  textAnchor="middle" fontSize={9}  fill="var(--color-surface-400)">shared</text>
         <text x={170} y={108} textAnchor="middle" fontSize={13} fontWeight={500} fill="#52504a">{fmt(AB)}</text>
       </svg>
     )
@@ -237,7 +262,7 @@ function VennDiagram({ proteins, platformIds }) {
 
 function VennNote() {
   return (
-    <p className="mt-2 text-[10px]" style={{ color: '#6f6d67' }}>
+    <p className="mt-2 text-[10px]" style={{ color: 'var(--color-surface-400)' }}>
       Unique counts reflect overlap with selected platforms only; a protein may also appear on unselected platforms.
     </p>
   )
@@ -253,7 +278,7 @@ function VennSection({ proteins }) {
 
   const selStyle = (pid) => ({
     fontSize: 11, borderRadius: 0, border: `1px solid ${PLATFORM_META[pid].color}40`,
-    padding: '4px 8px', color: PLATFORM_META[pid].color,
+    padding: '4px 8px', color: PLATFORM_META[pid].textColor,
     background: PLATFORM_META[pid].color + '0d', cursor: 'pointer',
   })
 
@@ -263,19 +288,19 @@ function VennSection({ proteins }) {
         <div className="flex border overflow-hidden text-xs" style={{ borderColor: '#e5e4e2' }}>
           {[2, 3].map(n => (
             <button key={n} onClick={() => setMode(n)} className="px-3 py-1.5 cursor-pointer transition"
-              style={{ background: mode === n ? '#8B1A1A' : '#ffffff', color: mode === n ? 'white' : '#52504a' }}>
+              style={{ background: mode === n ? 'var(--color-brand-500)' : '#ffffff', color: mode === n ? 'white' : '#52504a' }}>
               {n}-platform
             </button>
           ))}
         </div>
-        <select value={selA} onChange={e => setSelA(e.target.value)} style={selStyle(selA)}>
+        <select aria-label="First platform" value={selA} onChange={e => setSelA(e.target.value)} style={selStyle(selA)}>
           {ALL_PLATFORM_IDS.map(pid => <option key={pid} value={pid}>{PLATFORM_META[pid].label}</option>)}
         </select>
-        <select value={selB} onChange={e => setSelB(e.target.value)} style={selStyle(selB)}>
+        <select aria-label="Second platform" value={selB} onChange={e => setSelB(e.target.value)} style={selStyle(selB)}>
           {ALL_PLATFORM_IDS.map(pid => <option key={pid} value={pid}>{PLATFORM_META[pid].label}</option>)}
         </select>
         {mode === 3 && (
-          <select value={selC} onChange={e => setSelC(e.target.value)} style={selStyle(selC)}>
+          <select aria-label="Third platform" value={selC} onChange={e => setSelC(e.target.value)} style={selStyle(selC)}>
             {ALL_PLATFORM_IDS.map(pid => <option key={pid} value={pid}>{PLATFORM_META[pid].label}</option>)}
           </select>
         )}
@@ -295,8 +320,8 @@ function UnassayedMatches({ hits, query, onOpen }) {
   const shown = hits.slice(0, UNASSAYED_SHOWN)
   const scope = hits.some(r => r.status !== STATUS_NONE) ? 'affinity' : 'none'
   return (
-    <div style={{ background: '#fafaf9', border: '1px solid #e5e4e2', borderLeft: '3px solid #8B1A1A', padding: '14px 18px' }}>
-      <p className="uppercase mb-2" style={{ fontSize: 10, letterSpacing: '0.08em', color: '#8B1A1A', fontWeight: 500 }}>
+    <div style={{ background: '#fafaf9', border: '1px solid #e5e4e2', borderLeft: '3px solid var(--color-brand-500)', padding: '14px 18px' }}>
+      <p className="uppercase mb-2" style={{ fontSize: 10, letterSpacing: '0.08em', color: 'var(--color-brand-500)', fontWeight: 500 }}>
         In the Unassayed Proteome list
       </p>
       <ul className="space-y-2.5">
@@ -314,9 +339,9 @@ function UnassayedMatches({ hits, query, onOpen }) {
           </li>
         ))}
       </ul>
-      <button onClick={() => onOpen?.(query.trim(), scope)} className="text-xs mt-3 hover:underline cursor-pointer" style={{ color: '#8B1A1A', fontWeight: 400 }}>
+      <button onClick={() => onOpen?.(query.trim(), scope)} className="text-xs mt-3 hover:underline cursor-pointer" style={{ color: 'var(--color-brand-500)', fontWeight: 400 }}>
         {hits.length > UNASSAYED_SHOWN
-          ? `View all ${hits.length.toLocaleString()} matches in the Unassayed Proteome tab →`
+          ? `View all ${hits.length.toLocaleString('en-US')} matches in the Unassayed Proteome tab →`
           : 'View in the Unassayed Proteome tab →'}
       </button>
     </div>
@@ -329,7 +354,7 @@ function PlatformPill({ platformId, small }) {
   return (
     <span
       className={`inline-flex items-center font-medium ${small ? 'text-[10px] px-1.5 py-0' : 'text-xs px-2 py-0.5'}`}
-      style={{ background: meta.color + '18', color: meta.color, border: `1px solid ${meta.color}30` }}
+      style={{ background: meta.color + '18', color: meta.textColor, border: `1px solid ${meta.color}30` }}
     >
       {meta.partial ? `${meta.label}*` : meta.label}
     </span>
@@ -339,14 +364,9 @@ function PlatformPill({ platformId, small }) {
 export default function ProteinBrowser({ initialPlatform, onNavigate, onOpenUnassayed }) {
   const [proteins, setProteins] = useState(null)
   const [loadError, setLoadError] = useState(false)
-  // Distinct reviewed human proteins (canonical Swiss-Prot accessions), not browsable rows:
-  // proteins are listed under several identifier formats (isoforms, MS protein groups,
-  // unreviewed accessions) and some collapse to the same canonical protein, so counting rows
-  // overcounts. Dedupe by canonical accession to match the Overview KPI's distinct definition.
-  const uniqueProteinCount = useMemo(
-    () => proteins ? new Set(proteins.flatMap(p => p.canonical || [])).size : null,
-    [proteins]
-  )
+  // Which platforms measure each distinct protein. A protein can be listed under several
+  // entries, so the coverage filters count platforms per protein rather than per entry.
+  const byProtein = useMemo(() => proteins ? platformsByProtein(proteins) : null, [proteins])
   const [selectedPlatforms, setSelectedPlatforms] = useState(
     initialPlatform ? new Set([initialPlatform]) : new Set(ALL_PLATFORM_IDS)
   )
@@ -406,17 +426,28 @@ export default function ProteinBrowser({ initialPlatform, onNavigate, onOpenUnas
     setPage(0)
   }, [])
 
-  const filtered = useMemo(() => {
-    if (!proteins) return []
+  const { filtered, distinctInView } = useMemo(() => {
+    if (!proteins) return { filtered: [], distinctInView: 0 }
     const q = search.trim().toLowerCase()
+    const distinct = new Set()
     const isBlankGene = g => !g || g === '0' || g === '-'
-    return proteins
+    const rows = proteins
       .filter(p => {
         // Must have at least one selected platform
         if (!p.platforms.some(pid => selectedPlatforms.has(pid))) return false
-        // Coverage filter: proteins in exactly one platform, or in all six
-        if (coverageFilter === 'unique' && p.platformCount !== 1) return false
-        if (coverageFilter === 'shared' && p.platformCount !== ALL_PLATFORM_IDS.length) return false
+        // Proteins this entry contributes on the selected platforms. Coverage filter: proteins
+        // on exactly one platform, or on all six, counted across all of a protein's entries.
+        const inView = []
+        for (const pid of p.platforms) {
+          if (!selectedPlatforms.has(pid)) continue
+          for (const acc of canonFor(p, pid)) {
+            const nPlatforms = byProtein.get(acc).size
+            if (coverageFilter === 'unique' && nPlatforms !== 1) continue
+            if (coverageFilter === 'shared' && nPlatforms !== ALL_PLATFORM_IDS.length) continue
+            inView.push(acc)
+          }
+        }
+        if (coverageFilter !== 'all' && inView.length === 0) return false
         // Text search
         if (q) {
           const aliasMatch = p.aliases?.some(a => a.toLowerCase().includes(q))
@@ -427,6 +458,7 @@ export default function ProteinBrowser({ initialPlatform, onNavigate, onOpenUnas
             !aliasMatch
           ) return false
         }
+        inView.forEach(acc => distinct.add(acc))
         return true
       })
       .sort((a, b) => {
@@ -435,7 +467,8 @@ export default function ProteinBrowser({ initialPlatform, onNavigate, onOpenUnas
         if (aBlank !== bBlank) return aBlank ? 1 : -1
         return (a.gene || '').localeCompare(b.gene || '')
       })
-  }, [proteins, selectedPlatforms, search, coverageFilter])
+    return { filtered: rows, distinctInView: distinct.size }
+  }, [proteins, byProtein, selectedPlatforms, search, coverageFilter])
 
   const downloadCurrentView = useCallback(() => {
     downloadProteinsCSV(filtered, 'apt_protein_coverage.csv')
@@ -505,7 +538,8 @@ export default function ProteinBrowser({ initialPlatform, onNavigate, onOpenUnas
       <div>
         <h2 className="text-xl" style={{ color: '#141310', fontWeight: 500 }}>Protein Coverage Browser</h2>
         <p className="text-sm mt-1" style={{ color: '#52504a', fontWeight: 400 }}>
-          {uniqueProteinCount != null ? `${uniqueProteinCount.toLocaleString()} unique proteins` : (loadError ? 'Protein data unavailable' : 'Loading protein data…')} across 6 platforms, matched by UniProt ID.
+          {coverage.proteins.toLocaleString('en-US')} distinct human proteins across 6 platforms, counted by UniProtKB/Swiss-Prot entry and listed under {coverage.entries.toLocaleString('en-US')} catalogue entries.
+          One protein can have several entries (isoforms, mass spectrometry protein groups, unreviewed accessions), and {coverage.unmappedEntries} entries match no Swiss-Prot human protein.
           Filter by platform to see coverage and overlap.
         </p>
       </div>
@@ -515,21 +549,21 @@ export default function ProteinBrowser({ initialPlatform, onNavigate, onOpenUnas
         {/* Platform toggles */}
         <div>
           <div className="flex items-center justify-between mb-2">
-            <span className="uppercase" style={{ fontSize: 10, letterSpacing: '0.08em', color: '#6f6d67', fontWeight: 400 }}>
+            <span className="uppercase" style={{ fontSize: 10, letterSpacing: '0.08em', color: 'var(--color-surface-400)', fontWeight: 400 }}>
               Filter by Platform
             </span>
             <div className="flex items-center gap-3">
               <button
                 onClick={() => setShowOverlap(v => !v)}
                 aria-expanded={showOverlap}
-                className="text-xs hover:underline"
-                style={{ color: '#8B1A1A', fontWeight: 400 }}
+                className="apt-tap text-xs hover:underline"
+                style={{ color: 'var(--color-brand-500)', fontWeight: 400 }}
               >
                 {showOverlap ? 'Hide cross-platform overlap ↑' : 'Show cross-platform overlap →'}
               </button>
               <button
                 onClick={selectAll}
-                className="text-xs hover:underline"
+                className="apt-tap text-xs hover:underline"
                 style={{ color: '#C44D18', fontWeight: 400 }}
               >
                 Show all
@@ -547,7 +581,7 @@ export default function ProteinBrowser({ initialPlatform, onNavigate, onOpenUnas
                   className="flex items-center gap-1.5 text-xs px-3 py-1.5 transition-all border cursor-pointer"
                   style={{
                     background: active ? meta.color + '15' : '#fafaf9',
-                    color: active ? meta.color : '#6f6d67',
+                    color: active ? meta.textColor : 'var(--color-surface-400)',
                     borderColor: active ? meta.color + '40' : '#e5e4e2',
                     fontWeight: 400,
                   }}
@@ -569,7 +603,7 @@ export default function ProteinBrowser({ initialPlatform, onNavigate, onOpenUnas
           <div className="relative flex-1 min-w-[220px]">
             <svg className="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none"
               width="19" height="19" viewBox="0 0 24 24" fill="none"
-              stroke="#6f6d67" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              stroke="var(--color-surface-400)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
             </svg>
             <input
@@ -581,12 +615,12 @@ export default function ProteinBrowser({ initialPlatform, onNavigate, onOpenUnas
               onBlur={() => setTimeout(() => setShowSuggestions(false), 150)}
               onFocus={() => { requestUnassayed(); if (suggestions.length > 0) setShowSuggestions(true) }}
               className="w-full pl-12 pr-4 py-4 focus:outline-none focus:ring-2 focus:border-transparent transition"
-              style={{ fontSize: 16.5, color: '#141310', background: '#ffffff', border: '1px solid #d0cfcc', fontWeight: 400, '--tw-ring-color': '#8B1A1A' }}
+              style={{ fontSize: 16.5, color: '#141310', background: '#ffffff', border: '1px solid #d0cfcc', fontWeight: 400, '--tw-ring-color': 'var(--color-brand-500)' }}
             />
             {/* Autocomplete dropdown */}
             {showSuggestions && (
               <div className="absolute z-20 w-full mt-0.5 bg-white border overflow-hidden"
-                style={{ border: '1px solid #d0cfcc', borderTop: '2px solid #8B1A1A', boxShadow: '0 4px 12px rgba(0,0,0,0.08)' }}>
+                style={{ border: '1px solid #d0cfcc', borderTop: '2px solid var(--color-brand-500)', boxShadow: '0 4px 12px rgba(0,0,0,0.08)' }}>
                 {suggestions.map((s, i) => (
                   <button
                     key={i}
@@ -595,15 +629,15 @@ export default function ProteinBrowser({ initialPlatform, onNavigate, onOpenUnas
                     style={{ borderBottom: i < suggestions.length - 1 ? '1px solid #f3f2f0' : 'none' }}
                   >
                     <span style={{ fontSize: 13, fontWeight: 400, color: '#141310' }}>{s.label}</span>
-                    <span style={{ fontSize: 11, fontWeight: 400, color: '#6f6d67' }} className="truncate max-w-[55%] text-right ml-3">{s.type === 'unassayed' ? `No platform · ${s.sub}` : s.sub}</span>
+                    <span style={{ fontSize: 11, fontWeight: 400, color: 'var(--color-surface-400)' }} className="truncate max-w-[55%] text-right ml-3">{s.type === 'unassayed' ? `No platform · ${s.sub}` : s.sub}</span>
                   </button>
                 ))}
               </div>
             )}
           </div>
-          <div className="flex items-center gap-1.5 flex-shrink-0">
-            <span className="uppercase" style={{ color: '#6f6d67', fontSize: 10, letterSpacing: '0.06em', fontWeight: 500 }}>Coverage</span>
-            <div className="inline-flex" role="radiogroup" aria-label="Coverage filter">
+          <div className="flex flex-wrap items-center gap-1.5 sm:flex-shrink-0">
+            <span className="uppercase" style={{ color: 'var(--color-surface-400)', fontSize: 10, letterSpacing: '0.06em', fontWeight: 500 }}>Coverage</span>
+            <RadioGroup className="flex flex-wrap" label="Coverage filter">
               {[
                 { id: 'all',    label: 'All proteins' },
                 { id: 'unique', label: 'Unique to one platform' },
@@ -616,11 +650,11 @@ export default function ProteinBrowser({ initialPlatform, onNavigate, onOpenUnas
                     role="radio"
                     aria-checked={active}
                     onClick={() => { setCoverageFilter(opt.id); setPage(0) }}
-                    className="text-xs px-2.5 py-1 border transition-colors cursor-pointer"
+                    className="text-xs px-2.5 py-1.5 border transition-colors cursor-pointer"
                     style={{
-                      background: active ? '#8B1A1A' : '#ffffff',
+                      background: active ? 'var(--color-brand-500)' : '#ffffff',
                       color: active ? '#fff' : '#52504a',
-                      borderColor: active ? '#8B1A1A' : '#e5e4e2',
+                      borderColor: active ? 'var(--color-brand-500)' : '#e5e4e2',
                       marginLeft: i === 0 ? 0 : -1,
                       fontWeight: 400,
                     }}
@@ -629,7 +663,7 @@ export default function ProteinBrowser({ initialPlatform, onNavigate, onOpenUnas
                   </button>
                 )
               })}
-            </div>
+            </RadioGroup>
           </div>
         </div>
       </div>
@@ -639,13 +673,13 @@ export default function ProteinBrowser({ initialPlatform, onNavigate, onOpenUnas
         <div style={{ background: '#ffffff', border: '1px solid #e5e4e2', borderTop: '2px solid #141310', padding: '20px' }}>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             <div>
-              <h3 className="uppercase mb-4" style={{ fontSize: 10, letterSpacing: '0.08em', color: '#6f6d67', fontWeight: 400 }}>
+              <h3 className="uppercase mb-4" style={{ fontSize: 10, letterSpacing: '0.08em', color: 'var(--color-surface-400)', fontWeight: 400 }}>
                 All-Platform Overlap Matrix
               </h3>
               <OverlapHeatmap proteins={proteins} />
             </div>
             <div>
-              <h3 className="uppercase mb-4" style={{ fontSize: 10, letterSpacing: '0.08em', color: '#6f6d67', fontWeight: 400 }}>
+              <h3 className="uppercase mb-4" style={{ fontSize: 10, letterSpacing: '0.08em', color: 'var(--color-surface-400)', fontWeight: 400 }}>
                 Venn Diagram
               </h3>
               <VennSection proteins={proteins} />
@@ -657,8 +691,8 @@ export default function ProteinBrowser({ initialPlatform, onNavigate, onOpenUnas
       {/* Results summary */}
       {!proteins ? (
         loadError ? (
-          <div className="py-12 text-center" style={{ color: '#6f6d67' }}>
-            <p className="text-sm mb-2" style={{ fontWeight: 400, color: '#8B1A1A' }}>
+          <div className="py-12 text-center" style={{ color: 'var(--color-surface-400)' }}>
+            <p className="text-sm mb-2" style={{ fontWeight: 400, color: 'var(--color-brand-500)' }}>
               Couldn't load the protein dataset.
             </p>
             <p className="text-xs mb-4" style={{ fontWeight: 400 }}>
@@ -667,17 +701,17 @@ export default function ProteinBrowser({ initialPlatform, onNavigate, onOpenUnas
             <button
               onClick={loadProteins}
               className="text-xs px-4 py-2 border transition-colors"
-              style={{ color: '#8B1A1A', borderColor: '#8B1A1A', background: 'transparent', fontWeight: 400 }}
-              onMouseEnter={e => { e.currentTarget.style.background = '#8B1A1A'; e.currentTarget.style.color = '#fff' }}
-              onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#8B1A1A' }}
+              style={{ color: 'var(--color-brand-500)', borderColor: 'var(--color-brand-500)', background: 'transparent', fontWeight: 400 }}
+              onMouseEnter={e => { e.currentTarget.style.background = 'var(--color-brand-500)'; e.currentTarget.style.color = '#fff' }}
+              onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'var(--color-brand-500)' }}
             >
               Retry
             </button>
           </div>
         ) : (
-          <div className="py-12 text-center" style={{ color: '#6f6d67' }}>
+          <div className="py-12 text-center" style={{ color: 'var(--color-surface-400)' }}>
             <div className="inline-block w-6 h-6 rounded-full border-2 border-t-transparent animate-spin mb-2"
-              style={{ borderColor: '#8B1A1A', borderTopColor: 'transparent' }} />
+              style={{ borderColor: 'var(--color-brand-500)', borderTopColor: 'transparent' }} />
             <p className="text-sm" style={{ fontWeight: 400 }}>Loading protein data…</p>
           </div>
         )
@@ -685,15 +719,19 @@ export default function ProteinBrowser({ initialPlatform, onNavigate, onOpenUnas
       <div className="flex items-center justify-between gap-4">
         <p className="text-sm" style={{ color: '#52504a', fontWeight: 400 }}>
           <span style={{ color: '#141310', fontWeight: 500 }}>
-            {filtered.length.toLocaleString()}
+            {filtered.length.toLocaleString('en-US')}
           </span>{' '}
-          protein{filtered.length !== 1 ? 's' : ''} matched
+          catalogue {filtered.length !== 1 ? 'entries' : 'entry'} ·{' '}
+          <span style={{ color: '#141310', fontWeight: 500 }}>
+            {distinctInView.toLocaleString('en-US')}
+          </span>{' '}
+          distinct protein{distinctInView !== 1 ? 's' : ''}
           {coverageFilter === 'unique' && ' · unique to one platform'}
-          {coverageFilter === 'shared' && ' · measured by all six'}
+          {coverageFilter === 'shared' && ' · measured by all six. A protein can have several entries, so a row may show only some of the six.'}
         </p>
         <div className="flex items-center gap-3 flex-shrink-0">
           {pageCount > 1 && (
-            <p className="text-xs" style={{ color: '#6f6d67' }}>
+            <p className="text-xs" style={{ color: 'var(--color-surface-400)' }}>
               Page {page + 1} of {pageCount}
             </p>
           )}
@@ -701,10 +739,10 @@ export default function ProteinBrowser({ initialPlatform, onNavigate, onOpenUnas
             onClick={downloadCurrentView}
             disabled={filtered.length === 0}
             className="flex items-center gap-1.5 text-xs px-3 py-1.5 border transition-all cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
-            style={{ background: '#fafaf9', borderColor: '#8B1A1A40', color: '#8B1A1A', fontWeight: 400 }}
+            style={{ background: '#fafaf9', borderColor: 'color-mix(in srgb, var(--color-brand-500) 25%, transparent)', color: 'var(--color-brand-500)', fontWeight: 400 }}
             title="Download the current filtered list as CSV"
           >
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#8B1A1A" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--color-brand-500)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
               <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
             </svg>
             Download CSV
@@ -720,23 +758,24 @@ export default function ProteinBrowser({ initialPlatform, onNavigate, onOpenUnas
       {/* Table */}
       {proteins && <div style={{ background: '#ffffff', border: '1px solid #e5e4e2', borderTop: '2px solid #141310', overflow: 'hidden' }}>
         {filtered.length === 0 ? (
-          <div className="py-16 text-center" style={{ color: '#6f6d67' }}>
+          <div className="py-16 text-center" style={{ color: 'var(--color-surface-400)' }}>
             No proteins match your filters.
           </div>
         ) : (
           <>
             <div className="overflow-x-auto">
-              <table className="w-full text-sm">
+              {/* Wide enough on phones that platform pills sit on one or two lines; the gene stays in view. */}
+              <table className="w-full min-w-[680px] text-sm">
                 <thead>
                   <tr style={{ background: '#fafaf9', borderBottom: '1px solid #e5e4e2' }}>
-                    <th className="text-left px-4 py-3 uppercase w-24"
-                      style={{ fontSize: 10, letterSpacing: '0.08em', color: '#6f6d67', fontWeight: 400 }}>Gene</th>
+                    <th className="text-left px-3 sm:px-4 py-3 uppercase w-24 sticky left-0 z-10"
+                      style={{ fontSize: 10, letterSpacing: '0.08em', color: 'var(--color-surface-400)', fontWeight: 400, background: '#fafaf9' }}>Gene</th>
                     <th className="text-left px-4 py-3 uppercase"
-                      style={{ fontSize: 10, letterSpacing: '0.08em', color: '#6f6d67', fontWeight: 400 }}>Protein Name</th>
+                      style={{ fontSize: 10, letterSpacing: '0.08em', color: 'var(--color-surface-400)', fontWeight: 400 }}>Protein Name</th>
                     <th className="text-left px-4 py-3 uppercase w-28"
-                      style={{ fontSize: 10, letterSpacing: '0.08em', color: '#6f6d67', fontWeight: 400 }}>UniProt</th>
+                      style={{ fontSize: 10, letterSpacing: '0.08em', color: 'var(--color-surface-400)', fontWeight: 400 }}>UniProt</th>
                     <th className="text-left px-4 py-3 uppercase"
-                      style={{ fontSize: 10, letterSpacing: '0.08em', color: '#6f6d67', fontWeight: 400 }}>Platforms</th>
+                      style={{ fontSize: 10, letterSpacing: '0.08em', color: 'var(--color-surface-400)', fontWeight: 400 }}>Platforms</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -749,10 +788,10 @@ export default function ProteinBrowser({ initialPlatform, onNavigate, onOpenUnas
                         className="transition-colors"
                         onMouseEnter={e => e.currentTarget.style.background = '#fafaf9'}
                         onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
-                        <td className="px-4 py-2.5 font-mono text-xs" style={{ color: '#141310', fontWeight: 400 }}>
+                        <td className="px-3 sm:px-4 py-1.5 sm:py-2.5 font-mono text-xs sticky left-0" style={{ color: '#141310', fontWeight: 400, background: '#ffffff' }}>
                           {p.gene || '-'}
                         </td>
-                        <td className="px-4 py-2.5" style={{ color: '#52504a', fontWeight: 400 }}>
+                        <td className="px-3 sm:px-4 py-1.5 sm:py-2.5" style={{ color: '#52504a', fontWeight: 400 }}>
                           <div className="flex items-center gap-2">
                             <span className="leading-snug">{p.name || p.gene || '-'}</span>
                             {p.alamarPanels && (
@@ -763,7 +802,7 @@ export default function ProteinBrowser({ initialPlatform, onNavigate, onOpenUnas
                             )}
                           </div>
                         </td>
-                        <td className="px-4 py-2.5">
+                        <td className="px-3 sm:px-4 py-1.5 sm:py-2.5">
                           <a
                             href={`https://www.uniprot.org/uniprotkb/${p.uniprot.split('-')[0]}`}
                             target="_blank"
@@ -774,14 +813,14 @@ export default function ProteinBrowser({ initialPlatform, onNavigate, onOpenUnas
                             {p.uniprot}
                           </a>
                         </td>
-                        <td className="px-4 py-2.5">
+                        <td className="px-3 sm:px-4 py-1.5 sm:py-2.5">
                           <div className="flex flex-wrap gap-1 items-center">
                             {platformsToShow.map(pid => (
                               <PlatformPill key={pid} platformId={pid} small />
                             ))}
                             {isShared && p.platformCount > platformsToShow.length && (
                               <span className="text-[10px] px-1.5 font-medium"
-                                style={{ background: '#f3f2f0', color: '#6f6d67' }}>
+                                style={{ background: '#f3f2f0', color: 'var(--color-surface-400)' }}>
                                 +{p.platformCount - platformsToShow.length} more
                               </span>
                             )}
@@ -817,8 +856,8 @@ export default function ProteinBrowser({ initialPlatform, onNavigate, onOpenUnas
                         onClick={() => setPage(idx)}
                         className="w-8 h-8 text-xs border transition cursor-pointer"
                         style={{
-                          borderColor: isActive ? '#8B1A1A' : '#e5e4e2',
-                          background: isActive ? '#8B1A1A' : 'transparent',
+                          borderColor: isActive ? 'var(--color-brand-500)' : '#e5e4e2',
+                          background: isActive ? 'var(--color-brand-500)' : 'transparent',
                           color: isActive ? 'white' : '#52504a',
                           fontWeight: 400,
                         }}
@@ -852,9 +891,9 @@ export default function ProteinBrowser({ initialPlatform, onNavigate, onOpenUnas
       {hasPartialSelected && !partialDismissed && (
         <div className="px-4 py-3 text-sm flex items-start gap-2"
           style={{ background: 'rgba(217,119,6,0.07)', border: '1px solid rgba(217,119,6,0.2)' }}>
-          <span style={{ color: '#d97706' }}>⚠</span>
+          <span style={{ color: 'var(--color-amber-text)' }}>⚠</span>
           <p style={{ color: '#92400e', fontWeight: 400 }} className="flex-1">
-            <strong style={{ fontWeight: 500 }}>Note (Biognosys TrueDiscovery):</strong> TrueDiscovery is an MS-DIA platform without a fixed panel: detectable proteins are study- and workflow-dependent. The list shown here (3,575 proteins) is from Ahadi, Kirsher et al. 2025 (Communications Chemistry, Supplementary Data 8, MS-HAP Depletion arm), a published, matched-cohort head-to-head comparison. It reflects Biognosys's standard depletion workflow and is a conservative lower bound relative to the ~7,000 protein groups Biognosys reports using its higher-depth P2 enrichment workflow; it is not exhaustive.
+            <strong style={{ fontWeight: 500 }}>Note (Biognosys TrueDiscovery):</strong> TrueDiscovery is an MS-DIA platform without a fixed panel: detectable proteins are study- and workflow-dependent. The list shown here (3,575 proteins) is from Kirsher et al. 2025 (Communications Chemistry, Supplementary Data 8, MS-HAP Depletion arm), a published, matched-cohort head-to-head comparison. It reflects Biognosys's standard depletion workflow and is a conservative lower bound relative to the ~7,000 protein groups Biognosys reports using its higher-depth P2 enrichment workflow; it is not exhaustive.
           </p>
           <button
             onClick={() => setPartialDismissed(true)}
@@ -870,7 +909,7 @@ export default function ProteinBrowser({ initialPlatform, onNavigate, onOpenUnas
       {hasSeerSelected && !seerDismissed && (
         <div className="px-4 py-3 text-sm flex items-start gap-2"
           style={{ background: 'rgba(220,38,38,0.04)', border: '1px solid rgba(220,38,38,0.15)' }}>
-          <span style={{ color: '#DC2626', fontSize: 13 }}>ℹ</span>
+          <span style={{ color: '#b91c1c', fontSize: 13 }}>ℹ</span>
           <p style={{ color: '#7f1d1d', fontWeight: 400 }} className="flex-1">
             <strong style={{ fontWeight: 500 }}>Seer Proteograph XT:</strong> Protein list received directly from Seer (April 2026), reflecting 10,698 protein groups identified at least twice across two independent plasma studies. As with all MS-DIA platforms, detectable proteins remain partially study-dependent.
           </p>
@@ -885,8 +924,8 @@ export default function ProteinBrowser({ initialPlatform, onNavigate, onOpenUnas
       )}
 
       {/* Footer note */}
-      <p className="text-xs text-center" style={{ color: '#6f6d67' }}>
-        * Biognosys TrueDiscovery protein list is from Ahadi, Kirsher et al. 2025 (Communications Chemistry, Supplementary Data 8, MS-HAP Depletion arm) and is study-dependent: a conservative lower bound relative to the ~7,000-protein P2 enrichment figure Biognosys reports for its higher-depth workflow.
+      <p className="text-xs text-center" style={{ color: 'var(--color-surface-400)' }}>
+        * Biognosys TrueDiscovery protein list is from Kirsher et al. 2025 (Communications Chemistry, Supplementary Data 8, MS-HAP Depletion arm) and is study-dependent: a conservative lower bound relative to the ~7,000-protein P2 enrichment figure Biognosys reports for its higher-depth workflow.
         Seer Proteograph XT list received directly from Seer (April 2026; 10,698 protein groups, ≥2 identifications across two independent studies).
         All other platforms represent full published panel contents.
       </p>

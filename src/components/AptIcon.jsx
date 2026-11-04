@@ -76,7 +76,7 @@ export default function AptIcon({ size = 40 }) {
 // it renders a static monochrome 2x2 mark instead of animating (see index.css).
 const CYCLE_ICONS = [Antibody, Aptamer, Peptide, Nanoparticle]
 
-export function AnimatedAptIcon({ size = 68, color = '#8B1A1A', duration = 7.5 }) {
+export function AnimatedAptIcon({ size = 68, color = 'var(--color-brand-500)', duration = 7.5 }) {
   return (
     <div className="apt-cycler-wrap" aria-hidden="true"
       style={{ width: size, height: size, position: 'relative', flexShrink: 0 }}>

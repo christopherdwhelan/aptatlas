@@ -29,9 +29,9 @@ export default function CardView({ platforms }) {
               onClick={() => setTechFilter(opt.id)}
               className="text-xs font-medium px-3 py-1.5 rounded-full border transition-all"
               style={{
-                background: active ? '#8B1A1A' : '#fff',
+                background: active ? 'var(--color-brand-500)' : '#fff',
                 color: active ? '#fff' : '#6b7280',
-                borderColor: active ? '#8B1A1A' : '#e2e8f0',
+                borderColor: active ? 'var(--color-brand-500)' : '#e2e8f0',
               }}
             >
               {opt.label}
@@ -39,7 +39,7 @@ export default function CardView({ platforms }) {
                 className="ml-1.5 px-1.5 py-0.5 rounded-full text-xs"
                 style={{
                   background: active ? 'rgba(255,255,255,0.25)' : '#f1f5f9',
-                  color: active ? '#fff' : '#9aaabf',
+                  color: active ? '#fff' : 'var(--color-surface-400)',
                 }}
               >
                 {opt.id === 'all' ? platforms.length : platforms.filter(p => p.platformType === opt.id).length}
@@ -61,8 +61,8 @@ export default function CardView({ platforms }) {
       </div>
 
       {/* Proteins Measured footnote */}
-      <p className="mt-4" style={{ fontSize: 10, color: '#a3a19d', fontWeight: 400, lineHeight: 1.45 }}>
-        <span style={{ color: '#8B1A1A' }}>†</span> Counts differ in kind by technology: Olink reports assays; SomaScan reports unique protein targets; Seer and Biognosys report MS protein groups; NULISA reports panel targets. Cross-platform comparisons in this atlas map all content to UniProt identifiers; see Methods.
+      <p className="mt-4" style={{ fontSize: 10, color: 'var(--color-label)', fontWeight: 400, lineHeight: 1.45 }}>
+        <span style={{ color: 'var(--color-brand-500)' }}>†</span> Counts differ in kind by technology: Olink reports assays; SomaScan reports unique protein targets; Seer and Biognosys report MS protein groups; NULISA reports panel targets. Cross-platform comparisons in this atlas map all content to UniProt identifiers; see Methods.
       </p>
 
       {/* Detail panel (portaled to <body>, so it overlays the viewport) */}

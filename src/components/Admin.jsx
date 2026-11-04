@@ -39,10 +39,10 @@ function Bar({ label, count, max }) {
     <div className="mb-2.5 last:mb-0">
       <div className="flex items-baseline justify-between mb-1">
         <span className="text-xs" style={{ color: '#141310', fontWeight: 400 }}>{label}</span>
-        <span className="text-xs tabular-nums" style={{ color: '#6f6d67' }}>{count}</span>
+        <span className="text-xs tabular-nums" style={{ color: 'var(--color-surface-400)' }}>{count}</span>
       </div>
       <div className="h-1.5 w-full" style={{ background: '#f0eee9' }}>
-        <div className="h-full" style={{ width: `${pct}%`, background: '#8B1A1A' }} />
+        <div className="h-full" style={{ width: `${pct}%`, background: 'var(--color-brand-500)' }} />
       </div>
     </div>
   )
@@ -58,22 +58,22 @@ function PlatformBreakdownPanel({ rows }) {
   const max = withTotal.length ? Math.max(...withTotal.map(r => r.total)) : 0
   return (
     <div className="bg-white px-4 py-4" style={{ border: '1px solid #e5e4e2' }}>
-      <h2 className="text-xs uppercase mb-1" style={{ color: '#6f6d67', fontWeight: 600, letterSpacing: '0.06em' }}>By recommended platform</h2>
-      <p className="text-[10px] mb-3 leading-snug" style={{ color: '#a3a19d', fontWeight: 400 }}>
+      <h2 className="text-xs uppercase mb-1" style={{ color: 'var(--color-surface-400)', fontWeight: 600, letterSpacing: '0.06em' }}>By recommended platform</h2>
+      <p className="text-[10px] mb-3 leading-snug" style={{ color: 'var(--color-label)', fontWeight: 400 }}>
         What each visitor was shown: sole recommendation vs. one of several statistically tied. Co-recommended counts every appearance in a tie, so totals exceed the number of visits.
       </p>
       {withTotal.length === 0
-        ? <p className="text-xs" style={{ color: '#6f6d67' }}>No data yet.</p>
+        ? <p className="text-xs" style={{ color: 'var(--color-surface-400)' }}>No data yet.</p>
         : withTotal.map(row => (
             <div key={row.platform || 'unknown'} className="mb-2.5 last:mb-0">
               <div className="flex items-baseline justify-between mb-1 gap-2">
                 <span className="text-xs truncate" style={{ color: '#141310', fontWeight: 400 }}>{row.platform || 'Unknown'}</span>
-                <span className="text-xs tabular-nums flex-shrink-0" style={{ color: '#6f6d67' }}>
-                  {row.total} shown <span style={{ color: '#a3a19d' }}>({row.outright} outright, {row.co} co-rec)</span>
+                <span className="text-xs tabular-nums flex-shrink-0" style={{ color: 'var(--color-surface-400)' }}>
+                  {row.total} shown <span style={{ color: 'var(--color-label)' }}>({row.outright} outright, {row.co} co-rec)</span>
                 </span>
               </div>
               <div className="h-1.5 w-full flex" style={{ background: '#f0eee9' }}>
-                <div className="h-full" style={{ width: `${max ? (row.outright / max) * 100 : 0}%`, background: '#8B1A1A' }} />
+                <div className="h-full" style={{ width: `${max ? (row.outright / max) * 100 : 0}%`, background: 'var(--color-brand-500)' }} />
                 <div className="h-full" style={{ width: `${max ? (row.co / max) * 100 : 0}%`, background: '#cf9a96' }} />
               </div>
             </div>
@@ -87,9 +87,9 @@ function BreakdownPanel({ title, rows, rowKey, format }) {
   const fmt = format || (v => prettify(v) || 'Unknown')
   return (
     <div className="bg-white px-4 py-4" style={{ border: '1px solid #e5e4e2' }}>
-      <h2 className="text-xs uppercase mb-3" style={{ color: '#6f6d67', fontWeight: 600, letterSpacing: '0.06em' }}>{title}</h2>
+      <h2 className="text-xs uppercase mb-3" style={{ color: 'var(--color-surface-400)', fontWeight: 600, letterSpacing: '0.06em' }}>{title}</h2>
       {rows.length === 0
-        ? <p className="text-xs" style={{ color: '#6f6d67' }}>No data yet.</p>
+        ? <p className="text-xs" style={{ color: 'var(--color-surface-400)' }}>No data yet.</p>
         : rows.map(row => (
             <Bar key={row[rowKey] || 'unknown'} label={fmt(row[rowKey])} count={row.count} max={max} />
           ))}
@@ -107,7 +107,7 @@ function LoginForm({ onSubmit, error, loading }) {
         style={{ border: '1px solid #c8c0b8', borderTop: '2px solid #141310' }}
       >
         <h1 className="text-sm mb-1" style={{ color: '#141310', fontWeight: 600 }}>APT admin</h1>
-        <p className="text-xs mb-4" style={{ color: '#6f6d67' }}>Recommendation logs for Help Me Choose and Help Me Combine.</p>
+        <p className="text-xs mb-4" style={{ color: 'var(--color-surface-400)' }}>Recommendation logs for Help Me Choose and Help Me Combine.</p>
         <input
           type="password"
           autoFocus
@@ -117,12 +117,12 @@ function LoginForm({ onSubmit, error, loading }) {
           className="w-full px-3 py-2 text-sm mb-3 outline-none"
           style={{ border: '1px solid #c8c0b8', color: '#141310' }}
         />
-        {error && <p className="text-xs mb-3" style={{ color: '#8B1A1A' }}>{error}</p>}
+        {error && <p className="text-xs mb-3" style={{ color: 'var(--color-brand-500)' }}>{error}</p>}
         <button
           type="submit"
           disabled={loading || !password}
           className="w-full px-4 py-2.5 text-sm"
-          style={{ background: '#8B1A1A', color: '#fff', fontWeight: 400, opacity: loading || !password ? 0.6 : 1 }}
+          style={{ background: 'var(--color-brand-500)', color: '#fff', fontWeight: 400, opacity: loading || !password ? 0.6 : 1 }}
         >
           {loading ? 'Checking...' : 'Log in'}
         </button>
@@ -158,7 +158,7 @@ function SectionHeader({ title, exportHref, onClearAll, clearing, total }) {
           onClick={onClearAll}
           disabled={clearing || !total}
           className="px-3 py-1.5 text-xs"
-          style={{ border: '1px solid #8B1A1A', color: '#8B1A1A', background: '#fff', opacity: clearing || !total ? 0.5 : 1 }}
+          style={{ border: '1px solid var(--color-brand-500)', color: 'var(--color-brand-500)', background: '#fff', opacity: clearing || !total ? 0.5 : 1 }}
         >
           {clearing ? 'Clearing...' : 'Clear all'}
         </button>
@@ -179,29 +179,29 @@ function DetailRow({ row, colSpan = 7, onDelete, deleting }) {
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div className="flex flex-wrap gap-x-6 gap-y-2">
             <div>
-              <p className="text-xs mb-1" style={{ color: '#6f6d67', fontWeight: 500 }}>Priority weights</p>
+              <p className="text-xs mb-1" style={{ color: 'var(--color-surface-400)', fontWeight: 500 }}>Priority weights</p>
               <div className="flex flex-wrap gap-1.5">
                 {Object.entries(weights).map(([k, v]) => (
                   <span key={k} className="px-1.5 py-0.5 text-xs" style={{ border: '1px solid #e5e4e2', color: '#141310' }}>
                     {WEIGHT_LABELS[k] || k}: {v}/5
                   </span>
                 ))}
-                {Object.keys(weights).length === 0 && <span className="text-xs" style={{ color: '#6f6d67' }}>None recorded</span>}
+                {Object.keys(weights).length === 0 && <span className="text-xs" style={{ color: 'var(--color-surface-400)' }}>None recorded</span>}
               </div>
             </div>
             <div>
-              <p className="text-xs mb-1" style={{ color: '#6f6d67', fontWeight: 500 }}>Toggles</p>
+              <p className="text-xs mb-1" style={{ color: 'var(--color-surface-400)', fontWeight: 500 }}>Toggles</p>
               <div className="flex flex-wrap gap-1.5">
                 {Object.entries(toggles).filter(([, v]) => v != null).map(([k, v]) => (
                   <span key={k} className="px-1.5 py-0.5 text-xs" style={{ border: '1px solid #e5e4e2', color: '#141310' }}>
                     {TOGGLE_LABELS[k] || k}: {String(v)}
                   </span>
                 ))}
-                {Object.values(toggles).every(v => v == null) && <span className="text-xs" style={{ color: '#6f6d67' }}>None selected</span>}
+                {Object.values(toggles).every(v => v == null) && <span className="text-xs" style={{ color: 'var(--color-surface-400)' }}>None selected</span>}
               </div>
             </div>
             <div>
-              <p className="text-xs mb-1" style={{ color: '#6f6d67', fontWeight: 500 }}>Targets and version</p>
+              <p className="text-xs mb-1" style={{ color: 'var(--color-surface-400)', fontWeight: 500 }}>Targets and version</p>
               <div className="flex flex-wrap gap-1.5">
                 {(row.protein_targets && row.protein_targets.length > 0) && (
                   <span className="px-1.5 py-0.5 text-xs" style={{ border: '1px solid #e5e4e2', color: '#141310' }}>Proteins: {row.protein_targets.join(', ')}</span>
@@ -213,7 +213,7 @@ function DetailRow({ row, colSpan = 7, onDelete, deleting }) {
                   <span className="px-1.5 py-0.5 text-xs" style={{ border: '1px solid #e5e4e2', color: '#141310' }}>Version: {row.app_version}</span>
                 )}
                 {!(row.protein_targets && row.protein_targets.length) && !row.pathway_id && !row.app_version && (
-                  <span className="text-xs" style={{ color: '#6f6d67' }}>None recorded</span>
+                  <span className="text-xs" style={{ color: 'var(--color-surface-400)' }}>None recorded</span>
                 )}
               </div>
             </div>
@@ -222,7 +222,7 @@ function DetailRow({ row, colSpan = 7, onDelete, deleting }) {
             onClick={onDelete}
             disabled={deleting}
             className="px-2.5 py-1 text-xs flex-shrink-0"
-            style={{ border: '1px solid #8B1A1A', color: '#8B1A1A', background: '#fff', opacity: deleting ? 0.5 : 1 }}
+            style={{ border: '1px solid var(--color-brand-500)', color: 'var(--color-brand-500)', background: '#fff', opacity: deleting ? 0.5 : 1 }}
           >
             {deleting ? 'Deleting...' : 'Delete this entry'}
           </button>
@@ -245,25 +245,25 @@ function CombineDetailRow({ row, onDelete, deleting }) {
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div className="flex flex-wrap gap-x-6 gap-y-2">
             <div>
-              <p className="text-xs mb-1" style={{ color: '#6f6d67', fontWeight: 500 }}>Axis weights</p>
+              <p className="text-xs mb-1" style={{ color: 'var(--color-surface-400)', fontWeight: 500 }}>Axis weights</p>
               <div className="flex flex-wrap gap-1.5">
                 {Object.entries(weights).map(([k, v]) => (
                   <span key={k} className="px-1.5 py-0.5 text-xs" style={{ border: '1px solid #e5e4e2', color: '#141310' }}>
                     {AXIS_LABELS[k] || k}: {v}
                   </span>
                 ))}
-                {Object.keys(weights).length === 0 && <span className="text-xs" style={{ color: '#6f6d67' }}>None recorded</span>}
+                {Object.keys(weights).length === 0 && <span className="text-xs" style={{ color: 'var(--color-surface-400)' }}>None recorded</span>}
               </div>
             </div>
             <div>
-              <p className="text-xs mb-1" style={{ color: '#6f6d67', fontWeight: 500 }}>Quality dimensions</p>
+              <p className="text-xs mb-1" style={{ color: 'var(--color-surface-400)', fontWeight: 500 }}>Quality dimensions</p>
               <div className="flex flex-wrap gap-1.5">
                 {Object.entries(qWeights).filter(([, v]) => v > 0).map(([k, v]) => (
                   <span key={k} className="px-1.5 py-0.5 text-xs" style={{ border: '1px solid #e5e4e2', color: '#141310' }}>
                     {QDIM_LABELS[k] || k}: {v}
                   </span>
                 ))}
-                {Object.values(qWeights).every(v => !v) && <span className="text-xs" style={{ color: '#6f6d67' }}>None weighted</span>}
+                {Object.values(qWeights).every(v => !v) && <span className="text-xs" style={{ color: 'var(--color-surface-400)' }}>None weighted</span>}
               </div>
             </div>
           </div>
@@ -271,7 +271,7 @@ function CombineDetailRow({ row, onDelete, deleting }) {
             onClick={onDelete}
             disabled={deleting}
             className="px-2.5 py-1 text-xs flex-shrink-0"
-            style={{ border: '1px solid #8B1A1A', color: '#8B1A1A', background: '#fff', opacity: deleting ? 0.5 : 1 }}
+            style={{ border: '1px solid var(--color-brand-500)', color: 'var(--color-brand-500)', background: '#fff', opacity: deleting ? 0.5 : 1 }}
           >
             {deleting ? 'Deleting...' : 'Delete this entry'}
           </button>
@@ -449,7 +449,7 @@ export default function Admin() {
         <div className="flex items-center justify-between mb-6">
           <div>
             <h1 className="text-base" style={{ color: '#141310', fontWeight: 600 }}>APT admin</h1>
-            <p className="text-xs mt-0.5" style={{ color: '#6f6d67' }}>Private. Not linked from the public site.</p>
+            <p className="text-xs mt-0.5" style={{ color: 'var(--color-surface-400)' }}>Private. Not linked from the public site.</p>
           </div>
           <div className="flex items-center gap-2">
             <button
@@ -463,7 +463,7 @@ export default function Admin() {
             <button
               onClick={handleLogout}
               className="px-3 py-1.5 text-xs"
-              style={{ border: '1px solid #c8c0b8', color: '#6f6d67', background: '#fff' }}
+              style={{ border: '1px solid #c8c0b8', color: 'var(--color-surface-400)', background: '#fff' }}
             >
               Log out
             </button>
@@ -494,25 +494,25 @@ export default function Admin() {
         </div>
 
         <div className="bg-white mb-10" style={{ border: '1px solid #e5e4e2' }}>
-          <h2 className="text-xs uppercase px-4 pt-4 pb-3" style={{ color: '#6f6d67', fontWeight: 600, letterSpacing: '0.06em' }}>
+          <h2 className="text-xs uppercase px-4 pt-4 pb-3" style={{ color: 'var(--color-surface-400)', fontWeight: 600, letterSpacing: '0.06em' }}>
             Recent recommendations <span className="normal-case" style={{ fontWeight: 400 }}>(click a row for priorities)</span>
           </h2>
           <div className="overflow-x-auto">
             <table className="w-full text-xs" style={{ borderCollapse: 'collapse' }}>
               <thead>
                 <tr style={{ borderTop: '1px solid #e5e4e2', borderBottom: '1px solid #e5e4e2' }}>
-                  <th className="text-left px-4 py-2" style={{ color: '#6f6d67', fontWeight: 500 }}>Time</th>
-                  <th className="text-left px-4 py-2" style={{ color: '#6f6d67', fontWeight: 500 }}>Location</th>
-                  <th className="text-left px-4 py-2" style={{ color: '#6f6d67', fontWeight: 500 }}>Goal</th>
-                  <th className="text-left px-4 py-2" style={{ color: '#6f6d67', fontWeight: 500 }}>Sample</th>
-                  <th className="text-left px-4 py-2" style={{ color: '#6f6d67', fontWeight: 500 }}>Recommended</th>
-                  <th className="text-left px-4 py-2" style={{ color: '#6f6d67', fontWeight: 500 }}>Match</th>
-                  <th className="text-left px-4 py-2" style={{ color: '#6f6d67', fontWeight: 500 }}>Tie</th>
+                  <th className="text-left px-4 py-2" style={{ color: 'var(--color-surface-400)', fontWeight: 500 }}>Time</th>
+                  <th className="text-left px-4 py-2" style={{ color: 'var(--color-surface-400)', fontWeight: 500 }}>Location</th>
+                  <th className="text-left px-4 py-2" style={{ color: 'var(--color-surface-400)', fontWeight: 500 }}>Goal</th>
+                  <th className="text-left px-4 py-2" style={{ color: 'var(--color-surface-400)', fontWeight: 500 }}>Sample</th>
+                  <th className="text-left px-4 py-2" style={{ color: 'var(--color-surface-400)', fontWeight: 500 }}>Recommended</th>
+                  <th className="text-left px-4 py-2" style={{ color: 'var(--color-surface-400)', fontWeight: 500 }}>Match</th>
+                  <th className="text-left px-4 py-2" style={{ color: 'var(--color-surface-400)', fontWeight: 500 }}>Tie</th>
                 </tr>
               </thead>
               <tbody>
                 {recent.length === 0 && (
-                  <tr><td colSpan={7} className="px-4 py-6 text-center" style={{ color: '#6f6d67' }}>No recommendations logged yet.</td></tr>
+                  <tr><td colSpan={7} className="px-4 py-6 text-center" style={{ color: 'var(--color-surface-400)' }}>No recommendations logged yet.</td></tr>
                 )}
                 {recent.map((row, i) => (
                   <Fragment key={i}>
@@ -570,26 +570,26 @@ export default function Admin() {
         </div>
 
         <div className="bg-white" style={{ border: '1px solid #e5e4e2' }}>
-          <h2 className="text-xs uppercase px-4 pt-4 pb-3" style={{ color: '#6f6d67', fontWeight: 600, letterSpacing: '0.06em' }}>
+          <h2 className="text-xs uppercase px-4 pt-4 pb-3" style={{ color: 'var(--color-surface-400)', fontWeight: 600, letterSpacing: '0.06em' }}>
             Recent recommendations <span className="normal-case" style={{ fontWeight: 400 }}>(click a row for weights)</span>
           </h2>
           <div className="overflow-x-auto">
             <table className="w-full text-xs" style={{ borderCollapse: 'collapse' }}>
               <thead>
                 <tr style={{ borderTop: '1px solid #e5e4e2', borderBottom: '1px solid #e5e4e2' }}>
-                  <th className="text-left px-4 py-2" style={{ color: '#6f6d67', fontWeight: 500 }}>Time</th>
-                  <th className="text-left px-4 py-2" style={{ color: '#6f6d67', fontWeight: 500 }}>Location</th>
-                  <th className="text-left px-4 py-2" style={{ color: '#6f6d67', fontWeight: 500 }}>Starting point</th>
-                  <th className="text-left px-4 py-2" style={{ color: '#6f6d67', fontWeight: 500 }}>Denominator</th>
-                  <th className="text-left px-4 py-2" style={{ color: '#6f6d67', fontWeight: 500 }}>Recommended pair</th>
-                  <th className="text-left px-4 py-2" style={{ color: '#6f6d67', fontWeight: 500 }}>Tier</th>
-                  <th className="text-left px-4 py-2" style={{ color: '#6f6d67', fontWeight: 500 }}>Match</th>
-                  <th className="text-left px-4 py-2" style={{ color: '#6f6d67', fontWeight: 500 }}>Co-leading</th>
+                  <th className="text-left px-4 py-2" style={{ color: 'var(--color-surface-400)', fontWeight: 500 }}>Time</th>
+                  <th className="text-left px-4 py-2" style={{ color: 'var(--color-surface-400)', fontWeight: 500 }}>Location</th>
+                  <th className="text-left px-4 py-2" style={{ color: 'var(--color-surface-400)', fontWeight: 500 }}>Starting point</th>
+                  <th className="text-left px-4 py-2" style={{ color: 'var(--color-surface-400)', fontWeight: 500 }}>Denominator</th>
+                  <th className="text-left px-4 py-2" style={{ color: 'var(--color-surface-400)', fontWeight: 500 }}>Recommended pair</th>
+                  <th className="text-left px-4 py-2" style={{ color: 'var(--color-surface-400)', fontWeight: 500 }}>Tier</th>
+                  <th className="text-left px-4 py-2" style={{ color: 'var(--color-surface-400)', fontWeight: 500 }}>Match</th>
+                  <th className="text-left px-4 py-2" style={{ color: 'var(--color-surface-400)', fontWeight: 500 }}>Co-leading</th>
                 </tr>
               </thead>
               <tbody>
                 {combineRecent.length === 0 && (
-                  <tr><td colSpan={8} className="px-4 py-6 text-center" style={{ color: '#6f6d67' }}>No recommendations logged yet.</td></tr>
+                  <tr><td colSpan={8} className="px-4 py-6 text-center" style={{ color: 'var(--color-surface-400)' }}>No recommendations logged yet.</td></tr>
                 )}
                 {combineRecent.map((row, i) => (
                   <Fragment key={i}>

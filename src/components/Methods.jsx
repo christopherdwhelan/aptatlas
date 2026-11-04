@@ -1,7 +1,9 @@
 import { useState } from 'react'
 import SectionLayout from './SectionLayout'
+import RouteLink from './RouteLink'
 import scoring from '../data/scoring.json'
 import { LOW_EVIDENCE_THRESHOLD } from '../data/confidence'
+import { independentHeadToHeadCount } from '../data/siteStats'
 
 function ContactButton({ email }) {
   const [copied, setCopied] = useState(false)
@@ -17,7 +19,7 @@ function ContactButton({ email }) {
     <button
       onClick={handleClick}
       className="inline-flex items-center gap-2 px-5 py-2.5 text-sm transition-all hover:opacity-90"
-      style={{ background: '#8B1A1A', color: '#fff', fontWeight: 400 }}
+      style={{ background: 'var(--color-brand-500)', color: '#fff', fontWeight: 400 }}
     >
       {copied ? '✓ Copied to clipboard' : email}
     </button>
@@ -31,7 +33,7 @@ const DIMENSION_DETAIL = {
   },
   precision: {
     basis: 'evidence',
-    note: 'Based on median CV reported in Kirsher/Ahadi et al. (2025) Alkahest benchmarking study, the most comprehensive head-to-head precision comparison to date.',
+    note: 'Based on median CV reported in Kirsher et al. (2025) Alkahest benchmarking study, a direct comparison of eight platforms on plasma from the same donors.',
   },
   specificity: {
     basis: 'evidence',
@@ -39,7 +41,7 @@ const DIMENSION_DETAIL = {
   },
   sensitivity: {
     basis: 'mixed',
-    note: 'Evidence-based for established platforms (LOD comparisons, below-LOD rates in plasma). Based on Kirsher/Ahadi et al. (2025): SomaSeq scores 4/5, reflecting 96.2% of proteins detected across all samples and 97% of assays within linear range: broad consistent detection comparable to Olink. Note that aptamer cross-reactivity means some SomaScan signal may reflect off-target binding rather than genuine protein detection; the 2/5 specificity score captures this separately. Nomic nELISA scores 3/5: as a sandwich ELISA format, it does not benefit from the signal amplification of Olink\'s proximity extension assay (PEA), and there is insufficient published head-to-head LOD evidence to justify a score of 4/5 at this time. Expert assessment for other newer platforms with limited published LOD data.',
+    note: 'Evidence-based for established platforms (LOD comparisons, below-LOD rates in plasma). Based on Kirsher et al. (2025): SomaSeq scores 4/5, reflecting 96.2% of proteins detected across all samples and 97% of assays within linear range: broad consistent detection comparable to Olink. Note that aptamer cross-reactivity means some SomaScan signal may reflect off-target binding rather than genuine protein detection; the 2/5 specificity score captures this separately. Nomic nELISA scores 3/5: as a sandwich ELISA format, it does not benefit from the signal amplification of Olink\'s proximity extension assay (PEA), and there is insufficient published head-to-head LOD evidence to justify a score of 4/5 at this time. Expert assessment for other newer platforms with limited published LOD data.',
   },
   cost_efficiency: {
     basis: 'mixed',
@@ -68,8 +70,8 @@ const DIMENSION_DETAIL = {
 }
 
 const BASIS_BADGE = {
-  evidence: { label: 'Evidence-based',     bg: 'rgba(139,26,26,0.08)', color: '#8B1A1A' },
-  expert:   { label: 'Expert assessment',  bg: 'rgba(215,119,6,0.08)',  color: '#d97706' },
+  evidence: { label: 'Evidence-based',     bg: 'rgba(139,26,26,0.08)', color: 'var(--color-brand-500)' },
+  expert:   { label: 'Expert assessment',  bg: 'rgba(215,119,6,0.08)',  color: 'var(--color-amber-text)' },
   mixed:    { label: 'Mixed',              bg: 'rgba(107,91,149,0.1)',  color: '#6b5b95' },
 }
 
@@ -95,7 +97,7 @@ function BracketCard({ children, id }) {
   return (
     <div id={id} className="px-6 py-5 mb-5" style={{
       background: 'rgba(139,26,26,0.04)',
-      borderLeft: '4px solid #8B1A1A',
+      borderLeft: '4px solid var(--color-brand-500)',
       scrollMarginTop: 64,
     }}>
       {children}
@@ -107,7 +109,7 @@ function DisclosureItem({ children }) {
   return (
     <div className="flex items-start gap-3 py-3" style={{ borderBottom: '1px solid #f3f2f0' }}>
       <span className="mt-0.5 flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center text-xs"
-        style={{ background: 'rgba(215,119,6,0.1)', color: '#d97706', fontWeight: 500 }}>!</span>
+        style={{ background: 'rgba(215,119,6,0.1)', color: 'var(--color-amber-text)', fontWeight: 500 }}>!</span>
       <p className="text-sm leading-relaxed" style={{ color: '#52504a', fontWeight: 400 }}>{children}</p>
     </div>
   )
@@ -118,33 +120,28 @@ function MethodsFlowchart({ id }) {
     {
       num: 1,
       title: 'Curate evidence base',
-      desc: '9 large-scale head-to-head comparison studies collected, covering the majority of evaluated platforms across plasma, serum, CSF, and other matrices.',
-      color: '#0891B2',
+      desc: `${independentHeadToHeadCount} independent head-to-head studies collected, covering the majority of evaluated platforms across plasma, serum, CSF, and other matrices.`,
     },
     {
       num: 2,
-      title: 'LLM-assisted initial score extraction',
-      desc: 'Claude (Anthropic) reviewed each study and extracted structured initial scores across 10 analytical dimensions, with reasoning documented for each platform and score.',
-      color: '#6b5b95',
+      title: 'Model draft',
+      desc: 'On 30 March 2026, Whelan used Claude (Anthropic) to draft scores for the six platforms on nine analytical dimensions. The prompt file generated in the same session as the draft also told the build to adjust scores so that platform totals fell between 28 and 33; the authors did not set this range or use platform totals when scoring or adjudicating.',
     },
     {
       num: 3,
-      title: 'Expert review & calibration',
-      desc: 'Scores reviewed and manually revised by Whelan & Smith-Byrne against primary literature. Scientific justification documented for every score. Fairness simulation run across 1M+ weight combinations to identify and correct structural biases in the recommendation engine.',
-      color: '#8B1A1A',
+      title: 'Author scoring & adjudication',
+      desc: 'Whelan & Smith-Byrne scored the six platforms on the nine dimensions before opening the model\'s draft, then compared the two sets and adjudicated. Before release on 2 April 2026, 19 of the 54 draft scores changed (18 by one point; 11 up, 8 down) and a tenth dimension, pQTL accuracy, was added. The authors\' pre-adjudication set was not retained. Scientific justification documented for every score. Fairness simulation run across 1M+ weight combinations to identify and correct structural biases in the recommendation engine.',
       isLoopTarget: true,
     },
     {
       num: 4,
-      title: 'Public soft launch',
+      title: 'Public beta release',
       desc: 'Recommendation engine and scoring framework published online. Researchers invited to complete the tool and submit feedback via embedded survey.',
-      color: '#1B8A4E',
     },
     {
       num: 5,
-      title: 'Real-world validation & revision',
-      desc: 'Responses collected from N≈50 researchers across academic, clinical, and industry settings. Recommendations reviewed; scores and algorithm revised where real-world usage revealed divergence from simulated expectations.',
-      color: '#d97706',
+      title: 'Real-world calibration',
+      desc: '65 study profiles collected from researchers in academic, industry, clinical and other settings in eight countries; 63 could be scored, since two required systematic PTM detection, which excludes every platform. Responses were used to calibrate recommendations and to refine scores and the algorithm where real use departed from the simulation.',
       isLoopSource: true,
     },
   ]
@@ -161,7 +158,7 @@ function MethodsFlowchart({ id }) {
             {/* Left column: number + connector line */}
             <div className="flex flex-col items-center flex-shrink-0" style={{ width: 32 }}>
               <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0"
-                style={{ background: step.color, color: '#fff', fontWeight: 500, fontSize: 13 }}>
+                style={{ background: 'var(--color-brand-500)', color: '#fff', fontWeight: 500, fontSize: 13 }}>
                 {step.num}
               </div>
               {i < steps.length - 1 && (
@@ -174,7 +171,7 @@ function MethodsFlowchart({ id }) {
                 <p className="text-sm" style={{ color: '#141310', fontWeight: 500 }}>{step.title}</p>
                 {step.isLoopTarget && (
                   <span className="text-xs px-2 py-0.5 rounded-full"
-                    style={{ background: 'rgba(139,26,26,0.08)', color: '#8B1A1A', fontWeight: 400 }}>
+                    style={{ background: 'rgba(139,26,26,0.08)', color: 'var(--color-brand-500)', fontWeight: 400 }}>
                     ↩ iterative revision returns here
                   </span>
                 )}
@@ -182,8 +179,8 @@ function MethodsFlowchart({ id }) {
               <p className="text-xs leading-relaxed" style={{ color: '#52504a', fontWeight: 400 }}>{step.desc}</p>
               {step.isLoopSource && (
                 <div className="mt-3 px-4 py-3 text-xs"
-                  style={{ background: 'rgba(139,26,26,0.04)', borderLeft: '3px solid #8B1A1A', color: '#52504a', fontWeight: 400 }}>
-                  <strong style={{ color: '#8B1A1A', fontWeight: 500 }}>Ongoing: </strong>
+                  style={{ background: 'rgba(139,26,26,0.04)', borderLeft: '3px solid var(--color-brand-500)', color: '#52504a', fontWeight: 400 }}>
+                  <strong style={{ color: 'var(--color-brand-500)', fontWeight: 500 }}>Ongoing: </strong>
                   Steps 3–5 repeat as new comparative studies are published and additional researcher feedback is collected. Each revision cycle is documented in the version history below.
                 </div>
               )}
@@ -215,17 +212,17 @@ export default function Methods() {
 
       {/* 1 - About This Tool */}
       <BracketCard id="about">
-        <p className="text-xs uppercase tracking-widest mb-2" style={{ color: '#8B1A1A', fontSize: 10, letterSpacing: '0.08em', fontWeight: 400 }}>
+        <p className="text-xs uppercase tracking-widest mb-2" style={{ color: 'var(--color-brand-500)', fontSize: 10, letterSpacing: '0.08em', fontWeight: 400 }}>
           About This Tool
         </p>
         <p className="text-sm leading-relaxed" style={{ color: '#52504a', fontWeight: 400 }}>
           The <strong style={{ fontWeight: 500 }}>Atlas of Proteomic Technologies (APT)</strong> is built and maintained by{' '}
-          <a href="https://ignitionscientific.com" className="hover:underline" style={{ color: '#C44D18', fontWeight: 400 }}>
+          <a href="https://ignitionscientific.com" className="hover:underline" style={{ color: 'var(--color-brand-500)', fontWeight: 400 }}>
             Ignition Scientific
           </a>{' '}
           to help researchers select the right proteomics platform for their study. It synthesizes published
           head-to-head comparison data with expert assessment of platform capabilities from scientists at
-          Oxford University and the Royal College of Surgeons in Ireland. The tool is updated monthly to
+          Oxford University and the Royal College of Surgeons in Ireland. The tool is updated with each release to
           reflect new evidence and platform changes. Scores and recommendations reflect the authors'
           assessment based on published literature and are intended to guide study design decisions, not to
           serve as definitive or commercial platform rankings.
@@ -234,20 +231,23 @@ export default function Methods() {
 
       {/* 1a - How to Cite */}
       <div className="px-6 py-5 mb-5" style={{ background: 'rgba(8,145,178,0.05)', borderLeft: '4px solid #0891B2' }}>
-        <p className="text-xs uppercase tracking-widest mb-2" style={{ color: '#0891B2', fontSize: 10, letterSpacing: '0.08em', fontWeight: 400 }}>
+        <p className="text-xs uppercase tracking-widest mb-2" style={{ color: 'var(--color-info-text)', fontSize: 10, letterSpacing: '0.08em', fontWeight: 400 }}>
           How to Cite
         </p>
         <p className="text-sm leading-relaxed mb-3" style={{ color: '#52504a', fontWeight: 400 }}>
           If you use this tool to inform a study design or publication, please cite the accompanying preprint:
         </p>
-        <div className="px-4 py-3 text-sm leading-relaxed font-mono" style={{ background: 'rgba(8,145,178,0.06)', border: '1px solid rgba(8,145,178,0.2)', color: '#52504a', fontWeight: 400 }}>
+        <div className="px-4 py-3 text-sm leading-relaxed font-mono [overflow-wrap:anywhere]" style={{ background: 'rgba(8,145,178,0.06)', border: '1px solid rgba(8,145,178,0.2)', color: '#52504a', fontWeight: 400 }}>
           Whelan, Christopher D. &amp; Smith-Byrne, K. (2026). Atlas of Proteomic Technologies: an evidence-based framework for selecting and combining commercial proteomics platforms. <em>bioRxiv</em>.{' '}
-          <a href="https://doi.org/10.64898/2026.09.10.750723" target="_blank" rel="noopener noreferrer" className="hover:underline" style={{ color: '#C44D18' }}>
+          <a href="https://doi.org/10.64898/2026.09.10.750723" target="_blank" rel="noopener noreferrer" className="hover:underline" style={{ color: 'var(--color-brand-500)' }}>
             https://doi.org/10.64898/2026.09.10.750723
           </a>
         </div>
-        <p className="text-xs mt-3 leading-relaxed" style={{ color: '#6f6d67', fontWeight: 400 }}>
+        <p className="text-xs mt-3 leading-relaxed" style={{ color: 'var(--color-surface-400)', fontWeight: 400 }}>
           This preprint has not yet been peer reviewed; the citation will be updated when a peer-reviewed version is available.
+        </p>
+        <p className="text-xs mt-2" style={{ color: 'var(--color-surface-400)', fontWeight: 400 }}>
+          Code and data: <RouteLink tab="reproducibility" className="underline underline-offset-2" style={{ color: 'var(--color-brand-500)' }}>see Reproducibility</RouteLink>
         </p>
       </div>
 
@@ -256,7 +256,7 @@ export default function Methods() {
 
       {/* 1c - Starting point disclaimer */}
       <div className="px-6 py-5 mb-5" style={{ background: 'rgba(215,119,6,0.05)', borderLeft: '4px solid #d97706' }}>
-        <p className="text-xs uppercase tracking-widest mb-2" style={{ color: '#d97706', fontSize: 10, letterSpacing: '0.08em', fontWeight: 500 }}>
+        <p className="text-xs uppercase tracking-widest mb-2" style={{ color: 'var(--color-amber-text)', fontSize: 10, letterSpacing: '0.08em', fontWeight: 500 }}>
           This tool is a starting point, not a final verdict
         </p>
         <p className="text-sm leading-relaxed" style={{ color: '#52504a', fontWeight: 400 }}>
@@ -287,7 +287,7 @@ export default function Methods() {
         </p>
         <p className="text-sm leading-relaxed" style={{ color: '#52504a', fontWeight: 400 }}>
           Product and company names (including Olink, SomaScan, SomaSeq, Alamar NULISA, Nomic nELISA, Seer Proteograph, and Biognosys TrueDiscovery) are trademarks of their respective owners and are used here for identification and comparison only. The tool is provided "as is," without warranty of any kind; verify all specifications and pricing with the vendor before making purchasing decisions. If you believe any statement is inaccurate or out of date, email{' '}
-          <a href="mailto:chris@ignitionscientific.com" className="hover:underline" style={{ color: '#8B1A1A', fontWeight: 400 }}>chris@ignitionscientific.com</a>{' '}and we will review and correct it promptly.
+          <a href="mailto:chris@ignitionscientific.com" className="hover:underline" style={{ color: 'var(--color-brand-500)', fontWeight: 400 }}>chris@ignitionscientific.com</a>{' '}and we will review and correct it promptly.
         </p>
       </div>
 
@@ -338,17 +338,17 @@ export default function Methods() {
                         {badge.label}
                       </span>
                     </div>
-                    <p className="text-xs mb-1" style={{ color: '#6f6d67', fontWeight: 400 }}>{dim.description}</p>
+                    <p className="text-xs mb-1" style={{ color: 'var(--color-surface-400)', fontWeight: 400 }}>{dim.description}</p>
                     <p className="text-xs leading-relaxed" style={{ color: '#52504a', fontWeight: 400 }}>{detail?.note}</p>
                   </div>
                   <div className="flex-shrink-0 text-right">
                     <div className="flex gap-0.5">
                       {[1,2,3,4,5].map(n => (
                         <div key={n} className="w-2 h-5"
-                          style={{ background: n <= 3 ? '#8B1A1A' : '#e5e4e2' }} />
+                          style={{ background: n <= 3 ? 'var(--color-brand-500)' : '#e5e4e2' }} />
                       ))}
                     </div>
-                    <p className="text-xs mt-1" style={{ color: '#6f6d67', fontWeight: 400 }}>1–5 scale</p>
+                    <p className="text-xs mt-1" style={{ color: 'var(--color-surface-400)', fontWeight: 400 }}>1–5 scale</p>
                   </div>
                 </div>
               </div>
@@ -417,25 +417,30 @@ export default function Methods() {
       <SectionCard id="evidence-curation">
         <SectionHeading>Evidence Curation</SectionHeading>
         <p className="text-sm leading-relaxed mb-4" style={{ color: '#52504a', fontWeight: 400 }}>
-          Studies are included in the Evidence Base if they meet the following criteria:
+          A study counts as an independent head-to-head study in the Evidence Base if it meets all of the following criteria:
         </p>
         <ul className="space-y-2 mb-4">
           {[
             'Peer-reviewed publication or preprint from a recognized repository (bioRxiv, medRxiv)',
-            'Head-to-head comparison of two or more proteomics platforms on the same biological samples',
+            'Head-to-head comparison of two or more high-plex proteomics platforms on the same biological samples',
+            'Not vendor-authored: no author is employed by the vendor of a compared platform',
             'Quantitative comparison of at least one analytical metric (CV, correlation, pQTL enrichment, or disease association)',
             'Plasma, serum, or other biofluid sample type (tissue-only studies excluded from primary curation)',
           ].map((item, i) => (
             <li key={i} className="flex items-start gap-2.5 text-sm leading-snug" style={{ color: '#52504a', fontWeight: 400 }}>
-              <span className="mt-0.5 w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: '#8B1A1A', marginTop: 6 }} />
+              <span className="mt-0.5 w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: 'var(--color-brand-500)', marginTop: 6 }} />
               {item}
             </li>
           ))}
         </ul>
+        <p className="text-sm leading-relaxed mb-4" style={{ color: '#52504a', fontWeight: 400 }}>
+          Other papers cited on this site are listed as foundational rows and are not counted. Vendor authorship is marked on the row.
+        </p>
         <div className="px-4 py-3 text-sm" style={{ background: '#fafaf9', border: '1px solid #e5e4e2', color: '#52504a', fontWeight: 400 }}>
           <strong style={{ color: '#141310', fontWeight: 500 }}>Evidence depth varies across platforms. </strong>
-          Olink and SomaScan have been compared in large population cohorts (UKB-PPP, ARIC, JHS) with
-          tens of thousands of participants. Newer platforms (Nomic nELISA, NULISA, Seer Proteograph) have less
+          Olink and SomaScan have been characterised repeatedly by independent groups in large cohorts. Olink was run
+          in UK Biobank and SomaScan in Iceland, with tens of thousands of participants on each, but same-person
+          comparisons are smaller: 1,930 people in MESA, 1,514 in Iceland and hundreds in ARIC and the Jackson Heart Study. Newer platforms (Nomic nELISA, NULISA, Seer Proteograph) have less
           published comparative data; scores for these platforms carry greater uncertainty. Platforms with an
           evidence depth of {LOW_EVIDENCE_THRESHOLD} or less are flagged as lower confidence wherever their scores
           appear. The flag does not change any score or recommendation.
@@ -600,7 +605,7 @@ export default function Methods() {
           columns, with the tie-group-size distribution reported on its own as a scenario-level statistic.
           Every superseded definition is documented, not deleted, in the downloadable reproducibility
           bundle. Olink Explore HT's precision score (2/5, its weakest scored dimension) is independently
-          evidenced by two published CV comparisons (Ahadi et al. 2025: 26.8%; Rooney et al. 2024 ARIC
+          evidenced by two published CV comparisons (Kirsher et al. 2025: 26.8%; Rooney et al. 2025 ARIC
           cohort: 35.7%) and was not revised during any of this.
         </p>
 
@@ -609,10 +614,10 @@ export default function Methods() {
           <table className="w-full text-xs">
             <thead>
               <tr style={{ background: '#fafaf9', borderBottom: '2px solid #141310' }}>
-                <th className="text-left px-4 py-2.5 uppercase" style={{ color: '#6f6d67', fontSize: 10, letterSpacing: '0.08em', fontWeight: 400 }}>Platform</th>
-                <th className="text-right px-4 py-2.5 uppercase" style={{ color: '#6f6d67', fontSize: 10, letterSpacing: '0.08em', fontWeight: 400 }}>Co-recommended</th>
-                <th className="text-right px-4 py-2.5 uppercase" style={{ color: '#6f6d67', fontSize: 10, letterSpacing: '0.08em', fontWeight: 400 }}>Outright win</th>
-                <th className="text-left px-4 py-2.5 uppercase" style={{ color: '#6f6d67', fontSize: 10, letterSpacing: '0.08em', fontWeight: 400 }}>Typically competitive when</th>
+                <th className="text-left px-4 py-2.5 uppercase" style={{ color: 'var(--color-surface-400)', fontSize: 10, letterSpacing: '0.08em', fontWeight: 400 }}>Platform</th>
+                <th className="text-right px-4 py-2.5 uppercase" style={{ color: 'var(--color-surface-400)', fontSize: 10, letterSpacing: '0.08em', fontWeight: 400 }}>Co-recommended</th>
+                <th className="text-right px-4 py-2.5 uppercase" style={{ color: 'var(--color-surface-400)', fontSize: 10, letterSpacing: '0.08em', fontWeight: 400 }}>Outright win</th>
+                <th className="text-left px-4 py-2.5 uppercase" style={{ color: 'var(--color-surface-400)', fontSize: 10, letterSpacing: '0.08em', fontWeight: 400 }}>Typically competitive when</th>
               </tr>
             </thead>
             <tbody>
@@ -626,7 +631,7 @@ export default function Methods() {
               ].map((row, i) => (
                 <tr key={row.name} style={{ borderTop: i > 0 ? '1px solid #f3f2f0' : 'none' }}>
                   <td className="px-4 py-2.5" style={{ color: '#141310', fontWeight: 500 }}>{row.name}</td>
-                  <td className="px-4 py-2.5 text-right" style={{ color: '#8B1A1A', fontWeight: 500 }}>{row.co}</td>
+                  <td className="px-4 py-2.5 text-right" style={{ color: 'var(--color-brand-500)', fontWeight: 500 }}>{row.co}</td>
                   <td className="px-4 py-2.5 text-right" style={{ color: '#52504a', fontWeight: 400 }}>{row.win}</td>
                   <td className="px-4 py-2.5" style={{ color: '#52504a', fontWeight: 400 }}>{row.condition}</td>
                 </tr>
@@ -683,10 +688,10 @@ export default function Methods() {
           <table className="w-full text-xs">
             <thead>
               <tr style={{ background: '#fafaf9', borderBottom: '2px solid #141310' }}>
-                <th className="text-left px-4 py-2.5 uppercase" style={{ color: '#6f6d67', fontSize: 10, letterSpacing: '0.08em', fontWeight: 400 }}>Platform</th>
-                <th className="text-right px-4 py-2.5 uppercase" style={{ color: '#6f6d67', fontSize: 10, letterSpacing: '0.08em', fontWeight: 400 }}>Co-recommended</th>
-                <th className="text-right px-4 py-2.5 uppercase" style={{ color: '#6f6d67', fontSize: 10, letterSpacing: '0.08em', fontWeight: 400 }}>Outright win (slice)</th>
-                <th className="text-left px-4 py-2.5 uppercase" style={{ color: '#6f6d67', fontSize: 10, letterSpacing: '0.08em', fontWeight: 400 }}>Notes</th>
+                <th className="text-left px-4 py-2.5 uppercase" style={{ color: 'var(--color-surface-400)', fontSize: 10, letterSpacing: '0.08em', fontWeight: 400 }}>Platform</th>
+                <th className="text-right px-4 py-2.5 uppercase" style={{ color: 'var(--color-surface-400)', fontSize: 10, letterSpacing: '0.08em', fontWeight: 400 }}>Co-recommended</th>
+                <th className="text-right px-4 py-2.5 uppercase" style={{ color: 'var(--color-surface-400)', fontSize: 10, letterSpacing: '0.08em', fontWeight: 400 }}>Outright win (slice)</th>
+                <th className="text-left px-4 py-2.5 uppercase" style={{ color: 'var(--color-surface-400)', fontSize: 10, letterSpacing: '0.08em', fontWeight: 400 }}>Notes</th>
               </tr>
             </thead>
             <tbody>
@@ -700,7 +705,7 @@ export default function Methods() {
               ].map((row, i) => (
                 <tr key={row.name} style={{ borderTop: i > 0 ? '1px solid #f3f2f0' : 'none' }}>
                   <td className="px-4 py-2.5" style={{ color: '#141310', fontWeight: 500 }}>{row.name}</td>
-                  <td className="px-4 py-2.5 text-right" style={{ color: '#8B1A1A', fontWeight: 500 }}>{row.co}</td>
+                  <td className="px-4 py-2.5 text-right" style={{ color: 'var(--color-brand-500)', fontWeight: 500 }}>{row.co}</td>
                   <td className="px-4 py-2.5 text-right" style={{ color: '#52504a', fontWeight: 400 }}>{row.win}</td>
                   <td className="px-4 py-2.5" style={{ color: '#52504a', fontWeight: 400 }}>{row.note}</td>
                 </tr>
@@ -742,10 +747,10 @@ export default function Methods() {
           <table className="w-full text-xs">
             <thead>
               <tr style={{ background: '#fafaf9', borderBottom: '2px solid #141310' }}>
-                <th className="text-left px-4 py-2.5 uppercase" style={{ color: '#6f6d67', fontSize: 10, letterSpacing: '0.08em', fontWeight: 400 }}>Platform</th>
-                <th className="text-right px-4 py-2.5 uppercase" style={{ color: '#6f6d67', fontSize: 10, letterSpacing: '0.08em', fontWeight: 400 }}>Co-recommended</th>
-                <th className="text-right px-4 py-2.5 uppercase" style={{ color: '#6f6d67', fontSize: 10, letterSpacing: '0.08em', fontWeight: 400 }}>Outright win</th>
-                <th className="text-left px-4 py-2.5 uppercase" style={{ color: '#6f6d67', fontSize: 10, letterSpacing: '0.08em', fontWeight: 400 }}>Notes</th>
+                <th className="text-left px-4 py-2.5 uppercase" style={{ color: 'var(--color-surface-400)', fontSize: 10, letterSpacing: '0.08em', fontWeight: 400 }}>Platform</th>
+                <th className="text-right px-4 py-2.5 uppercase" style={{ color: 'var(--color-surface-400)', fontSize: 10, letterSpacing: '0.08em', fontWeight: 400 }}>Co-recommended</th>
+                <th className="text-right px-4 py-2.5 uppercase" style={{ color: 'var(--color-surface-400)', fontSize: 10, letterSpacing: '0.08em', fontWeight: 400 }}>Outright win</th>
+                <th className="text-left px-4 py-2.5 uppercase" style={{ color: 'var(--color-surface-400)', fontSize: 10, letterSpacing: '0.08em', fontWeight: 400 }}>Notes</th>
               </tr>
             </thead>
             <tbody>
@@ -759,7 +764,7 @@ export default function Methods() {
               ].map((row, i) => (
                 <tr key={row.name} style={{ borderTop: i > 0 ? '1px solid #f3f2f0' : 'none' }}>
                   <td className="px-4 py-2.5" style={{ color: '#141310', fontWeight: 500 }}>{row.name}</td>
-                  <td className="px-4 py-2.5 text-right" style={{ color: '#8B1A1A', fontWeight: 500 }}>{row.co}</td>
+                  <td className="px-4 py-2.5 text-right" style={{ color: 'var(--color-brand-500)', fontWeight: 500 }}>{row.co}</td>
                   <td className="px-4 py-2.5 text-right" style={{ color: '#52504a', fontWeight: 400 }}>{row.win}</td>
                   <td className="px-4 py-2.5" style={{ color: '#52504a', fontWeight: 400 }}>{row.note}</td>
                 </tr>
@@ -788,7 +793,7 @@ export default function Methods() {
           rather than as a row inside the platform tables. The full breakdown by tie-group size (how often
           a tie is 2-way versus larger) is in the downloadable reproducibility bundle (
           <code style={{ background: 'rgba(20,19,16,0.06)', padding: '1px 5px' }}>choose_tie_distribution.csv</code>,{' '}
-          <a href="#reproducibility" className="hover:underline" style={{ color: '#8B1A1A' }}>Reproducibility</a> tab)
+          <RouteLink tab="reproducibility" className="hover:underline" style={{ color: 'var(--color-brand-500)' }}>Reproducibility</RouteLink> tab)
           rather than reproduced here; in short, ties shrink quickly by size in the prevalence-weighted
           baseline grid (each larger tie-group size is markedly less common than the last) but skew toward
           3- and 4-way in real usage, consistent with real study designs clustering around a few common
@@ -855,7 +860,7 @@ export default function Methods() {
             'The prevalence-weighted baseline (see Baseline weighting methodology, above) depends on the 65-respondent sample being reasonably representative of true usage, a dependency the previous uniform methodology did not have. It also assumes goal, sample type, study size, and toggle state are statistically independent (weighted as a product of their individual observed rates); real respondents\' characteristics are likely correlated, which is part of why the real-world dataset\'s spread still differs from the baseline grid\'s even though both now use real-world prevalence.',
           ].map((item, i) => (
             <li key={i} className="flex items-start gap-2.5 text-sm leading-snug" style={{ color: '#52504a', fontWeight: 400 }}>
-              <span className="mt-0.5 w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: '#8B1A1A', marginTop: 6 }} />
+              <span className="mt-0.5 w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: 'var(--color-brand-500)', marginTop: 6 }} />
               {item}
             </li>
           ))}
@@ -867,7 +872,7 @@ export default function Methods() {
           data, and five result sets (the prevalence-weighted baseline grid, the superseded uniform baseline
           grid kept for audit purposes, secondary check, real-world, and the tie-group-size distribution -
           outright win and co-recommended rates throughout) are downloadable from the{' '}
-          <a href="#reproducibility" className="hover:underline" style={{ color: '#8B1A1A' }}>Reproducibility</a>{' '}
+          <RouteLink tab="reproducibility" className="hover:underline" style={{ color: 'var(--color-brand-500)' }}>Reproducibility</RouteLink>{' '}
           tab. The bundle's script comments document every superseded win-rate and weighting methodology in
           full, not just the current one.
         </div>
@@ -883,7 +888,7 @@ export default function Methods() {
           as inputs, rather than creating new platform scores, and evaluates the fifteen pairs formed from all six
           coverage-bearing platforms. Seer Proteograph XT and Biognosys TrueDiscovery are modelled as two independent
           mass-spectrometry platforms, each scored against its own accession-level coverage list (Biognosys TrueDiscovery's
-          list is the published Ahadi et al. 2025 depletion-workflow dataset described above); they were previously merged
+          list is the published Kirsher et al. 2025 depletion-workflow dataset described above); they were previously merged
           into a single "mass spectrometry" category before that list existed.
         </p>
 
@@ -899,6 +904,10 @@ export default function Methods() {
           which set the axis weights; no axis is privileged by default, so coverage leads only if it is chosen. Sample volume
           is opt-in, and the combined measurement score can be recomposed from its eight underlying measurement properties, including
           maturity properties such as throughput that are off by default. An advanced panel exposes every weight directly.
+        </p>
+
+        <p className="text-xs mb-4" style={{ color: 'var(--color-surface-400)', fontWeight: 400 }}>
+          The companion manuscript reports 15,123 protein identifiers and Protein Coverage lists 15,128 catalogue entries; the difference is the five phospho-tau rows that NULISA lists under MAPT (P10636).
         </p>
 
         <p className="text-sm leading-relaxed" style={{ color: '#52504a', fontWeight: 400 }}>
@@ -928,7 +937,7 @@ export default function Methods() {
           appears least in the priority sweep, even though it produces the single largest net-new contribution of
           any Nomic Omni pairing (140 net-new drug targets). The engine specification, reproduction script, and the sweep and
           bootstrap-CI outputs are downloadable from the{' '}
-          <a href="#reproducibility" className="hover:underline" style={{ color: '#8B1A1A' }}>Reproducibility</a> tab.
+          <RouteLink tab="reproducibility" className="hover:underline" style={{ color: 'var(--color-brand-500)' }}>Reproducibility</RouteLink> tab.
         </p>
       </SectionCard>
 
@@ -1019,7 +1028,7 @@ export default function Methods() {
             For custom platform selection analysis, study design consulting, or questions about this tool:
           </p>
           <ContactButton email="chris@ignitionscientific.com" />
-          <p className="text-xs mt-3" style={{ color: '#6f6d67', fontWeight: 400 }}>
+          <p className="text-xs mt-3" style={{ color: 'var(--color-surface-400)', fontWeight: 400 }}>
             Response within 2 business days. Custom analyses available for pharmaceutical, biotech, and academic groups.
           </p>
         </div>
@@ -1030,6 +1039,7 @@ export default function Methods() {
         <SectionHeading>Version History</SectionHeading>
         <div className="space-y-0">
           {[
+            { version: 'v4.5', date: 'November 4, 2026', notes: 'Corrections to the evidence base and headline numbers; no score, weight or recommendation changed. The Overview figure \'170K+ participants\' was wrong: it drew on parent-cohort sizes rather than the people in each comparison (for example 100,000 for PRECISE-SG100K, where 500 participants were profiled). It is replaced by ~6,600 participants measured on two or more platforms; the Evidence Base now gives per-study counts and the any-platform total. Sample sizes and eight citations in the Evidence Base were corrected against the papers. The Overview\'s largest-platform figure now counts distinct proteins (10,065 for Seer; the 10,698 protein groups Seer lists remain on its card with a note). Protein Coverage now labels what each count means: 14,340 distinct human proteins, listed under 15,128 catalogue entries. Its \'unique to one platform\' and \'measured by all six\' filters now work at protein level (5,722 and 118 proteins; previously 6,725 and 109 entries). Overview figures are computed from the data at build time. All 51 key findings in the Evidence Base were then checked against the full text of the cited papers; 44 were changed, including 14 with no support in the cited paper. The same claims were corrected in the platform details, Executive Summary and Help Me Choose: for example, NULISA\'s limit of detection is 10 aM for HIV p24; the published nELISA study used a 191-plex panel in cell culture samples and reports seven orders of magnitude, while the roughly 1,000-plex panel and ~$50 price are vendor figures; and Pietzner et al. 2026 detected 8,079 Seer protein groups, not ~8,511. Sissala et al. 2025 is now tagged as other mass spectrometry rather than Seer. The Methods build steps now state the actual sequence: Claude drafted the first scores, and the authors scored the platforms before opening that draft, then compared the two sets and adjudicated. Every score change, before and since release, was decided by Whelan and Smith-Byrne; Claude made edits only on their instruction. The prompt file generated in the same session as the draft also told the build to adjust scores so that platform totals fell between 28 and 33; the authors did not set this range or use platform totals when scoring or adjudicating. The Overview and Evidence Base now count independent head-to-head studies: the same samples on two or more high-plex platforms, not vendor-authored (criterion in Methods). Nicholas et al. 2026 was added as an independent head-to-head study, and Rea Reyes et al. 2025, Zeng et al. 2024 and Suhre et al. 2025 as foundational rows; vendor authorship is marked. The Overview has a new By the numbers strip and a simpler hero, its search now covers the full platform catalogue, and its Technology and Cost filters were removed. Across the site, the build-step circles and the Help Me Choose progress steps are clearer, Platform Comparison cards show the technology in place of a repeated score, All Platforms gains a Technology filter, a Columns control and a cost note column, and long detail views show when there is more to scroll. Every page now has its own address (/compare, /methods and so on), title and description, and its text is in the page before any script runs, so search engines and link previews can read it. Old links with # in them still work. On phones and tablets the current tab stays in view, detail panels fill the screen, and Help Me Choose starts each step at the top. Small grey and coloured text is darker and easier to read, and panels, sliders and options now work by keyboard and are named for screen readers.' },
             { version: 'v4.4', date: 'October 10, 2026', notes: 'Display: platforms with an evidence depth of 2/5 or lower are now flagged as lower confidence wherever their scores appear (Platform Comparison cards, detail panels and table; the Overview; and Help Me Choose and Help Me Combine results), with a note that their scores are provisional. The flag is computed from the evidence-depth score, so it follows any future score change. No score, weight or recommendation changed.' },
             { version: 'v4.3.1', date: 'October 9, 2026', notes: 'Text correction: removed statements that Alamar NULISA\'s p-tau217 assay is FDA-cleared. NULISA\'s p-tau217 assays are for research use only; the Overview, Help Me Choose, and NULISA platform profile now describe its attomolar sensitivity and well-validated blood p-tau217 measurement instead. Also corrected the Help Me Combine description of the FDA-approved biomarker set from 217 to 216 proteins, the distinct-protein count its coverage values have used since v4.2. No score, weight, or recommendation changed.' },
             { version: 'v4.3', date: 'October 9, 2026', notes: 'Added the Unassayed Proteome tab: the 5,850 human proteins in UniProtKB/Swiss-Prot (entries reviewed manually by UniProt\'s curators) that are not on the catalogue of any of the six platforms (the 20,190 human Swiss-Prot proteins minus the 14,340 on at least one platform, counted by canonical accession as in Protein Coverage). A toggle widens the list to the 9,072 proteins on none of the four affinity catalogues; the extra 3,222 are on a mass spectrometry list only. For each protein the tab shows whether two tissue proteomes that used no commercial platform detected it (the GTEx tissue proteome, Jiang et al. 2020, Cell; Wang et al. 2019, Mol Syst Biol), with localization from UniProt, protein class and drug-target status from ChEMBL, and focused-paper counts from NCBI gene2pubmed. The list can be searched, filtered, sorted, and downloaded as CSV. A Protein Coverage search for one of these proteins now shows its status and tissue detection and links to the new tab. No score, weight, or recommendation changed.' },
@@ -1072,7 +1082,7 @@ export default function Methods() {
             >
               <div className="flex-shrink-0 text-right" style={{ minWidth: 80 }}>
                 <span className="text-xs px-2 py-0.5"
-                  style={{ background: 'rgba(139,26,26,0.08)', color: '#8B1A1A', fontWeight: 400 }}>
+                  style={{ background: 'rgba(139,26,26,0.08)', color: 'var(--color-brand-500)', fontWeight: 400 }}>
                   {entry.version}
                 </span>
               </div>
@@ -1086,11 +1096,11 @@ export default function Methods() {
         <button
           onClick={() => setShowAllVersions(v => !v)}
           className="block text-xs mt-4 hover:underline focus:outline-none focus:underline"
-          style={{ color: '#8B1A1A', fontWeight: 400 }}
+          style={{ color: 'var(--color-brand-500)', fontWeight: 400 }}
         >
           {showAllVersions ? 'Show fewer versions' : 'Show full version history'}
         </button>
-        <p className="text-xs mt-4" style={{ color: '#6f6d67', fontWeight: 400 }}>
+        <p className="text-xs mt-4" style={{ color: 'var(--color-surface-400)', fontWeight: 400 }}>
           Evidence base and scoring are reviewed monthly. Platform additions and major score revisions are noted in the changelog.
         </p>
       </SectionCard>

@@ -1,49 +1,16 @@
 import { useState } from 'react'
 import { AnimatedAptIcon } from './AptIcon'
-import KpiCard from './KpiCard'
-import DetailModal from './Comparison/DetailModal'
+import RouteLink from './RouteLink'
+import DetailPanel from './Comparison/DetailPanel'
 import { ConfidenceTip } from './LowerConfidenceBadge'
 import platforms from '../data/platforms.json'
+import catalog from '../data/all_platforms.json'
 import { isLowerConfidence, platformNote } from '../data/confidence'
-import evidence from '../data/evidence.json'
-import allPlatforms from '../data/all_platforms.json'
-
-// Thin-line SVG icons
-const Icons = {
-  platforms: (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-      <rect x="2" y="3" width="7" height="7" rx="1"/><rect x="9" y="3" width="7" height="7" rx="1"/>
-      <rect x="16" y="3" width="6" height="7" rx="1"/><rect x="2" y="12" width="20" height="9" rx="1"/>
-    </svg>
-  ),
-  proteins: (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="12" cy="12" r="3"/><path d="M12 2v4M12 18v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M2 12h4M18 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/>
-    </svg>
-  ),
-  studies: (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/>
-      <line x1="9" y1="7" x2="15" y2="7"/><line x1="9" y1="11" x2="15" y2="11"/>
-    </svg>
-  ),
-  classes: (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-      <polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/>
-    </svg>
-  ),
-  maxProteins: (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
-    </svg>
-  ),
-  participants: (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/>
-      <path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/>
-    </svg>
-  ),
-}
+import {
+  coverage, catalogueCount, assessedCount, maxProteinsOnOnePlatform,
+  canonicalProteome, proteinsOnNoPlatform, drugTargetCount, drugTargetsOnAPlatform,
+  participantsAny, participantsMulti, approx, atLeastK,
+} from '../data/siteStats'
 
 const KEY_FINDINGS = [
   {
@@ -51,7 +18,7 @@ const KEY_FINDINGS = [
     accent: 'teal',
   },
   {
-    text: 'Olink and SomaScan/SomaSeq are the most validated options with the deepest head-to-head evidence base, but show poor cross-platform protein correlation (median Spearman 0.33 for matched assays).',
+    text: 'Olink and SomaScan/SomaSeq are the most validated options with the deepest head-to-head evidence base, but show modest cross-platform protein correlation (median Spearman 0.33 for matched assays).',
     accent: 'teal',
   },
   {
@@ -59,11 +26,11 @@ const KEY_FINDINGS = [
     accent: 'gold',
   },
   {
-    text: 'Nomic nELISA is a disruptive entrant: absolute quant, 1,000+ samples/day at ~$50/sample. This cost structure changes the economics of population studies.',
+    text: 'Nomic nELISA is a low-cost entrant with calibrated quantification. Its primary published study profiled 7,392 cell culture samples at 191-plex in under a week. If the platform holds in plasma at scale, it would change the economics of population studies.',
     accent: 'purple',
   },
   {
-    text: 'NULISA fills a specialized niche: attomolar sensitivity and well-validated blood p-tau217 measurement (research use only) make it the leading choice for Alzheimer\'s and neuroinflammation studies.',
+    text: 'NULISA fills a specialized niche: attomolar limits of detection and blood p-tau217 measurement (research use only), benchmarked against amyloid PET and Simoa, suit Alzheimer\'s and neuroinflammation studies.',
     accent: 'gold',
   },
 ]
@@ -77,18 +44,56 @@ const NEXT_STEPS = [
 ]
 
 const ACCENT_STYLES = {
-  teal:   { dot: '#8B1A1A' },
+  teal:   { dot: 'var(--color-brand-500)' },
   gold:   { dot: '#C44D18' },
   purple: { dot: '#A32020' },
 }
 
-export default function Overview({ onNavigateToProteins }) {
-  const [search, setSearch] = useState('')
-  const [techFilter, setTechFilter] = useState('all')
-  const [costFilter, setCostFilter] = useState('all')
-  const [selectedPlatform, setSelectedPlatform] = useState(null)
+const fmt = n => n.toLocaleString('en-US')
+const pct = (part, whole) => `${(part / whole) * 100}%`
+const ACCENT = 'var(--color-brand-500)'
+const UNFILLED = '#e5e4e2'
 
-  const maxProteins = Math.max(...platforms.map(p => p.proteinsNumeric)).toLocaleString()
+// One dot per item, with the first `filled` in the accent colour
+function UnitDots({ total, filled }) {
+  return (
+    <div className="flex flex-wrap gap-[3px] mt-2.5" aria-hidden="true">
+      {Array.from({ length: total }, (_, i) => (
+        <span
+          key={i}
+          style={{ width: 8, height: 8, borderRadius: '50%', background: i < filled ? ACCENT : UNFILLED }}
+        />
+      ))}
+    </div>
+  )
+}
+
+function ProportionBar({ part, whole }) {
+  return (
+    <div className="mt-2.5" style={{ height: 8, background: UNFILLED }} aria-hidden="true">
+      <div style={{ height: '100%', width: pct(part, whole), background: ACCENT }} />
+    </div>
+  )
+}
+
+function StatCell({ value, children, graphic }) {
+  return (
+    <div className="bg-white px-5 py-3.5">
+      <span className="block tabular-nums leading-none text-[22px]" style={{ color: '#141310', fontWeight: 400, letterSpacing: '-0.01em' }}>
+        {value}
+      </span>
+      <span className="block mt-1.5 text-xs leading-snug" style={{ color: 'var(--color-surface-400)', fontWeight: 400 }}>
+        {children}
+      </span>
+      {graphic}
+    </div>
+  )
+}
+
+const statLink = 'inline-block py-1 underline underline-offset-2 hover:text-brand-500'
+
+export default function Overview({ onNavigateToProteins, onOpenPlatform }) {
+  const [selectedPlatform, setSelectedPlatform] = useState(null)
 
   return (
     <div className="space-y-6">
@@ -96,19 +101,13 @@ export default function Overview({ onNavigateToProteins }) {
       {/* ── Hero Banner ── */}
       <div
         className="bg-white overflow-hidden"
-        style={{ border: '2px solid #8B1A1A' }}
+        style={{ border: '2px solid var(--color-brand-500)' }}
       >
         <div className="px-6 py-5 flex flex-col sm:flex-row items-center sm:items-center gap-4 sm:gap-8">
           {/* Cycling modality icon */}
           <AnimatedAptIcon size={68} />
           {/* Text */}
           <div className="flex-1 min-w-0 text-center sm:text-left">
-            <p
-              className="uppercase mb-3"
-              style={{ color: '#8B1A1A', fontSize: '10px', letterSpacing: '0.1em', fontWeight: 400 }}
-            >
-              Atlas of Proteomic Technologies (APT)
-            </p>
             <p className="text-base sm:text-lg leading-snug max-w-2xl" style={{ color: '#141310', fontWeight: 400 }}>
               An independent, evidence-based overview of commercial high-plex proteomics platforms, built to inform study design for scientists across industry and academia.
             </p>
@@ -116,37 +115,39 @@ export default function Overview({ onNavigateToProteins }) {
 
           {/* CTA */}
           <div className="flex-shrink-0 flex flex-col gap-2 items-stretch">
-            <button
-              onClick={() => { window.location.hash = 'chooser' }}
+            <RouteLink
+              tab="chooser"
               className="flex items-center justify-center gap-2 px-5 py-2.5 text-sm transition-all"
               style={{
-                backgroundColor: '#8B1A1A',
+                backgroundColor: 'var(--color-brand-500)',
                 backgroundImage: 'none',
                 color: '#fff',
-                border: '1px solid #8B1A1A',
+                border: '1px solid var(--color-brand-500)',
                 whiteSpace: 'nowrap',
+                textDecoration: 'none',
                 fontWeight: 400,
               }}
               onMouseEnter={e => { e.currentTarget.style.backgroundColor = '#7a1616' }}
-              onMouseLeave={e => { e.currentTarget.style.backgroundColor = '#8B1A1A' }}
+              onMouseLeave={e => { e.currentTarget.style.backgroundColor = 'var(--color-brand-500)' }}
             >
-              Not sure where to start? &bull; Get a platform recommendation →
-            </button>
-            <button
-              onClick={() => { window.location.hash = 'combine' }}
+              Get a platform recommendation
+            </RouteLink>
+            <RouteLink
+              tab="combine"
               className="flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs transition-colors"
               style={{
                 background: 'transparent',
-                color: '#6f6d67',
+                color: 'var(--color-surface-400)',
                 border: '1px solid #e5e4e2',
                 whiteSpace: 'nowrap',
+                textDecoration: 'none',
                 fontWeight: 400,
               }}
-              onMouseEnter={e => { e.currentTarget.style.color = '#8B1A1A'; e.currentTarget.style.borderColor = '#8B1A1A' }}
-              onMouseLeave={e => { e.currentTarget.style.color = '#6f6d67'; e.currentTarget.style.borderColor = '#e5e4e2' }}
+              onMouseEnter={e => { e.currentTarget.style.color = 'var(--color-brand-500)'; e.currentTarget.style.borderColor = 'var(--color-brand-500)' }}
+              onMouseLeave={e => { e.currentTarget.style.color = 'var(--color-surface-400)'; e.currentTarget.style.borderColor = '#e5e4e2' }}
             >
-              Deploying multiple platforms? Use our Combine tool →
-            </button>
+              Find the best platform pair
+            </RouteLink>
           </div>
         </div>
       </div>
@@ -158,19 +159,19 @@ export default function Overview({ onNavigateToProteins }) {
           className="lg:col-span-3 bg-white overflow-hidden"
           style={{ borderTop: '2px solid #141310', border: '1px solid #e5e4e2', borderTopWidth: '2px', borderTopColor: '#141310' }}
         >
-          <div className="px-6 pt-5 pb-1 flex items-center gap-2" style={{ borderBottom: '1px solid #e5e4e2' }}>
+          <div className="px-7 pt-6 pb-2 flex items-center gap-2" style={{ borderBottom: '1px solid #e5e4e2' }}>
             <span
               className="uppercase"
-              style={{ color: '#8B1A1A', fontSize: '10px', letterSpacing: '0.1em', fontWeight: 400 }}
+              style={{ color: 'var(--color-brand-500)', fontSize: '10px', letterSpacing: '0.1em', fontWeight: 400 }}
             >
               Executive Summary
             </span>
           </div>
-          <div className="px-6 py-5">
-            <h2 className="text-lg mb-2" style={{ color: '#141310', fontWeight: 400 }}>
+          <div className="px-7 py-6">
+            <h2 className="text-xl mb-3" style={{ color: '#141310', fontWeight: 400 }}>
               State of High-Plex Plasma Proteomics, 2026
             </h2>
-            <ul className="space-y-2">
+            <ul className="space-y-2.5">
               {KEY_FINDINGS.map((item, i) => {
                 const style = ACCENT_STYLES[item.accent]
                 return (
@@ -198,7 +199,7 @@ export default function Overview({ onNavigateToProteins }) {
           >
             <p
               className="uppercase"
-              style={{ color: '#8B1A1A', fontSize: '10px', letterSpacing: '0.1em', fontWeight: 400 }}
+              style={{ color: 'var(--color-brand-500)', fontSize: '10px', letterSpacing: '0.1em', fontWeight: 400 }}
             >
               High-Level Guidance
             </p>
@@ -209,239 +210,140 @@ export default function Overview({ onNavigateToProteins }) {
                 <li key={i} className="flex items-start gap-2.5">
                   <span
                     className="mt-0.5 flex-shrink-0 text-xs w-4 text-right"
-                    style={{ color: '#8B1A1A', fontWeight: 500 }}
+                    style={{ color: 'var(--color-brand-500)', fontWeight: 500 }}
                   >
                     {i + 1}.
                   </span>
-                  <span className="text-[11px] leading-snug" style={{ color: '#52504a', fontWeight: 400 }}>{step}</span>
+                  <span className="text-[13.5px] leading-snug" style={{ color: '#52504a', fontWeight: 400 }}>{step}</span>
                 </li>
               ))}
             </ul>
-            <div className="mt-5 pt-4 text-center" style={{ borderTop: '1px solid #e5e4e2' }}>
-              <p className="text-xs" style={{ color: '#6f6d67' }}>
-                For deeper dives:{' '}
-                <a
-                  href="mailto:chris@ignitionscientific.com"
-                  className="underline-offset-2 hover:underline"
-                  style={{ color: '#C44D18', fontWeight: 400 }}
-                >
-                  chris@ignitionscientific.com
-                </a>
-              </p>
+          </div>
+        </div>
+      </div>
+
+      {/* ── By the numbers ── */}
+      <div>
+        <div className="bg-white" style={{ border: '1px solid #e5e4e2', borderTop: '2px solid #141310' }}>
+          <p
+            className="uppercase px-5 pt-3 pb-2"
+            style={{ color: 'var(--color-brand-500)', fontSize: '10px', letterSpacing: '0.1em', fontWeight: 400 }}
+          >
+            By the numbers
+          </p>
+          <div className="px-5 pt-3 pb-4" style={{ borderTop: '1px solid #e5e4e2' }}>
+            <p className="text-[15px] leading-snug" style={{ color: '#141310', fontWeight: 400, letterSpacing: '0.02em' }}>
+              <RouteLink tab="proteins" className="tabular-nums text-[28px] leading-none hover:text-brand-500" style={{ fontWeight: 600 }}>{fmt(coverage.proteins)}</RouteLink>
+              {' '}of {fmt(canonicalProteome)} reviewed human proteins are on at least one of the six platforms
+            </p>
+            <div className="relative mt-3.5" style={{ height: 16, background: UNFILLED }} aria-hidden="true">
+              <div className="absolute inset-y-0 left-0" style={{ width: pct(coverage.proteins, canonicalProteome), background: ACCENT }} />
+              <div className="absolute" style={{ left: pct(maxProteinsOnOnePlatform, canonicalProteome), top: -4, bottom: -4, width: 2, background: '#141310' }} />
+            </div>
+            <div className="flex flex-wrap justify-between gap-x-6 gap-y-1 mt-2 text-xs" style={{ color: 'var(--color-surface-400)', fontWeight: 400 }}>
+              <RouteLink tab="proteins" className={statLink}>{fmt(maxProteinsOnOnePlatform)} on the broadest platform (black line)</RouteLink>
+              <RouteLink tab="unassayed" className={statLink}>{fmt(proteinsOnNoPlatform)} on no platform (grey)</RouteLink>
             </div>
           </div>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-px" style={{ background: '#e5e4e2', borderTop: '1px solid #e5e4e2' }}>
+            <StatCell value={assessedCount} graphic={<UnitDots total={catalogueCount} filled={assessedCount} />}>
+              <RouteLink tab="comparison" className={statLink}>platforms assessed in depth</RouteLink>, of <RouteLink tab="platforms" className={statLink}>{catalogueCount} catalogued</RouteLink>
+            </StatCell>
+            <StatCell value={approx(participantsMulti)} graphic={<ProportionBar part={participantsMulti} whole={participantsAny} />}>
+              <RouteLink tab="evidence" className={statLink}>participants measured on two or more platforms</RouteLink>, of {atLeastK(participantsAny)} on any
+            </StatCell>
+            <StatCell value={fmt(drugTargetsOnAPlatform)} graphic={<ProportionBar part={drugTargetsOnAPlatform} whole={drugTargetCount} />}>
+              of {fmt(drugTargetCount)} <RouteLink tab="combine" className={statLink}>drug targets on at least one platform</RouteLink>
+            </StatCell>
+          </div>
         </div>
+        <p className="text-xs mt-2" style={{ color: 'var(--color-surface-400)', fontWeight: 400 }}>
+          <RouteLink tab="reproducibility" className="underline-offset-2 hover:underline" style={{ color: 'inherit' }}>
+            Simulation and coverage figures on this site are reproducible from downloadable code and data.
+          </RouteLink>
+        </p>
       </div>
 
-      {/* ── KPI Row ── */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
-        <KpiCard
-          icon={Icons.classes}
-          value={allPlatforms.meta?.n_total ?? platforms.length}
-          label="Platforms Catalogued"
-        />
-        <KpiCard
-          icon={Icons.platforms}
-          value={platforms.length}
-          label="Platforms Surveyed in Depth"
-          accent
-        />
-        <KpiCard
-          icon={Icons.maxProteins}
-          value={maxProteins}
-          label="Max Proteins (single platform)"
-        />
-        <KpiCard
-          icon={Icons.studies}
-          value={evidence.filter(e => e.platformsCompared.length > 1).length}
-          label="Head-to-Head Studies"
-          accent
-        />
-        <KpiCard
-          icon={Icons.participants}
-          value="170K+"
-          label="Participants in Key Studies"
-          accent
-        />
-        <KpiCard
-          icon={Icons.proteins}
-          value="14,340"
-          label="Unique Proteins (6-platform union)"
-        />
-      </div>
-
-      {/* ── Search + Filters ── */}
-      <div
-        className="bg-white px-5 py-4"
-        style={{ border: '1px solid #e5e4e2' }}
-      >
-        <div className="flex flex-wrap gap-3 items-center">
-          {/* Search */}
-          <div className="relative flex-1 min-w-[220px]">
-            <svg
-              className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none"
-              width="15" height="15" viewBox="0 0 24 24"
-              fill="none" stroke="#6f6d67" strokeWidth="2"
-              strokeLinecap="round" strokeLinejoin="round"
-            >
-              <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
-            </svg>
-            <input
-              type="text"
-              placeholder="Search platform, technology, or feature…"
-              value={search}
-              onChange={e => setSearch(e.target.value)}
-              className="w-full pl-9 pr-4 py-2 text-sm focus:outline-none focus:ring-2 focus:border-transparent transition"
-              style={{
-                color: '#141310',
-                background: '#fafaf9',
-                border: '1px solid #e5e4e2',
-                '--tw-ring-color': '#8B1A1A',
-                fontWeight: 400,
-              }}
-            />
-          </div>
-
-          {/* Technology filter */}
-          <div className="flex items-center gap-2">
-            <label
-              className="uppercase tracking-wide"
-              style={{ color: '#6f6d67', fontSize: '10px', letterSpacing: '0.08em', fontWeight: 400 }}
-            >
-              Technology
-            </label>
-            <select
-              value={techFilter}
-              onChange={e => setTechFilter(e.target.value)}
-              className="text-sm px-3 py-2 focus:outline-none focus:ring-2 transition"
-              style={{
-                color: '#141310',
-                background: '#fafaf9',
-                border: '1px solid #e5e4e2',
-                '--tw-ring-color': '#8B1A1A',
-                fontWeight: 400,
-              }}
-            >
-              <option value="all">All Technologies</option>
-              <option value="affinity">Affinity-based (PEA / Aptamer / ELISA)</option>
-              <option value="ms">Mass Spectrometry (DIA-MS)</option>
-            </select>
-          </div>
-
-          {/* Cost filter */}
-          <div className="flex items-center gap-2">
-            <label
-              className="uppercase tracking-wide"
-              style={{ color: '#6f6d67', fontSize: '10px', letterSpacing: '0.08em', fontWeight: 400 }}
-            >
-              Cost/Sample
-            </label>
-            <select
-              value={costFilter}
-              onChange={e => setCostFilter(e.target.value)}
-              className="text-sm px-3 py-2 focus:outline-none focus:ring-2 transition"
-              style={{
-                color: '#141310',
-                background: '#fafaf9',
-                border: '1px solid #e5e4e2',
-                '--tw-ring-color': '#8B1A1A',
-                fontWeight: 400,
-              }}
-            >
-              <option value="all">Any Cost</option>
-              <option value="budget">&lt;$100</option>
-              <option value="mid">$100–$499</option>
-              <option value="premium">&gt;$500</option>
-            </select>
-          </div>
-
-          {/* Active filter chips */}
-          {(search || techFilter !== 'all' || costFilter !== 'all') && (
-            <button
-              onClick={() => { setSearch(''); setTechFilter('all'); setCostFilter('all') }}
-              className="text-xs px-3 py-1.5 transition hover:bg-surface-50"
-              style={{ color: '#52504a', border: '1px solid #e5e4e2', fontWeight: 400 }}
-            >
-              Clear filters ×
-            </button>
-          )}
-        </div>
-      </div>
+      <CatalogueSearch onOpenPlatform={onOpenPlatform} />
 
       {/* ── Platform Cards Quick Grid ── */}
       <div>
         <h3
           className="uppercase tracking-wide mb-3"
-          style={{ color: '#6f6d67', fontSize: '10px', letterSpacing: '0.1em', fontWeight: 400 }}
+          style={{ color: 'var(--color-surface-400)', fontSize: '10px', letterSpacing: '0.1em', fontWeight: 400 }}
         >
           Platform Overview
         </h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {platforms
-            .filter(p => {
-              const matchesSearch = !search || [p.name, p.company, p.technology].some(
-                f => f.toLowerCase().includes(search.toLowerCase())
-              )
-              const matchesTech = techFilter === 'all' || p.platformType === techFilter
-              const matchesCost = costFilter === 'all' || (() => {
-                const lo = p.costRangeNumeric[0]
-                if (costFilter === 'budget') return lo < 100
-                if (costFilter === 'mid') return lo >= 100 && lo < 500
-                if (costFilter === 'premium') return lo >= 500
-                return true
-              })()
-              return matchesSearch && matchesTech && matchesCost
-            })
-            .map(platform => (
-              <PlatformMiniCard key={platform.id} platform={platform} onViewProteins={onNavigateToProteins} onSelect={setSelectedPlatform} />
-            ))}
-
-          {/* Emerging premium platforms tile - shown when premium filter is active */}
-          {costFilter === 'premium' && (
-            <div
-              className="bg-white p-5"
-              style={{ border: '1px solid #e5e4e2', borderTop: '2px solid #6b5b95' }}
-            >
-              <div className="flex items-start justify-between gap-2 mb-3">
-                <div>
-                  <h3 className="text-base leading-tight" style={{ color: '#141310', fontWeight: 400 }}>
-                    Other Premium Platforms
-                  </h3>
-                  <p className="text-xs mt-0.5" style={{ color: '#52504a', fontWeight: 400 }}>Various vendors</p>
-                </div>
-                <span
-                  className="text-xs px-2 py-0.5 flex-shrink-0"
-                  style={{ border: '1px solid #6b5b95', color: '#6b5b95', fontWeight: 400 }}
-                >
-                  Emerging
-                </span>
-              </div>
-              <p className="text-xs leading-relaxed mb-3" style={{ color: '#52504a', fontWeight: 400 }}>
-                Several high-investment platforms offer orthogonal capabilities not covered by the scored platforms above:
-              </p>
-              <ul className="space-y-2">
-                {[
-                  { name: 'Nautilus Proteome Platform', note: 'Single-molecule protein sequencing; early access' },
-                  { name: 'Bruker timsTOF / PASEF', note: 'High-throughput MS with ion mobility; >10K proteins' },
-                  { name: 'Thermo Orbitrap Astral', note: 'Fastest Orbitrap MS; deep plasma proteome in minutes' },
-                  { name: 'Custom LC-MS/MS pipelines', note: 'Lab-built DDA/DIA workflows; highest flexibility' },
-                ].map(p => (
-                  <li key={p.name} className="flex items-start gap-2 text-xs" style={{ color: '#52504a', fontWeight: 400 }}>
-                    <span className="mt-1 w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: '#6b5b95' }}/>
-                    <span><strong style={{ fontWeight: 500 }}>{p.name}</strong>: {p.note}</span>
-                  </li>
-                ))}
-              </ul>
-              <p className="text-xs mt-3" style={{ color: '#6f6d67', fontWeight: 400 }}>
-                Not formally scored. Contact us for a custom analysis.
-              </p>
-            </div>
-          )}
+          {platforms.map(platform => (
+            <PlatformMiniCard key={platform.id} platform={platform} onViewProteins={onNavigateToProteins} onSelect={setSelectedPlatform} />
+          ))}
         </div>
       </div>
 
       {selectedPlatform && (
-        <DetailModal platform={selectedPlatform} onClose={() => setSelectedPlatform(null)} />
+        <DetailPanel platformId={selectedPlatform.id} onClose={() => setSelectedPlatform(null)} />
+      )}
+    </div>
+  )
+}
+
+// Finds any platform in the full catalogue and opens its detail panel in All Platforms.
+function CatalogueSearch({ onOpenPlatform }) {
+  const [query, setQuery] = useState('')
+  const [open, setOpen] = useState(false)
+  const q = query.trim().toLowerCase()
+  const matches = q
+    ? catalog.platforms.filter(p => [p.platform, p.vendor].some(f => f?.toLowerCase().includes(q)))
+    : []
+  return (
+    <div
+      className="relative bg-white px-5 py-4"
+      style={{ border: '1px solid #e5e4e2' }}
+      onBlur={e => { if (!e.currentTarget.contains(e.relatedTarget)) setOpen(false) }}
+    >
+      <svg
+        className="absolute left-8 top-1/2 -translate-y-1/2 pointer-events-none"
+        width="15" height="15" viewBox="0 0 24 24"
+        fill="none" stroke="var(--color-surface-400)" strokeWidth="2"
+        strokeLinecap="round" strokeLinejoin="round"
+      >
+        <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+      </svg>
+      <input
+        type="text"
+        aria-label="Search the platform catalogue"
+        placeholder={`Search all ${catalogueCount} platforms by name or vendor…`}
+        value={query}
+        onChange={e => { setQuery(e.target.value); setOpen(true) }}
+        onFocus={() => setOpen(true)}
+        onKeyDown={e => {
+          if (e.key === 'Enter' && matches[0]) onOpenPlatform(matches[0].platform)
+          if (e.key === 'Escape') setOpen(false)
+        }}
+        className="w-full pl-9 pr-4 py-2 text-sm focus:outline-none focus:ring-2 focus:border-transparent transition"
+        style={{ color: '#141310', background: '#fafaf9', border: '1px solid #e5e4e2', '--tw-ring-color': 'var(--color-brand-500)', fontWeight: 400 }}
+      />
+      {open && q && (
+        <div
+          className="absolute left-5 right-5 z-20 max-h-72 overflow-y-auto bg-white"
+          style={{ top: 'calc(100% - 12px)', border: '1px solid #e5e4e2', boxShadow: '0 4px 12px rgba(20,19,16,0.08)' }}
+        >
+          {matches.map(p => (
+            <button
+              key={p.platform}
+              onClick={() => onOpenPlatform(p.platform)}
+              className="block w-full text-left px-4 py-2 text-sm transition-colors hover:bg-[#fafaf9]"
+              style={{ color: '#141310', fontWeight: 400 }}
+            >
+              {p.platform}
+              <span className="ml-2 text-xs" style={{ color: 'var(--color-surface-400)' }}>{p.vendor}</span>
+            </button>
+          ))}
+          {matches.length === 0 && (
+            <p className="px-4 py-2 text-sm" style={{ color: 'var(--color-surface-400)', fontWeight: 400 }}>No platform matches “{query.trim()}”.</p>
+          )}
+        </div>
       )}
     </div>
   )
@@ -449,7 +351,7 @@ export default function Overview({ onNavigateToProteins }) {
 
 function PlatformMiniCard({ platform, onViewProteins, onSelect }) {
   const evidenceLabel = platform.evidenceDepth.split(' ')[0]
-  const evidenceColor = platform.evidenceDepth.startsWith('High') ? '#8B1A1A' : platform.evidenceDepth.startsWith('Moderate') ? '#d97706' : '#6f6d67'
+  const evidenceColor = platform.evidenceDepth.startsWith('High') ? 'var(--color-brand-500)' : platform.evidenceDepth.startsWith('Moderate') ? 'var(--color-amber-text)' : 'var(--color-surface-400)'
   return (
     <div
       onClick={() => onSelect(platform)}
@@ -473,8 +375,8 @@ function PlatformMiniCard({ platform, onViewProteins, onSelect }) {
         <span
           className="text-xs px-2 py-0.5 flex-shrink-0"
           style={{
-            border: `1px solid ${platform.platformType === 'ms' ? '#6b5b95' : '#8B1A1A'}`,
-            color: platform.platformType === 'ms' ? '#6b5b95' : '#8B1A1A',
+            border: `1px solid ${platform.platformType === 'ms' ? '#6b5b95' : 'var(--color-brand-500)'}`,
+            color: platform.platformType === 'ms' ? '#6b5b95' : 'var(--color-brand-500)',
             fontWeight: 400,
           }}
         >
@@ -484,19 +386,19 @@ function PlatformMiniCard({ platform, onViewProteins, onSelect }) {
 
       <div className="space-y-2">
         <div className="flex justify-between text-xs">
-          <span style={{ color: '#6f6d67', fontWeight: 400 }}>Proteins</span>
+          <span style={{ color: 'var(--color-surface-400)', fontWeight: 400 }}>Proteins</span>
           <span className="text-right" style={{ color: '#141310', fontWeight: 400 }}>{platform.proteins.split(';')[0]}</span>
         </div>
         <div className="flex justify-between text-xs">
-          <span style={{ color: '#6f6d67', fontWeight: 400 }}>Sample input</span>
+          <span style={{ color: 'var(--color-surface-400)', fontWeight: 400 }}>Sample input</span>
           <span className="text-right" style={{ color: '#141310', fontWeight: 400 }}>{platform.sampleInput}</span>
         </div>
         <div className="flex justify-between text-xs">
-          <span style={{ color: '#6f6d67', fontWeight: 400 }}>Cost range</span>
+          <span style={{ color: 'var(--color-surface-400)', fontWeight: 400 }}>Cost range</span>
           <span style={{ color: '#141310', fontWeight: 400 }}>{platform.costRange}</span>
         </div>
         <div className="flex justify-between text-xs">
-          <span style={{ color: '#6f6d67', fontWeight: 400 }}>Evidence</span>
+          <span style={{ color: 'var(--color-surface-400)', fontWeight: 400 }}>Evidence</span>
           {isLowerConfidence(platform.id) ? (
             <ConfidenceTip note={platformNote(platform.id)} style={{ color: evidenceColor, fontWeight: 400, borderBottom: '1px dotted #b8b6b0' }}>
               {evidenceLabel}
@@ -527,7 +429,7 @@ function PlatformMiniCard({ platform, onViewProteins, onSelect }) {
             onClick={e => { e.stopPropagation(); onViewProteins(platform.id) }}
             className="flex-1 text-xs py-1.5 transition hover:underline"
             style={{
-              color: platform.color,
+              color: platform.textColor,
               border: `1px solid ${platform.color}30`,
               background: `${platform.color}08`,
               fontWeight: 400,

@@ -1,9 +1,10 @@
 import { useState, useEffect, useMemo, useRef } from 'react'
 import { createPortal } from 'react-dom'
+import RadioGroup from './RadioGroup'
 import { loadUnassayed, isDetected, matchesQuery, STATUS_NONE, UNASSAYED_CSV } from '../data/unassayed'
 
 const PAGE_SIZE = 100
-const fmt = n => n.toLocaleString()
+const fmt = n => n.toLocaleString('en-US')
 
 const DETECTED_5 = 'Detected in tissue (5 or more tissues)'
 const DETECTED_1 = 'Detected in tissue (1 to 4 tissues)'
@@ -98,8 +99,8 @@ function downloadCSV(records, columns, filename) {
   URL.revokeObjectURL(url)
 }
 
-const TH = { fontSize: 10, fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.06em', color: '#6f6d67', background: '#ffffff' }
-const LABEL = { fontSize: 10, letterSpacing: '0.08em', color: '#6f6d67', fontWeight: 400 }
+const TH = { fontSize: 10, fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--color-surface-400)', background: '#ffffff' }
+const LABEL = { fontSize: 10, letterSpacing: '0.08em', color: 'var(--color-surface-400)', fontWeight: 400 }
 
 function SortIcon({ dir }) {
   return (
@@ -153,7 +154,7 @@ function Stat({ value, label, note }) {
       <p className="leading-none tabular-nums" style={{ fontSize: 28, fontWeight: 400, color: '#141310', letterSpacing: '-0.01em' }}>
         {value == null ? '…' : fmt(value)}
       </p>
-      <p className="uppercase mt-1.5 leading-tight" style={{ fontSize: 10, fontWeight: 400, letterSpacing: '0.06em', color: '#6f6d67' }}>{label}</p>
+      <p className="uppercase mt-1.5 leading-tight" style={{ fontSize: 10, fontWeight: 400, letterSpacing: '0.06em', color: 'var(--color-surface-400)' }}>{label}</p>
       {note && <p className="mt-1 text-xs leading-snug" style={{ color: '#52504a', fontWeight: 400 }}>{note}</p>}
     </div>
   )
@@ -165,7 +166,7 @@ function FilterSelect({ label, value, onChange, options }) {
     <label className="flex flex-col gap-1 min-w-0">
       <span className="uppercase" style={LABEL}>{label}</span>
       <select aria-label={label} value={value} onChange={e => onChange(e.target.value)} className="text-xs cursor-pointer w-full"
-        style={{ border: `1px solid ${active ? '#8B1A1A' : '#e5e4e2'}`, padding: '6px 8px', background: '#ffffff', color: active ? '#8B1A1A' : '#52504a', fontWeight: 400 }}>
+        style={{ border: `1px solid ${active ? 'var(--color-brand-500)' : '#e5e4e2'}`, padding: '6px 8px', background: '#ffffff', color: active ? 'var(--color-brand-500)' : '#52504a', fontWeight: 400 }}>
         {options.map(o => <option key={o.id} value={o.id}>{o.label}</option>)}
       </select>
     </label>
@@ -173,7 +174,7 @@ function FilterSelect({ label, value, onChange, options }) {
 }
 
 function DetectionCell({ r }) {
-  if (!isDetected(r)) return <span className="text-xs" style={{ color: '#6f6d67' }}>Not detected</span>
+  if (!isDetected(r)) return <span className="text-xs" style={{ color: 'var(--color-surface-400)' }}>Not detected</span>
   const five = r.detection === DETECTED_5
   return (
     <span className="text-[11px] px-1.5 py-0.5 whitespace-nowrap"
@@ -313,7 +314,7 @@ export default function UnassayedProteome({ initialSearch = '', initialScope = '
       <div style={{ background: '#ffffff', border: '1px solid #e5e4e2', borderTop: '2px solid #141310', padding: '16px 20px' }} className="space-y-4">
         <div>
           <span className="uppercase block mb-2" style={LABEL}>Show proteins on</span>
-          <div className="inline-flex flex-wrap" role="radiogroup" aria-label="Which proteins to list">
+          <RadioGroup className="inline-flex flex-wrap" label="Which proteins to list">
             {[
               { id: 'none', label: `No platform${stats ? ` (${fmt(stats.none)})` : ''}` },
               { id: 'affinity', label: `No affinity platform${stats ? ` (${fmt(stats.total)})` : ''}` },
@@ -323,9 +324,9 @@ export default function UnassayedProteome({ initialSearch = '', initialScope = '
                 <button key={opt.id} role="radio" aria-checked={active} onClick={() => changeScope(opt.id)}
                   className="text-xs px-3 py-1.5 border transition-colors cursor-pointer"
                   style={{
-                    background: active ? '#8B1A1A' : '#ffffff',
+                    background: active ? 'var(--color-brand-500)' : '#ffffff',
                     color: active ? '#ffffff' : '#52504a',
-                    borderColor: active ? '#8B1A1A' : '#e5e4e2',
+                    borderColor: active ? 'var(--color-brand-500)' : '#e5e4e2',
                     marginLeft: i === 0 ? 0 : -1,
                     fontWeight: 400,
                   }}>
@@ -333,8 +334,8 @@ export default function UnassayedProteome({ initialSearch = '', initialScope = '
                 </button>
               )
             })}
-          </div>
-          <p className="text-xs mt-2" style={{ color: '#6f6d67', fontWeight: 400 }}>
+          </RadioGroup>
+          <p className="text-xs mt-2" style={{ color: 'var(--color-surface-400)', fontWeight: 400 }}>
             {wide
               ? `Adds the ${stats ? `${fmt(stats.msOnly)} ` : ''}proteins that are on a mass spectrometry list (Seer Proteograph XT or Biognosys TrueDiscovery) but on none of the four affinity catalogues (Olink Explore HT, SomaSeq, Alamar NULISA, Nomic nELISA).`
               : 'Proteins on none of the six platform catalogues.'}
@@ -344,7 +345,7 @@ export default function UnassayedProteome({ initialSearch = '', initialScope = '
         <div className="relative">
           <svg className="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none"
             width="19" height="19" viewBox="0 0 24 24" fill="none"
-            stroke="#6f6d67" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            stroke="var(--color-surface-400)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
           </svg>
           <input
@@ -354,7 +355,7 @@ export default function UnassayedProteome({ initialSearch = '', initialScope = '
             value={search}
             onChange={e => reset(setSearch)(e.target.value)}
             className="w-full pl-12 pr-4 py-3.5 focus:outline-none focus:ring-2 focus:border-transparent transition"
-            style={{ fontSize: 16, color: '#141310', background: '#ffffff', border: '1px solid #d0cfcc', fontWeight: 400, '--tw-ring-color': '#8B1A1A' }}
+            style={{ fontSize: 16, color: '#141310', background: '#ffffff', border: '1px solid #d0cfcc', fontWeight: 400, '--tw-ring-color': 'var(--color-brand-500)' }}
           />
         </div>
 
@@ -368,11 +369,11 @@ export default function UnassayedProteome({ initialSearch = '', initialScope = '
 
         <div className="flex items-center justify-between gap-3 flex-wrap">
           <label className="flex items-center gap-1.5 text-xs cursor-pointer" style={{ color: '#52504a', fontWeight: 400 }}>
-            <input type="checkbox" checked={hideOlf} onChange={e => reset(setHideOlf)(e.target.checked)} style={{ accentColor: '#8B1A1A' }} />
+            <input type="checkbox" checked={hideOlf} onChange={e => reset(setHideOlf)(e.target.checked)} style={{ accentColor: 'var(--color-brand-500)' }} />
             Hide olfactory and taste receptors
           </label>
           {filtersActive && (
-            <button onClick={clearFilters} className="text-xs hover:underline cursor-pointer" style={{ color: '#8B1A1A', fontWeight: 400 }}>
+            <button onClick={clearFilters} className="text-xs hover:underline cursor-pointer" style={{ color: 'var(--color-brand-500)', fontWeight: 400 }}>
               Clear search and filters
             </button>
           )}
@@ -381,18 +382,18 @@ export default function UnassayedProteome({ initialSearch = '', initialScope = '
 
       {!rows ? (
         loadError ? (
-          <div className="py-12 text-center" style={{ color: '#6f6d67' }}>
-            <p className="text-sm mb-2" style={{ fontWeight: 400, color: '#8B1A1A' }}>Couldn't load the protein list.</p>
+          <div className="py-12 text-center" style={{ color: 'var(--color-surface-400)' }}>
+            <p className="text-sm mb-2" style={{ fontWeight: 400, color: 'var(--color-brand-500)' }}>Couldn't load the protein list.</p>
             <p className="text-xs mb-4" style={{ fontWeight: 400 }}>This is usually a temporary network issue. Check your connection and try again.</p>
             <button onClick={retry} className="text-xs px-4 py-2 border transition-colors cursor-pointer"
-              style={{ color: '#8B1A1A', borderColor: '#8B1A1A', background: 'transparent', fontWeight: 400 }}>
+              style={{ color: 'var(--color-brand-500)', borderColor: 'var(--color-brand-500)', background: 'transparent', fontWeight: 400 }}>
               Retry
             </button>
           </div>
         ) : (
-          <div className="py-12 text-center" style={{ color: '#6f6d67' }}>
+          <div className="py-12 text-center" style={{ color: 'var(--color-surface-400)' }}>
             <div className="inline-block w-6 h-6 rounded-full border-2 border-t-transparent animate-spin mb-2"
-              style={{ borderColor: '#8B1A1A', borderTopColor: 'transparent' }} />
+              style={{ borderColor: 'var(--color-brand-500)', borderTopColor: 'transparent' }} />
             <p className="text-sm" style={{ fontWeight: 400 }}>Loading the protein list…</p>
           </div>
         )
@@ -406,16 +407,16 @@ export default function UnassayedProteome({ initialSearch = '', initialScope = '
             </p>
             <div className="flex items-center gap-3 flex-shrink-0">
               {pageCount > 1 && (
-                <p className="text-xs" style={{ color: '#6f6d67' }}>Page {page + 1} of {pageCount}</p>
+                <p className="text-xs" style={{ color: 'var(--color-surface-400)' }}>Page {page + 1} of {pageCount}</p>
               )}
               <button
                 onClick={download}
                 disabled={filtered.length === 0}
                 className="flex items-center gap-1.5 text-xs px-3 py-1.5 border transition-all cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
-                style={{ background: '#fafaf9', borderColor: '#8B1A1A40', color: '#8B1A1A', fontWeight: 400 }}
+                style={{ background: '#fafaf9', borderColor: 'color-mix(in srgb, var(--color-brand-500) 25%, transparent)', color: 'var(--color-brand-500)', fontWeight: 400 }}
                 title="Download the proteins matching the current view as CSV"
               >
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#8B1A1A" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--color-brand-500)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
                 </svg>
                 Download CSV
@@ -426,7 +427,7 @@ export default function UnassayedProteome({ initialSearch = '', initialScope = '
           {/* Table: bounded scroll region so the header row and gene column stay in view */}
           <div style={{ background: '#ffffff', border: '1px solid #e5e4e2' }}>
             {filtered.length === 0 ? (
-              <div className="py-16 text-center text-sm" style={{ color: '#6f6d67' }}>No proteins match the current search and filters.</div>
+              <div className="py-16 text-center text-sm" style={{ color: 'var(--color-surface-400)' }}>No proteins match the current search and filters.</div>
             ) : (
               <>
                 <div ref={scrollRef} className="overflow-auto" style={{ maxHeight: 'calc(100vh - 200px)' }}>
@@ -450,21 +451,21 @@ export default function UnassayedProteome({ initialSearch = '', initialScope = '
                             </a>
                           </td>
                           {wide && (
-                            <td className="px-3 py-2 align-top text-xs" style={{ color: r.ms_catalogues ? '#52504a' : '#6f6d67' }}>
+                            <td className="px-3 py-2 align-top text-xs" style={{ color: r.ms_catalogues ? '#52504a' : 'var(--color-surface-400)' }}>
                               {r.ms_catalogues ? msShort(r) : 'None'}
                             </td>
                           )}
                           <td className="px-3 py-2 align-top"><DetectionCell r={r} /></td>
-                          <td className="px-3 py-2 align-top text-xs tabular-nums" style={{ color: r.gtex_tissues_of_32 ? '#141310' : '#6f6d67' }}>{r.gtex_tissues_of_32}</td>
-                          <td className="px-3 py-2 align-top text-xs tabular-nums" style={{ color: r.wang_tissues_of_29 ? '#141310' : '#6f6d67' }}>{r.wang_tissues_of_29}</td>
+                          <td className="px-3 py-2 align-top text-xs tabular-nums" style={{ color: r.gtex_tissues_of_32 ? '#141310' : 'var(--color-surface-400)' }}>{r.gtex_tissues_of_32}</td>
+                          <td className="px-3 py-2 align-top text-xs tabular-nums" style={{ color: r.wang_tissues_of_29 ? '#141310' : 'var(--color-surface-400)' }}>{r.wang_tissues_of_29}</td>
                           <td className="px-3 py-2 align-top text-xs" style={{ color: '#52504a' }}>{r.localization}</td>
                           <td className="px-3 py-2 align-top text-xs" style={{ color: '#52504a' }}>
                             {r.protein_class}
                             {r.olfactory_or_taste_receptor && (
-                              <span className="block mt-0.5 text-[10px]" style={{ color: '#6f6d67' }}>Olfactory or taste receptor</span>
+                              <span className="block mt-0.5 text-[10px]" style={{ color: 'var(--color-surface-400)' }}>Olfactory or taste receptor</span>
                             )}
                           </td>
-                          <td className="px-3 py-2 align-top text-xs" style={{ color: r.druggable_target ? '#141310' : '#6f6d67' }}>
+                          <td className="px-3 py-2 align-top text-xs" style={{ color: r.druggable_target ? '#141310' : 'var(--color-surface-400)' }}>
                             {r.approved_drug_target ? 'Approved' : r.druggable_target ? 'Clinical' : '-'}
                           </td>
                           <td className="px-3 py-2 align-top text-xs tabular-nums" style={{ color: '#52504a' }}>{fmt(r.focused_papers)}</td>
@@ -495,8 +496,8 @@ export default function UnassayedProteome({ initialSearch = '', initialScope = '
                             onClick={() => goToPage(idx)}
                             className="w-8 h-8 text-xs border transition cursor-pointer"
                             style={{
-                              borderColor: isActive ? '#8B1A1A' : '#e5e4e2',
-                              background: isActive ? '#8B1A1A' : 'transparent',
+                              borderColor: isActive ? 'var(--color-brand-500)' : '#e5e4e2',
+                              background: isActive ? 'var(--color-brand-500)' : 'transparent',
                               color: isActive ? 'white' : '#52504a',
                               fontWeight: 400,
                             }}
@@ -523,8 +524,8 @@ export default function UnassayedProteome({ initialSearch = '', initialScope = '
       )}
 
       {/* Sources and definitions */}
-      <div style={{ background: '#fafaf9', border: '1px solid #e5e4e2', borderLeft: '3px solid #8B1A1A', padding: '16px 20px' }}>
-        <p style={{ fontSize: 10, fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#8B1A1A', marginBottom: 10 }}>Sources and definitions</p>
+      <div style={{ background: '#fafaf9', border: '1px solid #e5e4e2', borderLeft: '3px solid var(--color-brand-500)', padding: '16px 20px' }}>
+        <p style={{ fontSize: 10, fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--color-brand-500)', marginBottom: 10 }}>Sources and definitions</p>
         <p className="text-xs leading-relaxed" style={{ color: '#52504a', fontWeight: 400, marginBottom: 12, maxWidth: '82ch' }}>
           The list starts from every human protein in UniProtKB/Swiss-Prot (entries reviewed manually by
           UniProt&rsquo;s curators) and removes every protein on at least one platform catalogue, counted by

@@ -33,6 +33,7 @@
   {
    "rank": 3,
    "platform": "Olink Explore HT",
+   "technology_group": "Affinity",
    "vendor": "Olink (Thermo Fisher Scientific)",
    "integration_tier": "T1",
    "integration_status": "Integrated",
@@ -98,6 +99,7 @@
   {
    "rank": 4,
    "platform": "SomaScan 11K (v5.0) / Illumina SomaScan Discovery",
+   "technology_group": "Affinity",
    "vendor": "Illumina",
    "integration_tier": "T1",
    "integration_status": "Integrated",
@@ -165,6 +167,7 @@
   {
    "rank": null,
    "platform": "SomaScan 7K (v4.1)",
+   "technology_group": "Affinity",
    "vendor": "Standard BioTools → Illumina",
    "integration_tier": "T1",
    "integration_status": "Retired",
@@ -229,6 +232,7 @@
   {
    "rank": null,
    "platform": "Olink Explore 3072 (legacy)",
+   "technology_group": "Affinity",
    "vendor": "Olink (Thermo Fisher Scientific)",
    "integration_tier": "T1",
    "integration_status": "Retired",
@@ -292,6 +296,7 @@
   {
    "rank": 1,
    "platform": "Alamar NULISAseq Neuro 220 Panel",
+   "technology_group": "Affinity",
    "vendor": "Alamar Biosciences",
    "integration_tier": "T1",
    "integration_status": "Integrated",
@@ -358,6 +363,7 @@
   {
    "rank": 8,
    "platform": "Targeted MRM/PRM panels (academic and CRO, incl. Inoviv)",
+   "technology_group": "Mass spectrometry",
    "vendor": "Academic core or CRO (e.g. Inoviv)",
    "integration_tier": "T2",
    "integration_status": "Targeted panel",
@@ -421,6 +427,7 @@
   {
    "rank": 6,
    "platform": "Olink Target 48/96 and Flex (custom panels)",
+   "technology_group": "Affinity",
    "vendor": "Olink (Thermo Fisher Scientific)",
    "integration_tier": "T2",
    "integration_status": "Targeted panel",
@@ -484,6 +491,7 @@
   {
    "rank": 7,
    "platform": "Quanterix Simoa (HD-X / SR-X singleplex and 2-6 plex)",
+   "technology_group": "Affinity",
    "vendor": "Quanterix",
    "integration_tier": "T2",
    "integration_status": "Targeted panel",
@@ -547,6 +555,7 @@
   {
    "rank": 5,
    "platform": "Luminex xMAP / INTELLIFLEX bead immunoassay",
+   "technology_group": "Affinity",
    "vendor": "Luminex/DiaSorin",
    "integration_tier": "T2",
    "integration_status": "Targeted panel",
@@ -610,6 +619,7 @@
   {
    "rank": 10,
    "platform": "Ella Automated Immunoassay System with Simple Plex assays (RUO; Ella CE-IVD variant)",
+   "technology_group": "Affinity",
    "vendor": "Bio-Techne (ProteinSimple / R&D Systems)",
    "integration_tier": "T2",
    "integration_status": "Targeted panel",
@@ -668,6 +678,7 @@
   {
    "rank": 11,
    "platform": "MRM Proteomics PeptiQuant Plus / BAK270 targeted MRM kits & services",
+   "technology_group": "Mass spectrometry",
    "vendor": "MRM Proteomics Inc. (UVic-Genome BC Proteomics Centre / Borchers group)",
    "integration_tier": "T2",
    "integration_status": "Integration-ready",
@@ -726,6 +737,7 @@
   {
    "rank": 9,
    "platform": "CellCarta / Caprion targeted MRM & PRM MS biomarker services (incl. Precision Assays immuno-MRM panels)",
+   "technology_group": "Mass spectrometry",
    "vendor": "CellCarta (formerly Caprion Biosciences); immuno-MRM panels via Precision Assays (Paulovich lab, Fred Hutch) acquisition",
    "integration_tier": "T2",
    "integration_status": "Integration-ready",
@@ -784,6 +796,7 @@
   {
    "rank": 12,
    "platform": "Seer Proteograph (XT / ONE nanoparticle corona enrichment)",
+   "technology_group": "Mass spectrometry",
    "vendor": "Seer",
    "integration_tier": "T3",
    "integration_status": "Integrated",
@@ -808,7 +821,7 @@
    "score_status": "APT-assessed",
    "detail": {
     "chemistry": "Engineered multi-nanoparticle protein-corona enrichment (NPA/NPB) + on-bead digest + bottom-up DIA-MS (open discovery)",
-    "plex_or_depth": "~8,511 protein groups/sample (independent, Pietzner et al.); up to 10,698 protein groups (Seer PDC, April 2026)",
+    "plex_or_depth": "8,079 protein groups detected at least once and 5,768 in ≥70% of samples (independent, Pietzner et al., Nature Genetics 2026); up to 10,698 protein groups (Seer PDC, April 2026)",
     "matrix": "plasma, serum",
     "quantitation_type": "label-free relative (open DIA-MS)",
     "cost_tier": "moderate, variable",
@@ -843,6 +856,7 @@
   {
    "rank": 13,
    "platform": "Illumina SomaSeq Discovery (formerly Illumina Protein Prep)",
+   "technology_group": "Affinity",
    "vendor": "Illumina",
    "integration_tier": "T1",
    "integration_status": "Integrated",
@@ -910,6 +924,7 @@
   {
    "rank": 14,
    "platform": "Nomic nELISA / Omni 1000",
+   "technology_group": "Affinity",
    "vendor": "Nomic Bio",
    "integration_tier": "T1",
    "integration_status": "Integrated",
@@ -975,6 +990,7 @@
   {
    "rank": 15,
    "platform": "Biognosys TrueSignature (targeted PRM panels)",
+   "technology_group": "Mass spectrometry",
    "vendor": "Biognosys",
    "integration_tier": "T2",
    "integration_status": "Targeted panel",
@@ -1038,6 +1054,7 @@
   {
    "rank": 16,
    "platform": "Alamar NULISAqPCR single-plex (e.g. p-tau217)",
+   "technology_group": "Affinity",
    "vendor": "Alamar Biosciences",
    "integration_tier": "T2",
    "integration_status": "Targeted panel",
@@ -1101,6 +1118,7 @@
   {
    "rank": 2,
    "platform": "Alamar NULISAseq Inflammation Panel 250 (IP250)",
+   "technology_group": "Affinity",
    "vendor": "Alamar Biosciences",
    "integration_tier": "T1",
    "integration_status": "Integrated",
@@ -1162,6 +1180,7 @@
   {
    "rank": 18,
    "platform": "Alamar NULISAseq Inflammation Panel AQ (absolute quantification)",
+   "technology_group": "Affinity",
    "vendor": "Alamar Biosciences",
    "integration_tier": "T1",
    "integration_status": "Integration-ready",
@@ -1220,6 +1239,7 @@
   {
    "rank": 17,
    "platform": "Alamar NULISAseq Immune 340 Panel",
+   "technology_group": "Affinity",
    "vendor": "Alamar Biosciences",
    "integration_tier": "T1",
    "integration_status": "Integration-ready",
@@ -1278,6 +1298,7 @@
   {
    "rank": 19,
    "platform": "Biognosys TrueDiscovery (P2 plasma enrichment, HRM DIA service)",
+   "technology_group": "Mass spectrometry",
    "vendor": "Biognosys",
    "integration_tier": "T3",
    "integration_status": "Integrated",
@@ -1341,6 +1362,7 @@
   {
    "rank": 20,
    "platform": "Olink Reveal",
+   "technology_group": "Affinity",
    "vendor": "Olink (Thermo Fisher Scientific)",
    "integration_tier": "T1",
    "integration_status": "Integration-ready",
@@ -1399,6 +1421,7 @@
   {
    "rank": 22,
    "platform": "Quantum-Si Platinum / Platinum Pro (next-gen protein sequencing)",
+   "technology_group": "Single-molecule & sequencing (emerging)",
    "vendor": "Quantum-Si",
    "integration_tier": "T3",
    "integration_status": "Profiled / reference",
@@ -1462,6 +1485,7 @@
   {
    "rank": 23,
    "platform": "Nautilus Voyager (single-molecule iterative mapping)",
+   "technology_group": "Single-molecule & sequencing (emerging)",
    "vendor": "Nautilus Biotechnology",
    "integration_tier": "T2",
    "integration_status": "Profiled / reference",
@@ -1525,6 +1549,7 @@
   {
    "rank": 24,
    "platform": "Portal Biotech nanopore protein sequencing",
+   "technology_group": "Single-molecule & sequencing (emerging)",
    "vendor": "Portal Biotech",
    "integration_tier": "T3",
    "integration_status": "Profiled / reference",
@@ -1588,6 +1613,7 @@
   {
    "rank": null,
    "platform": "ProteinXI Human Discovery 400 Panel",
+   "technology_group": "Affinity",
    "vendor": "ProteinXI (a division of Meso Scale Diagnostics, LLC / MSD)",
    "integration_tier": "T1",
    "integration_status": "Emerging, not yet scored",
@@ -1645,6 +1671,7 @@
   {
    "rank": null,
    "platform": "Glyphic Biotechnologies de novo protein sequencing",
+   "technology_group": "Single-molecule & sequencing (emerging)",
    "vendor": "Glyphic Bio",
    "integration_tier": "T3",
    "integration_status": "Emerging, not yet scored",
@@ -1706,6 +1733,7 @@
   {
    "rank": null,
    "platform": "Pumpkinseed deSIPHR nanophotonic single-molecule readout",
+   "technology_group": "Single-molecule & sequencing (emerging)",
    "vendor": "Pumpkinseed Bio",
    "integration_tier": "T3",
    "integration_status": "Emerging, not yet scored",
@@ -1767,6 +1795,7 @@
   {
    "rank": null,
    "platform": "Range Biotechnologies translational quantification platform",
+   "technology_group": "Single-molecule & sequencing (emerging)",
    "vendor": "Range Bio",
    "integration_tier": "T3",
    "integration_status": "Targeted panel",
@@ -1828,6 +1857,7 @@
   {
    "rank": null,
    "platform": "Erisyon Fluorosequencing",
+   "technology_group": "Single-molecule & sequencing (emerging)",
    "vendor": "Erisyon, Inc. (Houston, TX; UT Austin / Marcotte lab technology)",
    "integration_tier": "T3",
    "integration_status": "Emerging, not yet scored",
@@ -1888,6 +1918,7 @@
   {
    "rank": null,
    "platform": "Encodia ProteoCode (reverse-translation / DNA-barcoded peptide sequencing)",
+   "technology_group": "Single-molecule & sequencing (emerging)",
    "vendor": "Encodia, Inc. (San Diego, CA)",
    "integration_tier": "T3",
    "integration_status": "Emerging, not yet scored",
@@ -1944,6 +1975,7 @@
   {
    "rank": null,
    "platform": "Prisma Bio (optical protein sequencing; 'Universal Recognizer')",
+   "technology_group": "Single-molecule & sequencing (emerging)",
    "vendor": "Prisma Bio / Prisma Tx (founded 2021)",
    "integration_tier": "T3",
    "integration_status": "Emerging, not yet scored",
@@ -2000,6 +2032,7 @@
   {
    "rank": null,
    "platform": "Primary Bioscience nanopore protein sequencer",
+   "technology_group": "Single-molecule & sequencing (emerging)",
    "vendor": "Primary Bioscience (Seattle, WA; CoMotion Labs / UW incubator)",
    "integration_tier": "T3",
    "integration_status": "Emerging, not yet scored",
@@ -2056,6 +2089,7 @@
   {
    "rank": null,
    "platform": "UNOMR interface nanopore (iNP) / serial nanopore",
+   "technology_group": "Single-molecule & sequencing (emerging)",
    "vendor": "UNOMR AG (Zurich; ETH Zurich spinout, founded 2023/2025)",
    "integration_tier": "T3",
    "integration_status": "Emerging, not yet scored",
@@ -2112,6 +2146,7 @@
   {
    "rank": null,
    "platform": "Phosphopeptide (PTM) enrichment + Orbitrap Astral or timsTOF",
+   "technology_group": "Mass spectrometry",
    "vendor": "Various (academic / kit)",
    "integration_tier": "T3",
    "integration_status": "Enabling sample-prep (not ranked)",
@@ -2155,6 +2190,7 @@
   {
    "rank": null,
    "platform": "Orbitrap Astral / Astral Zoom (neat or enriched plasma DIA)",
+   "technology_group": "Mass spectrometry",
    "vendor": "Thermo Fisher",
    "integration_tier": "T3",
    "integration_status": "Enabling instrument (not ranked)",
@@ -2216,6 +2252,7 @@
   {
    "rank": null,
    "platform": "Top-down / intact-proteoform MS (incl. individual-ion MS)",
+   "technology_group": "Mass spectrometry",
    "vendor": "N/A, academic / reference method",
    "integration_tier": "T3",
    "integration_status": "Enabling instrument (not ranked)",
@@ -2277,6 +2314,7 @@
   {
    "rank": null,
    "platform": "Bruker timsTOF (Pro 2 / HT / Ultra 2) with Evosep One",
+   "technology_group": "Mass spectrometry",
    "vendor": "Bruker",
    "integration_tier": "T3",
    "integration_status": "Enabling instrument (not ranked)",
@@ -2338,6 +2376,7 @@
   {
    "rank": null,
    "platform": "Depletion / neat-plasma bottom-up MS (baseline comparator)",
+   "technology_group": "Mass spectrometry",
    "vendor": "N/A, academic / reference method",
    "integration_tier": "T3",
    "integration_status": "Enabling instrument (not ranked)",
@@ -2399,6 +2438,7 @@
   {
    "rank": null,
    "platform": "High-throughput CSF MS resource workflow (5,000-sample scale)",
+   "technology_group": "Mass spectrometry",
    "vendor": "N/A, academic core",
    "integration_tier": "T3",
    "integration_status": "Enabling instrument (not ranked)",
@@ -2460,6 +2500,7 @@
   {
    "rank": null,
    "platform": "SCIEX ZenoTOF 8600 high-throughput DIA",
+   "technology_group": "Mass spectrometry",
    "vendor": "SCIEX (Danaher)",
    "integration_tier": "T3",
    "integration_status": "Enabling instrument (not ranked)",
@@ -2521,6 +2562,7 @@
   {
    "rank": null,
    "platform": "Thermo Scientific Stellar MS (targeted PRM/MSn instrument line)",
+   "technology_group": "Mass spectrometry",
    "vendor": "Thermo Fisher Scientific",
    "integration_tier": "T3",
    "integration_status": "Enabling instrument (not ranked)",
@@ -2577,6 +2619,7 @@
   {
    "rank": null,
    "platform": "Thermo Scientific Orbitrap Ascend Tribrid (BioPharma / Multi-Omics / Structural Biology editions)",
+   "technology_group": "Mass spectrometry",
    "vendor": "Thermo Fisher Scientific",
    "integration_tier": "T3",
    "integration_status": "Enabling instrument (not ranked)",
@@ -2633,6 +2676,7 @@
   {
    "rank": null,
    "platform": "PreOmics ENRICH-iST / ENRICHplus (plasma/serum enrichment sample-prep for LC-MS)",
+   "technology_group": "Mass spectrometry",
    "vendor": "PreOmics GmbH (a Bruker company)",
    "integration_tier": "T3",
    "integration_status": "Enabling sample-prep (not ranked)",
@@ -2689,6 +2733,7 @@
   {
    "rank": null,
    "platform": "Proteonano Ultraplex Proteomics Platform",
+   "technology_group": "Mass spectrometry",
    "vendor": "Nanomics Biotechnology (Nanomics Biotech)",
    "integration_tier": "T3",
    "integration_status": "Enabling sample-prep (not ranked)",
@@ -2745,6 +2790,7 @@
   {
    "rank": 21,
    "platform": "ProteomEdge targeted-MS panels (ApoEdge, ComplemEdge, LiverEdge, DiscoveryEdge175, DiscoveryEdge600)",
+   "technology_group": "Mass spectrometry",
    "vendor": "ProteomEdge",
    "integration_tier": "T2",
    "integration_status": "Integration-ready",

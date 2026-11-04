@@ -46,6 +46,8 @@ npm run dev      # local development server
 npm run build    # production build
 ```
 
+The build writes a prerendered page for each route to `dist/`, plus `sitemap.xml` and `robots.txt`.
+
 ## Citation
 
 If you use APT, please cite the preprint and this software archive:

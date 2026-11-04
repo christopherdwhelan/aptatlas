@@ -23,17 +23,17 @@ function DownloadGrid({ base, files }) {
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
       {files.map(d => (
         <a key={d.file} href={`${base}/${d.file}`} download
-          className="group block border border-[#e5e4e2] hover:border-[#8B1A1A] transition-colors"
+          className="group block border border-[#e5e4e2] hover:border-brand-500 transition-colors"
           style={{ padding: '13px 15px' }}>
           <div className="flex items-center justify-between mb-1.5">
-            <span className="uppercase" style={{ color: '#8B1A1A', fontSize: 10, letterSpacing: '0.08em', fontWeight: 600 }}>{d.type}</span>
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-[#c4c2ba] group-hover:text-[#8B1A1A] transition-colors" aria-hidden="true">
+            <span className="uppercase" style={{ color: 'var(--color-brand-500)', fontSize: 10, letterSpacing: '0.08em', fontWeight: 600 }}>{d.type}</span>
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-[#c4c2ba] group-hover:text-brand-500 transition-colors" aria-hidden="true">
               <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="7 10 12 15 17 10" /><line x1="12" y1="15" x2="12" y2="3" />
             </svg>
           </div>
           <div style={{ color: '#141310', fontWeight: 500, fontSize: 13 }}>{d.title}</div>
-          <div className="font-mono mt-0.5" style={{ color: '#6f6d67', fontWeight: 400, fontSize: 11.5 }}>{d.file}</div>
-          <div className="mt-1.5" style={{ color: '#6f6d67', fontWeight: 400, fontSize: 12, lineHeight: 1.5 }}>{d.desc}</div>
+          <div className="font-mono mt-0.5" style={{ color: 'var(--color-surface-400)', fontWeight: 400, fontSize: 11.5 }}>{d.file}</div>
+          <div className="mt-1.5" style={{ color: 'var(--color-surface-400)', fontWeight: 400, fontSize: 12, lineHeight: 1.5 }}>{d.desc}</div>
         </a>
       ))}
     </div>
@@ -79,8 +79,8 @@ export default function Reproducibility() {
   return (
     <SectionLayout sections={REPRO_SECTIONS}>
 
-      <div className="px-6 py-5 mb-5" style={{ background: 'rgba(139,26,26,0.04)', borderLeft: '4px solid #8B1A1A' }}>
-        <p className="text-xs uppercase tracking-widest mb-2" style={{ color: '#8B1A1A', fontSize: 10, letterSpacing: '0.08em', fontWeight: 400 }}>
+      <div className="px-6 py-5 mb-5" style={{ background: 'rgba(139,26,26,0.04)', borderLeft: '4px solid var(--color-brand-500)' }}>
+        <p className="text-xs uppercase tracking-widest mb-2" style={{ color: 'var(--color-brand-500)', fontSize: 10, letterSpacing: '0.08em', fontWeight: 400 }}>
           Reproducibility
         </p>
         <p className="text-sm leading-relaxed" style={{ color: '#52504a', fontWeight: 400 }}>
@@ -156,7 +156,7 @@ export default function Reproducibility() {
           folder, then run the script (<code style={{ background: 'rgba(20,19,16,0.06)', padding: '1px 5px' }}>python3 regen_fairness.py</code>).
           It writes its own output files and prints a summary table; compare either against the downloadable
           result files above. If you find a discrepancy, email{' '}
-          <a href="mailto:chris@ignitionscientific.com" className="hover:underline" style={{ color: '#8B1A1A' }}>chris@ignitionscientific.com</a>{' '}
+          <a href="mailto:chris@ignitionscientific.com" className="hover:underline" style={{ color: 'var(--color-brand-500)' }}>chris@ignitionscientific.com</a>{' '}
           with the script output and we will investigate.
         </p>
       </div>

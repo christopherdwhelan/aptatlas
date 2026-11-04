@@ -1,17 +1,20 @@
-import { useEffect } from 'react'
 import { createPortal } from 'react-dom'
 import PlatformRadar from './PlatformRadar'
 import ScoreBar from './ScoreBar'
 import LowerConfidenceBadge from '../LowerConfidenceBadge'
+import ScrollFade from '../ScrollFade'
+import useDialog from '../useDialog'
 import scoring from '../../data/scoring.json'
 import { isLowerConfidence, platformNote } from '../../data/confidence'
+import { proteinCountNote } from '../../data/siteStats'
 import evidence from '../../data/evidence.json'
 import platforms from '../../data/platforms.json'
+import { OTHER_PLATFORMS } from '../../data/otherPlatforms'
 
 // ── Icons ──────────────────────────────────────────────────────────────────
 const CheckIcon = ({ color }) => (
   <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
-    stroke={color || '#8B1A1A'} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
+    stroke={color || 'var(--color-brand-500)'} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
     className="flex-shrink-0 mt-0.5">
     <polyline points="20 6 9 17 4 12"/>
   </svg>
@@ -46,12 +49,12 @@ function Section({ title, children, accent }) {
       style={{
         background: '#ffffff',
         border: accent ? undefined : '1px solid #e5e4e2',
-        borderLeft: accent ? '4px solid #8B1A1A' : '1px solid #e5e4e2',
+        borderLeft: accent ? '4px solid var(--color-brand-500)' : '1px solid #e5e4e2',
         overflow: 'hidden',
       }}
     >
       <div className="px-5 py-3 border-b" style={{ borderColor: '#e5e4e2' }}>
-        <p style={{ color: '#8B1A1A', fontSize: 10, letterSpacing: '0.1em', fontWeight: 400, textTransform: 'uppercase' }}>
+        <p style={{ color: 'var(--color-brand-500)', fontSize: 10, letterSpacing: '0.1em', fontWeight: 400, textTransform: 'uppercase' }}>
           {title}
         </p>
       </div>
@@ -64,7 +67,7 @@ function Section({ title, children, accent }) {
 function SpecRow({ label, value }) {
   return (
     <div className="flex gap-3 py-2 border-b last:border-0" style={{ borderColor: '#e5e4e2' }}>
-      <span className="text-xs w-36 flex-shrink-0" style={{ color: '#6f6d67', fontWeight: 400 }}>
+      <span className="text-xs w-36 flex-shrink-0" style={{ color: 'var(--color-surface-400)', fontWeight: 400 }}>
         {label}
       </span>
       <span className="text-xs leading-relaxed" style={{ color: '#52504a', fontWeight: 400 }}>{value}</span>
@@ -77,17 +80,10 @@ export default function DetailPanel({ platformId, onClose }) {
   const platform = platforms.find(p => p.id === platformId)
   const scores = scoring.scores[platformId] || {}
   const relevantStudies = evidence.filter(e => e.platformsCompared.includes(platformId))
-  const platformMap = Object.fromEntries(platforms.map(p => [p.id, p]))
+  const platformMap = { ...Object.fromEntries(platforms.map(p => [p.id, p])), ...OTHER_PLATFORMS }
 
-  useEffect(() => {
-    const handler = (e) => { if (e.key === 'Escape') onClose() }
-    window.addEventListener('keydown', handler)
-    document.body.style.overflow = 'hidden'
-    return () => {
-      window.removeEventListener('keydown', handler)
-      document.body.style.overflow = ''
-    }
-  }, [onClose])
+  const headingId = 'compare-detail-heading'
+  const { closeRef, dialogProps } = useDialog(onClose, headingId)
 
   if (!platform) return null
 
@@ -114,7 +110,8 @@ export default function DetailPanel({ platformId, onClose }) {
 
       {/* Slide-out panel */}
       <div
-        className="apt-panel-slide fixed top-0 right-0 bottom-0 z-50 flex flex-col overflow-hidden"
+        {...dialogProps}
+        className="apt-panel-slide apt-dialog-panel fixed top-0 right-0 bottom-0 z-50 flex flex-col overflow-hidden"
         style={{
           width: 'min(760px, 90vw)',
           background: '#fafaf9',
@@ -131,14 +128,9 @@ export default function DetailPanel({ platformId, onClose }) {
           }}
         >
           <div className="flex items-start gap-4">
-            {/* Color swatch */}
-            <div
-              className="w-10 h-10 flex-shrink-0 mt-0.5"
-              style={{ background: platform.color, opacity: 0.15 }}
-            />
-            <div style={{ marginLeft: -44, paddingLeft: 14 }}>
+            <div>
               <div className="flex items-center gap-2 flex-wrap">
-                <h2 className="text-xl leading-tight" style={{ color: '#141310', fontWeight: 400 }}>
+                <h2 id={headingId} className="text-xl leading-tight" style={{ color: '#141310', fontWeight: 400 }}>
                   {platform.name}
                 </h2>
                 <span
@@ -146,7 +138,7 @@ export default function DetailPanel({ platformId, onClose }) {
                   style={{
                     background: platform.platformType === 'ms'
                       ? 'rgba(107,91,149,0.1)' : 'rgba(139,26,26,0.08)',
-                    color: platform.platformType === 'ms' ? '#6b5b95' : '#8B1A1A',
+                    color: platform.platformType === 'ms' ? '#6b5b95' : 'var(--color-brand-500)',
                     fontWeight: 400,
                     border: '1px solid',
                     borderColor: platform.platformType === 'ms' ? 'rgba(107,91,149,0.25)' : 'rgba(139,26,26,0.2)',
@@ -166,8 +158,9 @@ export default function DetailPanel({ platformId, onClose }) {
           </div>
 
           <button
-            onClick={onClose}
-            className="flex-shrink-0 w-8 h-8 flex items-center justify-center transition"
+            ref={closeRef}
+            onClick={onClose} aria-label="Close"
+            className="apt-dialog-close flex-shrink-0 w-8 h-8 flex items-center justify-center transition"
             style={{ color: '#52504a', background: '#fafaf9', border: '1px solid #e5e4e2', borderRadius: 2 }}
             onMouseEnter={e => e.currentTarget.style.background = '#f3f2f0'}
             onMouseLeave={e => e.currentTarget.style.background = '#fafaf9'}
@@ -180,7 +173,7 @@ export default function DetailPanel({ platformId, onClose }) {
         </div>
 
         {/* ── Scrollable body ── */}
-        <div className="flex-1 overflow-y-auto px-6 py-5 space-y-4">
+        <ScrollFade wrapperClassName="flex-1 min-h-0" className="h-full overflow-y-auto px-6 py-5 space-y-4" fadeColor="#fafaf9" tabIndex={0}>
 
           {/* 1. Overview */}
           <Section title="Overview">
@@ -195,7 +188,7 @@ export default function DetailPanel({ platformId, onClose }) {
               style={{ background: '#ffffff', border: '1px solid #e5e4e2', overflow: 'hidden' }}
             >
               <div className="px-5 py-3 border-b" style={{ borderColor: '#e5e4e2' }}>
-                <p style={{ color: '#8B1A1A', fontSize: 10, letterSpacing: '0.1em', fontWeight: 400, textTransform: 'uppercase' }}>
+                <p style={{ color: 'var(--color-brand-500)', fontSize: 10, letterSpacing: '0.1em', fontWeight: 400, textTransform: 'uppercase' }}>
                   Performance Profile
                 </p>
               </div>
@@ -208,7 +201,7 @@ export default function DetailPanel({ platformId, onClose }) {
               style={{ background: '#ffffff', border: '1px solid #e5e4e2', overflow: 'hidden' }}
             >
               <div className="px-5 py-3 border-b flex items-center justify-between gap-2 flex-wrap" style={{ borderColor: '#e5e4e2' }}>
-                <p style={{ color: '#8B1A1A', fontSize: 10, letterSpacing: '0.1em', fontWeight: 400, textTransform: 'uppercase' }}>
+                <p style={{ color: 'var(--color-brand-500)', fontSize: 10, letterSpacing: '0.1em', fontWeight: 400, textTransform: 'uppercase' }}>
                   Dimension Scores
                 </p>
                 {isLowerConfidence(platform.id) && <LowerConfidenceBadge note={platformNote(platform.id)} small />}
@@ -226,7 +219,10 @@ export default function DetailPanel({ platformId, onClose }) {
 
           {/* 2. Specifications */}
           <Section title="Specifications">
-            <SpecRow label={<>Proteins<sup style={{ color: '#8B1A1A' }}>†</sup></>} value={platform.proteins} />
+            <SpecRow
+              label={<>Proteins<sup style={{ color: 'var(--color-brand-500)' }}>†</sup></>}
+              value={<>{platform.proteins}{proteinCountNote(platform) && <span className="block mt-1" style={{ color: 'var(--color-surface-400)' }}>{proteinCountNote(platform)}</span>}</>}
+            />
             <SpecRow label="Technology" value={platform.technology} />
             <SpecRow label="Sample Input" value={platform.sampleInput} />
             <SpecRow label="Sample Types" value={platform.sampleTypes} />
@@ -240,16 +236,24 @@ export default function DetailPanel({ platformId, onClose }) {
             {platform.readoutInstruments && (
               <SpecRow label="Readout Instruments" value={platform.readoutInstruments} />
             )}
-            <p className="pt-2" style={{ fontSize: 10, color: '#a3a19d', fontWeight: 400, lineHeight: 1.45 }}>
-              <span style={{ color: '#8B1A1A' }}>†</span> Counts differ in kind by technology: Olink reports assays; SomaScan reports unique protein targets; Seer and Biognosys report MS protein groups; NULISA reports panel targets. Cross-platform comparisons in this atlas map all content to UniProt identifiers; see Methods.
+            <p className="pt-2" style={{ fontSize: 10, color: 'var(--color-label)', fontWeight: 400, lineHeight: 1.45 }}>
+              <span style={{ color: 'var(--color-brand-500)' }}>†</span> Counts differ in kind by technology: Olink reports assays; SomaScan reports unique protein targets; Seer and Biognosys report MS protein groups; NULISA reports panel targets. Cross-platform comparisons in this atlas map all content to UniProt identifiers; see Methods.
             </p>
+            {platform.note && (
+              <div
+                className="mt-3 px-3 py-2.5 text-xs leading-relaxed"
+                style={{ background: 'rgba(139,26,26,0.06)', color: '#52504a', borderLeft: '3px solid var(--color-brand-500)', fontWeight: 400 }}
+              >
+                {platform.note}
+              </div>
+            )}
           </Section>
 
           {/* 3. Strengths & Limitations */}
           <Section title="Strengths & Limitations">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
               <div>
-                <p className="text-xs mb-2" style={{ color: '#8B1A1A', fontWeight: 500 }}>
+                <p className="text-xs mb-2" style={{ color: 'var(--color-brand-500)', fontWeight: 500 }}>
                   Key Strengths
                 </p>
                 <ul className="space-y-2">
@@ -262,7 +266,7 @@ export default function DetailPanel({ platformId, onClose }) {
                 </ul>
               </div>
               <div>
-                <p className="text-xs mb-2" style={{ color: '#d97706', fontWeight: 500 }}>
+                <p className="text-xs mb-2" style={{ color: 'var(--color-amber-text)', fontWeight: 500 }}>
                   Key Limitations
                 </p>
                 <ul className="space-y-2">
@@ -304,7 +308,7 @@ export default function DetailPanel({ platformId, onClose }) {
                             target="_blank"
                             rel="noopener noreferrer"
                             className="flex items-center gap-1 text-xs hover:underline"
-                            style={{ color: '#8B1A1A', fontWeight: 400 }}
+                            style={{ color: 'var(--color-brand-500)', fontWeight: 400 }}
                           >
                             Paper <ExternalIcon />
                           </a>
@@ -312,7 +316,7 @@ export default function DetailPanel({ platformId, onClose }) {
                       </div>
                     </div>
                     {study.sampleSize && (
-                      <p className="text-xs mb-1.5" style={{ color: '#6f6d67', fontWeight: 400 }}>
+                      <p className="text-xs mb-1.5" style={{ color: 'var(--color-surface-400)', fontWeight: 400 }}>
                         n = {study.sampleSize}
                       </p>
                     )}
@@ -325,8 +329,9 @@ export default function DetailPanel({ platformId, onClose }) {
                       ))}
                     </ul>
                     {/* Other platforms compared */}
+                    {study.platformsCompared.length > 1 && (
                     <div className="mt-2 flex items-center gap-1.5 flex-wrap">
-                      <span className="text-xs" style={{ color: '#6f6d67', fontWeight: 400 }}>Also compared:</span>
+                      <span className="text-xs" style={{ color: 'var(--color-surface-400)', fontWeight: 400 }}>Also compared:</span>
                       {study.platformsCompared
                         .filter(pid => pid !== platform.id)
                         .map(pid => {
@@ -335,13 +340,14 @@ export default function DetailPanel({ platformId, onClose }) {
                             <span
                               key={pid}
                               className="text-xs px-1.5 py-0.5"
-                              style={{ background: `${p.color}18`, color: p.color, fontWeight: 500, border: `1px solid ${p.color}30` }}
+                              style={{ background: `${p.color}18`, color: p.textColor, fontWeight: 500, border: `1px solid ${p.color}30` }}
                             >
                               {p.name}
                             </span>
                           ) : null
                         })}
                     </div>
+                    )}
                   </div>
                 ))}
               </div>
@@ -355,7 +361,7 @@ export default function DetailPanel({ platformId, onClose }) {
                 <li key={i} className="flex items-start gap-2 text-sm leading-relaxed" style={{ color: '#52504a', fontWeight: 400 }}>
                   <span
                     className="mt-0.5 flex-shrink-0 flex items-center gap-1"
-                    style={{ color: '#8B1A1A' }}
+                    style={{ color: 'var(--color-brand-500)' }}
                   >
                     <TagIcon />
                   </span>
@@ -413,7 +419,7 @@ export default function DetailPanel({ platformId, onClose }) {
 
           {/* Bottom padding */}
           <div className="h-4" />
-        </div>
+        </ScrollFade>
       </div>
 
       <style>{`

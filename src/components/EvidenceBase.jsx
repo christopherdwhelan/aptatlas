@@ -1,11 +1,18 @@
 import { useState, useMemo } from 'react'
 import evidence from '../data/evidence.json'
 import platforms from '../data/platforms.json'
+import { OTHER_PLATFORMS } from '../data/otherPlatforms'
+import {
+  studyCount, independentHeadToHeadCount, foundationalCount, studiesWithParticipants,
+  participantsAny, participantsMulti, approx, atLeastK,
+} from '../data/siteStats'
 
-const LAST_UPDATED = 'March 2026'
+const LAST_UPDATED = 'November 2026'
 
-const platformMap = Object.fromEntries(platforms.map(p => [p.id, p]))
+const platformMap = { ...Object.fromEntries(platforms.map(p => [p.id, p])), ...OTHER_PLATFORMS }
 const allYears = [...new Set(evidence.map(s => s.year))].sort((a, b) => b - a)
+const eldjarn = evidence.find(s => s.id === 'eldjarn-2023')
+const studiesByParticipants = [...studiesWithParticipants].sort((a, b) => b.participants - a.participants)
 
 // ── Icons ──────────────────────────────────────────────────────────────────
 const ExternalIcon = () => (
@@ -34,7 +41,7 @@ function PlatformChip({ platformId }) {
   return (
     <span
       className="inline-flex items-center gap-1 text-xs px-2 py-0.5"
-      style={{ background: `${p.color}18`, color: p.color, fontWeight: 400 }}
+      style={{ background: `${p.color}18`, color: p.textColor, fontWeight: 400 }}
     >
       <span className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: p.color }} />
       {p.name}
@@ -46,7 +53,7 @@ function PlatformChip({ platformId }) {
 function StudyCard({ study }) {
   const [expanded, setExpanded] = useState(false)
   const visibleFindings = expanded ? study.keyFindings : study.keyFindings.slice(0, 3)
-  const isFoundational = study.platformsCompared.length === 1
+  const isFoundational = study.foundational
 
   return (
     <div
@@ -54,7 +61,7 @@ function StudyCard({ study }) {
       style={{
         border: study.landmark ? undefined : '1px solid #e5e4e2',
         borderColor: study.landmark ? 'rgba(139,26,26,0.3)' : undefined,
-        borderLeft: study.landmark ? '4px solid #8B1A1A' : undefined,
+        borderLeft: study.landmark ? '4px solid var(--color-brand-500)' : undefined,
         borderTop: study.landmark ? '1px solid rgba(139,26,26,0.3)' : undefined,
         borderRight: study.landmark ? '1px solid rgba(139,26,26,0.3)' : undefined,
         borderBottom: study.landmark ? '1px solid rgba(139,26,26,0.3)' : undefined,
@@ -70,7 +77,7 @@ function StudyCard({ study }) {
             {study.landmark && (
               <span
                 className="inline-flex items-center gap-1 text-xs px-2 py-0.5 flex-shrink-0"
-                style={{ background: 'rgba(139,26,26,0.1)', color: '#8B1A1A', fontWeight: 400 }}
+                style={{ background: 'rgba(139,26,26,0.1)', color: 'var(--color-brand-500)', fontWeight: 400 }}
               >
                 <StarIcon /> Landmark
               </span>
@@ -81,6 +88,14 @@ function StudyCard({ study }) {
                 style={{ background: 'rgba(107,91,149,0.08)', color: '#6b5b95', fontWeight: 400 }}
               >
                 Foundational
+              </span>
+            )}
+            {study.vendorAuthorship && (
+              <span
+                className="inline-flex items-center gap-1 text-xs px-2 py-0.5 flex-shrink-0"
+                style={{ background: '#fafaf9', color: '#52504a', border: '1px solid #e5e4e2', fontWeight: 400 }}
+              >
+                {study.vendorAuthorship}
               </span>
             )}
           </div>
@@ -114,9 +129,13 @@ function StudyCard({ study }) {
 
         {/* Sample size */}
         {study.sampleSize && (
-          <p className="text-xs mb-2.5" style={{ color: '#6f6d67' }}>
+          <p className="text-xs mb-2.5" style={{ color: 'var(--color-surface-400)' }}>
             <span style={{ fontWeight: 400 }}>n =</span> {study.sampleSize}
           </p>
+        )}
+
+        {study.disclosureNote && (
+          <p className="text-xs mb-2.5" style={{ color: 'var(--color-surface-400)' }}>{study.disclosureNote}</p>
         )}
 
         {/* Platforms compared */}
@@ -132,7 +151,7 @@ function StudyCard({ study }) {
             <li key={i} className="flex items-start gap-2 text-xs leading-relaxed" style={{ color: '#52504a', fontWeight: 400 }}>
               <span
                 className="mt-1.5 w-1.5 h-1.5 rounded-full flex-shrink-0"
-                style={{ background: study.landmark ? '#8B1A1A' : '#d0cfcc' }}
+                style={{ background: study.landmark ? 'var(--color-brand-500)' : '#d0cfcc' }}
               />
               {f}
             </li>
@@ -154,11 +173,11 @@ function StudyCard({ study }) {
       {study.landmark && (
         <div
           className="px-5 py-2 flex items-center gap-1.5 text-xs"
-          style={{ background: 'rgba(139,26,26,0.04)', borderTop: '1px solid rgba(139,26,26,0.1)', color: '#8B1A1A' }}
+          style={{ background: 'rgba(139,26,26,0.04)', borderTop: '1px solid rgba(139,26,26,0.1)', color: 'var(--color-brand-500)' }}
         >
           <StarIcon />
           <span style={{ fontWeight: 400 }}>Landmark study</span>
-          <span style={{ color: '#6f6d67', fontWeight: 400 }}>: foundational evidence for platform comparison recommendations</span>
+          <span style={{ color: 'var(--color-surface-400)', fontWeight: 400 }}>: key evidence for platform comparison recommendations</span>
         </div>
       )}
     </div>
@@ -246,28 +265,74 @@ export default function EvidenceBase() {
 
   return (
     <div className="space-y-5">
+      {/* ── Header ── */}
+      <div>
+        <h2 className="text-xl" style={{ color: '#141310', fontWeight: 500 }}>Evidence Base</h2>
+        <p className="text-sm mt-1" style={{ color: '#52504a', fontWeight: 400 }}>
+          {studyCount} studies: {independentHeadToHeadCount} independent head-to-head studies (the same samples on two or more high-plex platforms, not vendor-authored) and {foundationalCount} foundational papers.
+          {' '}Across the independent head-to-head studies, {atLeastK(participantsAny)} participants were profiled on at least one compared platform and {approx(participantsMulti)} on two or more.
+          {' '}Most of the larger figure comes from {eldjarn.shortCitation}, which ran Olink in UK Biobank and SomaScan in Iceland, with {eldjarn.participantsMultiPlatform.toLocaleString('en-US')} Icelanders measured on both.
+        </p>
+      </div>
+
+      {/* ── Participants by study ── */}
+      <details open style={{ background: '#ffffff', border: '1px solid #e5e4e2' }}>
+        <summary className="px-4 py-2.5 text-xs cursor-pointer" style={{ color: '#141310', fontWeight: 500 }}>
+          Participants by study
+        </summary>
+        <div className="overflow-x-auto" style={{ borderTop: '1px solid #e5e4e2' }}>
+          <table className="w-full text-xs">
+            <thead>
+              <tr style={{ background: '#fafaf9', borderBottom: '1px solid #e5e4e2' }}>
+                <th scope="col" className="text-left px-4 py-2" style={{ color: 'var(--color-surface-400)', fontWeight: 500 }}>Study</th>
+                <th scope="col" className="text-right px-4 py-2" style={{ color: 'var(--color-surface-400)', fontWeight: 500 }}>At least one compared platform</th>
+                <th scope="col" className="text-right px-4 py-2" style={{ color: 'var(--color-surface-400)', fontWeight: 500 }}>Two or more platforms</th>
+              </tr>
+            </thead>
+            <tbody>
+              {studiesByParticipants.map(s => (
+                <tr key={s.id} style={{ borderBottom: '1px solid #e5e4e2' }}>
+                  <td className="px-4 py-2" style={{ color: '#52504a', fontWeight: 400 }}>{s.shortCitation}</td>
+                  <td className="text-right px-4 py-2 tabular-nums" style={{ color: '#52504a', fontWeight: 400 }}>{s.participants.toLocaleString('en-US')}</td>
+                  <td className="text-right px-4 py-2 tabular-nums" style={{ color: '#52504a', fontWeight: 400 }}>{s.participantsMultiPlatform.toLocaleString('en-US')}</td>
+                </tr>
+              ))}
+              <tr style={{ background: '#fafaf9' }}>
+                <td className="px-4 py-2" style={{ color: '#141310', fontWeight: 500 }}>Total</td>
+                <td className="text-right px-4 py-2 tabular-nums" style={{ color: '#141310', fontWeight: 500 }}>{participantsAny.toLocaleString('en-US')}</td>
+                <td className="text-right px-4 py-2 tabular-nums" style={{ color: '#141310', fontWeight: 500 }}>{participantsMulti.toLocaleString('en-US')}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p className="px-4 py-2.5 text-xs leading-relaxed" style={{ color: 'var(--color-surface-400)', fontWeight: 400, borderTop: '1px solid #e5e4e2' }}>
+          Totals are summed study by study, so anyone in more than one study counts more than once; the two ARIC studies may share participants.
+          Foundational papers are not counted.
+        </p>
+      </details>
+
       {/* ── Notice banner ── */}
       <div
         className="px-5 py-4 flex items-start gap-3"
         style={{
           background: 'rgba(139,26,26,0.05)',
           border: '1px solid rgba(139,26,26,0.15)',
-          borderLeft: '4px solid #8B1A1A',
+          borderLeft: '4px solid var(--color-brand-500)',
         }}
       >
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#8B1A1A"
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--color-brand-500)"
           strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="flex-shrink-0 mt-0.5">
           <circle cx="12" cy="12" r="10"/>
           <line x1="12" y1="8" x2="12" y2="12"/>
           <line x1="12" y1="16" x2="12.01" y2="16"/>
         </svg>
         <p className="text-xs leading-relaxed" style={{ color: '#52504a', fontWeight: 400 }}>
-          <span style={{ color: '#8B1A1A', fontWeight: 400 }}>Curated evidence base</span>
-          , updated monthly. Last updated: <span style={{ fontWeight: 400 }}>{LAST_UPDATED}</span>.{' '}
+          <span style={{ color: 'var(--color-brand-500)', fontWeight: 400 }}>Curated evidence base</span>
+          , updated with each release. Last updated: <span style={{ fontWeight: 400 }}>{LAST_UPDATED}</span>.{' '}
           Evidence depth varies across platforms: newer platforms (Nomic nELISA, NULISA) have
           substantially less published head-to-head data than established platforms (Olink, SomaScan/SomaSeq).
-          Studies marked <span style={{ color: '#8B1A1A', fontWeight: 400 }}>Landmark</span> are
-          foundational references that directly inform the platform recommendations in this tool.{' '}
+          Studies marked <span style={{ color: 'var(--color-brand-500)', fontWeight: 400 }}>Landmark</span> are
+          key references that directly inform the platform recommendations in this tool.{' '}
           <span style={{ fontWeight: 400, color: '#52504a' }}>Readout note:</span>{' '}
           Studies citing "SomaScan" used the array-based (microarray) readout.
           SomaSeq (Illumina; formerly Illumina Protein Prep) is the NGS-based successor; performance differences between readout methods have been reported.
@@ -280,8 +345,8 @@ export default function EvidenceBase() {
           onClick={() => setFiltersOpen(v => !v)}
           className="flex items-center gap-2 text-sm px-4 py-2 border transition-all"
           style={{
-            borderColor: activeFilterCount > 0 ? '#8B1A1A' : '#e5e4e2',
-            color: activeFilterCount > 0 ? '#8B1A1A' : '#52504a',
+            borderColor: activeFilterCount > 0 ? 'var(--color-brand-500)' : '#e5e4e2',
+            color: activeFilterCount > 0 ? 'var(--color-brand-500)' : '#52504a',
             background: activeFilterCount > 0 ? 'rgba(139,26,26,0.05)' : '#ffffff',
             fontWeight: 400,
           }}
@@ -307,7 +372,7 @@ export default function EvidenceBase() {
               <FilterIcon />
               <span
                 className="uppercase"
-                style={{ fontSize: 10, letterSpacing: '0.08em', color: '#6f6d67', fontWeight: 400 }}
+                style={{ fontSize: 10, letterSpacing: '0.08em', color: 'var(--color-surface-400)', fontWeight: 400 }}
               >
                 Filters
               </span>
@@ -327,14 +392,14 @@ export default function EvidenceBase() {
           <div>
             <p
               className="uppercase mb-2"
-              style={{ fontSize: 10, letterSpacing: '0.08em', color: '#6f6d67', fontWeight: 400 }}
+              style={{ fontSize: 10, letterSpacing: '0.08em', color: 'var(--color-surface-400)', fontWeight: 400 }}
             >
               Search
             </p>
             <div className="relative">
               <svg className="absolute left-2.5 top-1/2 -translate-y-1/2 pointer-events-none"
                 width="12" height="12" viewBox="0 0 24 24" fill="none"
-                stroke="#6f6d67" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                stroke="var(--color-surface-400)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
               </svg>
               <input
@@ -352,7 +417,7 @@ export default function EvidenceBase() {
           <div>
             <p
               className="uppercase mb-2"
-              style={{ fontSize: 10, letterSpacing: '0.08em', color: '#6f6d67', fontWeight: 400 }}
+              style={{ fontSize: 10, letterSpacing: '0.08em', color: 'var(--color-surface-400)', fontWeight: 400 }}
             >
               Study Type
             </p>
@@ -360,8 +425,8 @@ export default function EvidenceBase() {
               <div
                 className="w-4 h-4 rounded border-2 flex items-center justify-center flex-shrink-0 transition-all"
                 style={{
-                  borderColor: landmarkOnly ? '#8B1A1A' : '#d0cfcc',
-                  background: landmarkOnly ? '#8B1A1A' : '#fff',
+                  borderColor: landmarkOnly ? 'var(--color-brand-500)' : '#d0cfcc',
+                  background: landmarkOnly ? 'var(--color-brand-500)' : '#fff',
                 }}
                 onClick={() => setLandmarkOnly(v => !v)}
               >
@@ -382,11 +447,12 @@ export default function EvidenceBase() {
           <div>
             <p
               className="uppercase mb-2"
-              style={{ fontSize: 10, letterSpacing: '0.08em', color: '#6f6d67', fontWeight: 400 }}
+              style={{ fontSize: 10, letterSpacing: '0.08em', color: 'var(--color-surface-400)', fontWeight: 400 }}
             >
               Publication Year
             </p>
             <select
+              aria-label="Filter by year"
               value={selectedYear}
               onChange={e => setSelectedYear(e.target.value)}
               className="w-full text-xs px-2.5 py-1.5"
@@ -403,7 +469,7 @@ export default function EvidenceBase() {
           <div>
             <p
               className="uppercase mb-2.5"
-              style={{ fontSize: 10, letterSpacing: '0.08em', color: '#6f6d67', fontWeight: 400 }}
+              style={{ fontSize: 10, letterSpacing: '0.08em', color: 'var(--color-surface-400)', fontWeight: 400 }}
             >
               Platform
             </p>
@@ -432,13 +498,13 @@ export default function EvidenceBase() {
               )}
             </p>
             <div className="flex items-center gap-2">
-              <span className="flex items-center gap-1 text-xs" style={{ color: '#8B1A1A', fontWeight: 400 }}>
+              <span className="flex items-center gap-1 text-xs" style={{ color: 'var(--color-brand-500)', fontWeight: 400 }}>
                 <StarIcon />
                 {evidence.filter(s => s.landmark).length} Landmark
               </span>
               <span style={{ color: '#d0cfcc' }}>·</span>
-              <span className="text-xs" style={{ color: '#6f6d67', fontWeight: 400 }}>
-                {evidence.filter(s => s.platformsCompared.length === 1).length} Foundational
+              <span className="text-xs" style={{ color: 'var(--color-surface-400)', fontWeight: 400 }}>
+                {foundationalCount} Foundational
               </span>
             </div>
           </div>
@@ -449,7 +515,7 @@ export default function EvidenceBase() {
               style={{ border: '1px solid #e5e4e2' }}
             >
               <p className="text-sm mb-1" style={{ color: '#141310', fontWeight: 400 }}>No studies match these filters</p>
-              <p className="text-xs" style={{ color: '#6f6d67', fontWeight: 400 }}>Try removing a filter or broadening your search</p>
+              <p className="text-xs" style={{ color: 'var(--color-surface-400)', fontWeight: 400 }}>Try removing a filter or broadening your search</p>
               <button
                 onClick={clearFilters}
                 className="mt-3 text-xs hover:underline"

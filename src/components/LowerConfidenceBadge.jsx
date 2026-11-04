@@ -64,7 +64,7 @@ export default function LowerConfidenceBadge({ note, small = false }) {
     <ConfidenceTip note={note} style={{
       display: 'inline-flex', alignItems: 'center', gap: 4, flexShrink: 0,
       fontSize: small ? 9 : 10, fontWeight: 500, letterSpacing: '0.06em', textTransform: 'uppercase',
-      lineHeight: 1.5, whiteSpace: 'nowrap', color: '#6f6d67', background: '#ffffff',
+      lineHeight: 1.5, whiteSpace: 'nowrap', color: 'var(--color-surface-400)', background: '#ffffff',
       border: '1px solid #b8b6b0', padding: small ? '0 5px' : '1px 6px',
     }}>
       <svg width={small ? 9 : 10} height={small ? 9 : 10} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" aria-hidden="true">

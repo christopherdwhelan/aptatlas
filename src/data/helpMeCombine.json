@@ -1,6 +1,7 @@
 {
  "universe": {
   "drug_targets": 1449,
+  "drug_targets_on_a_platform": 1179,
   "approved_phase4": 929,
   "proteome_canonical": 20190,
   "proteome_atlas_union": 14340,

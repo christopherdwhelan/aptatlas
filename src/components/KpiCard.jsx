@@ -6,7 +6,7 @@ export default function KpiCard({ icon, value, label, accent = false }) {
         className="w-10 h-10 flex items-center justify-center flex-shrink-0"
         style={{ background: accent ? 'rgba(139,26,26,0.06)' : '#fafaf9' }}
       >
-        <span style={{ color: accent ? '#8B1A1A' : '#6f6d67' }}>
+        <span style={{ color: accent ? 'var(--color-brand-500)' : 'var(--color-surface-400)' }}>
           {icon}
         </span>
       </div>
@@ -20,7 +20,7 @@ export default function KpiCard({ icon, value, label, accent = false }) {
         </p>
         <p
           className="uppercase mt-1 leading-tight"
-          style={{ fontSize: '10px', fontWeight: 400, letterSpacing: '0.06em', color: '#6f6d67' }}
+          style={{ fontSize: '10px', fontWeight: 400, letterSpacing: '0.06em', color: 'var(--color-surface-400)' }}
         >
           {label}
         </p>

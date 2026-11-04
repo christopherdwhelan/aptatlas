@@ -54,7 +54,7 @@ function ExpandableList({ items, color }) {
         <button
           onClick={() => setOpen(o => !o)}
           className="mt-1.5 text-xs hover:underline"
-          style={{ color: '#8B1A1A', fontWeight: 400 }}
+          style={{ color: 'var(--color-brand-500)', fontWeight: 400 }}
         >
           {open ? '▲ Show less' : `+${items.length - 2} more`}
         </button>
@@ -103,7 +103,7 @@ export default function TableView({ platforms }) {
             <tr style={{ background: '#ffffff', borderBottom: '2px solid #141310' }}>
               {/* Row label col */}
               <th className="text-left px-4 py-3 sticky left-0 z-10"
-                style={{ fontSize: 10, fontWeight: 400, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#6f6d67', background: '#ffffff', minWidth: 160 }}>
+                style={{ fontSize: 10, fontWeight: 400, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--color-surface-400)', background: '#ffffff', minWidth: 160 }}>
                 Dimension
               </th>
               {sorted.map(p => (
@@ -120,7 +120,7 @@ export default function TableView({ platforms }) {
                     >
                       {p.name}
                     </button>
-                    <span style={{ fontSize: 10, fontWeight: 400, color: '#6f6d67' }}>
+                    <span style={{ fontSize: 10, fontWeight: 400, color: 'var(--color-surface-400)' }}>
                       {p.company.split(' ')[0]}
                     </span>
                     {isLowerConfidence(p.id) && <LowerConfidenceBadge note={platformNote(p.id)} small />}
@@ -139,10 +139,10 @@ export default function TableView({ platforms }) {
               >
                 <td
                   className="px-4 py-3 sticky left-0 z-10"
-                  style={{ fontSize: 10, fontWeight: 400, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#6f6d67', background: '#ffffff' }}
+                  style={{ fontSize: 10, fontWeight: 400, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--color-surface-400)', background: '#ffffff' }}
                 >
                   {row.label}
-                  {row.key === 'proteins' && <sup style={{ color: '#8B1A1A', fontWeight: 400 }}>†</sup>}
+                  {row.key === 'proteins' && <sup style={{ color: 'var(--color-brand-500)', fontWeight: 400 }}>†</sup>}
                 </td>
                 {sorted.map(p => (
                   <td key={p.id} className="px-3 py-3 text-center align-top">
@@ -159,7 +159,7 @@ export default function TableView({ platforms }) {
               <td
                 colSpan={sorted.length + 1}
                 className="px-4 py-2 sticky left-0"
-                style={{ color: '#8B1A1A' }}
+                style={{ color: 'var(--color-brand-500)' }}
               >
                 <span style={{ fontSize: 10, fontWeight: 400, textTransform: 'uppercase', letterSpacing: '0.1em' }}>
                   Scored Dimensions (click column header to sort)
@@ -184,15 +184,15 @@ export default function TableView({ platforms }) {
                       className="flex items-center gap-1.5 group text-left"
                     >
                       <span
-                        style={{ fontSize: 10, fontWeight: 400, textTransform: 'uppercase', letterSpacing: '0.08em', color: isSorted ? '#8B1A1A' : '#6f6d67' }}
+                        style={{ fontSize: 10, fontWeight: 400, textTransform: 'uppercase', letterSpacing: '0.08em', color: isSorted ? 'var(--color-brand-500)' : 'var(--color-surface-400)' }}
                       >
                         {dim.label}
                       </span>
-                      <span style={{ color: isSorted ? '#8B1A1A' : '#6f6d67' }}>
+                      <span style={{ color: isSorted ? 'var(--color-brand-500)' : 'var(--color-surface-400)' }}>
                         <SortIcon direction={isSorted ? sortDir : null} />
                       </span>
                     </button>
-                    <p className="text-xs mt-0.5" style={{ color: '#6f6d67', fontWeight: 400 }}>{dim.description}</p>
+                    <p className="text-xs mt-0.5" style={{ color: 'var(--color-surface-400)', fontWeight: 400 }}>{dim.description}</p>
                   </td>
                   {sorted.map(p => {
                     const score = scoring.scores[p.id]?.[dim.id] ?? 0
@@ -219,7 +219,7 @@ export default function TableView({ platforms }) {
             <tr style={{ background: '#ffffff', borderTop: '2px solid #f3f2f0' }}>
               <td
                 className="px-4 py-3 sticky left-0 z-10"
-                style={{ fontSize: 10, fontWeight: 400, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#6f6d67', background: '#ffffff', verticalAlign: 'top' }}
+                style={{ fontSize: 10, fontWeight: 400, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--color-surface-400)', background: '#ffffff', verticalAlign: 'top' }}
               >
                 Key Strengths
               </td>
@@ -234,7 +234,7 @@ export default function TableView({ platforms }) {
             <tr style={{ background: '#fafaf9', borderBottom: '1px solid #f3f2f0' }}>
               <td
                 className="px-4 py-3 sticky left-0 z-10"
-                style={{ fontSize: 10, fontWeight: 400, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#6f6d67', background: '#fafaf9', verticalAlign: 'top' }}
+                style={{ fontSize: 10, fontWeight: 400, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--color-surface-400)', background: '#fafaf9', verticalAlign: 'top' }}
               >
                 Key Limitations
               </td>
@@ -251,24 +251,24 @@ export default function TableView({ platforms }) {
       {/* Legend */}
       <div className="px-4 py-3 flex flex-wrap items-center gap-4"
         style={{ background: '#fafaf9', borderTop: '1px solid #e5e4e2' }}>
-        <span style={{ fontSize: 10, fontWeight: 400, color: '#6f6d67' }}>Legend:</span>
-        <span className="flex items-center gap-1.5 text-xs" style={{ color: '#8B1A1A', fontWeight: 400 }}>
-          <span className="inline-block w-2 h-2 rounded-full" style={{ background: '#8B1A1A' }} />
+        <span style={{ fontSize: 10, fontWeight: 400, color: 'var(--color-surface-400)' }}>Legend:</span>
+        <span className="flex items-center gap-1.5 text-xs" style={{ color: 'var(--color-brand-500)', fontWeight: 400 }}>
+          <span className="inline-block w-2 h-2 rounded-full" style={{ background: 'var(--color-brand-500)' }} />
           Best in class
         </span>
         <span className="flex items-center gap-1.5 text-xs" style={{ color: '#b45309', fontWeight: 400 }}>
           <span className="inline-block w-2 h-2 rounded-full" style={{ background: '#d97706' }} />
           Lowest in class
         </span>
-        <span className="ml-auto text-xs" style={{ color: '#6f6d67', fontWeight: 400 }}>
+        <span className="ml-auto text-xs" style={{ color: 'var(--color-surface-400)', fontWeight: 400 }}>
           Scores are 1–5, combining published evidence and expert assessment (see Methods for per-dimension basis). Click platform names or dimension labels to explore.
         </span>
       </div>
 
       {/* Proteins Measured footnote */}
       <div className="px-4 py-2.5" style={{ background: '#fafaf9', borderTop: '1px solid #e5e4e2' }}>
-        <p style={{ fontSize: 10, color: '#a3a19d', fontWeight: 400, lineHeight: 1.45 }}>
-          <span style={{ color: '#8B1A1A' }}>†</span> Counts differ in kind by technology: Olink reports assays; SomaScan reports unique protein targets; Seer and Biognosys report MS protein groups; NULISA reports panel targets. Cross-platform comparisons in this atlas map all content to UniProt identifiers; see Methods.
+        <p style={{ fontSize: 10, color: 'var(--color-label)', fontWeight: 400, lineHeight: 1.45 }}>
+          <span style={{ color: 'var(--color-brand-500)' }}>†</span> Counts differ in kind by technology: Olink reports assays; SomaScan reports unique protein targets; Seer and Biognosys report MS protein groups; NULISA reports panel targets. Cross-platform comparisons in this atlas map all content to UniProt identifiers; see Methods.
         </p>
       </div>
     </div>

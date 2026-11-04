@@ -41,7 +41,7 @@ export default function ViewToggle({ view, onViewChange }) {
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-all"
             style={{
               background: active ? '#ffffff' : 'transparent',
-              color: active ? '#8B1A1A' : '#52504a',
+              color: active ? 'var(--color-brand-500)' : '#52504a',
               boxShadow: active ? '0 1px 3px rgba(0,0,0,0.08)' : 'none',
             }}
           >

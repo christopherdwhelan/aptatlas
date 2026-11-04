@@ -3,6 +3,7 @@ import ViewToggle from './ViewToggle'
 import TableView from './TableView'
 import CardView from './CardView'
 import platforms from '../../data/platforms.json'
+import { scoredDimensionCount } from '../../data/siteStats'
 
 export default function Comparison() {
   const [view, setView] = useState('cards')
@@ -16,7 +17,7 @@ export default function Comparison() {
             Platform Comparison
           </h2>
           <p className="text-sm mt-0.5" style={{ color: '#52504a', fontWeight: 400 }}>
-            Side-by-side comparison across {platforms.length} platforms and 9 scored dimensions.
+            Side-by-side comparison across {platforms.length} platforms and {scoredDimensionCount} scored dimensions.
             {view === 'table' && ' Click any dimension label to sort.'}
           </p>
         </div>

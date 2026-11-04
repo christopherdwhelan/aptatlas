@@ -3,6 +3,7 @@ import PlatformRadar from './PlatformRadar'
 import LowerConfidenceBadge from '../LowerConfidenceBadge'
 import scoring from '../../data/scoring.json'
 import { isLowerConfidence, platformNote } from '../../data/confidence'
+import { proteinCountNote } from '../../data/siteStats'
 
 const TECH_LABELS = {
   'olink-explore-ht':       'PEA · Dual Antibody',
@@ -32,7 +33,7 @@ export default function PlatformCard({ platform, onViewDetails }) {
             <h3 className="text-sm leading-tight" style={{ color: '#141310', fontWeight: 400 }}>
               {platform.name}
             </h3>
-            <p className="text-xs mt-0.5" style={{ color: '#6f6d67', fontWeight: 400 }}>
+            <p className="text-xs mt-0.5" style={{ color: 'var(--color-surface-400)', fontWeight: 400 }}>
               {platform.company}
             </p>
           </div>
@@ -42,7 +43,7 @@ export default function PlatformCard({ platform, onViewDetails }) {
               background: platform.platformType === 'ms'
                 ? 'rgba(107,91,149,0.1)'
                 : 'rgba(139,26,26,0.08)',
-              color: platform.platformType === 'ms' ? '#6b5b95' : '#8B1A1A',
+              color: platform.platformType === 'ms' ? '#6b5b95' : 'var(--color-brand-500)',
               fontWeight: 400,
               fontSize: 10,
               letterSpacing: '0.06em',
@@ -53,24 +54,20 @@ export default function PlatformCard({ platform, onViewDetails }) {
           </span>
         </div>
 
-        {/* Technology badge, plus the lower-confidence flag when evidence depth is low */}
-        <div className="flex flex-wrap items-center gap-1.5 mt-1">
-          <span
-            className="inline-block text-xs px-2 py-0.5 border"
-            style={{ color: '#52504a', borderColor: '#e5e4e2', background: '#fafaf9', fontWeight: 400 }}
-          >
-            {TECH_LABELS[platform.id]}
-          </span>
-          {isLowerConfidence(platform.id) && <LowerConfidenceBadge note={platformNote(platform.id)} />}
-        </div>
+        {/* Lower-confidence flag when evidence depth is low */}
+        {isLowerConfidence(platform.id) && (
+          <div className="flex flex-wrap items-center gap-1.5 mt-1">
+            <LowerConfidenceBadge note={platformNote(platform.id)} />
+          </div>
+        )}
       </div>
 
       {/* Key stats */}
       <div className="px-5 pb-3 grid grid-cols-3 gap-2">
         {[
-          { label: 'Proteins', value: platform.proteinsNumeric.toLocaleString() + (platform.id === 'biognosys-truediscovery' ? '*' : '') },
+          { label: 'Proteins', value: platform.proteinsNumeric.toLocaleString('en-US') + (platform.id === 'biognosys-truediscovery' ? '*' : '') },
           { label: 'Cost', value: platform.costRange.replace(/ cost$/i, '') },
-          { label: 'Score', value: `${total}/45` },
+          { label: 'Technology', value: TECH_LABELS[platform.id] },
         ].map(stat => (
           <div
             key={stat.label}
@@ -80,13 +77,19 @@ export default function PlatformCard({ platform, onViewDetails }) {
             <p className="text-xs leading-tight" style={{ color: '#141310', fontWeight: 400 }}>
               {stat.value}
             </p>
-            <p className="mt-1 uppercase" style={{ fontSize: 10, letterSpacing: '0.06em', color: '#6f6d67', fontWeight: 400 }}>
+            <p className="mt-1 uppercase" style={{ fontSize: 10, letterSpacing: '0.06em', color: 'var(--color-surface-400)', fontWeight: 400 }}>
               {stat.label}
-              {stat.label === 'Proteins' && <sup style={{ color: '#8B1A1A' }}>†</sup>}
+              {stat.label === 'Proteins' && <sup style={{ color: 'var(--color-brand-500)' }}>†</sup>}
             </p>
           </div>
         ))}
       </div>
+
+      {proteinCountNote(platform) && (
+        <p className="px-5 pb-3" style={{ fontSize: 10, color: 'var(--color-surface-400)', fontWeight: 400, lineHeight: 1.4 }}>
+          {proteinCountNote(platform)}
+        </p>
+      )}
 
       {/* Targeted panel callout for focused platforms */}
       {(platform.id === 'nomic-omni' || platform.id === 'nulisa') && (
@@ -138,7 +141,7 @@ export default function PlatformCard({ platform, onViewDetails }) {
           >
             <span
               className="text-xs"
-              style={{ color: '#6f6d67', fontWeight: 400, borderBottom: '1px dotted #b8b6b0', cursor: 'default' }}
+              style={{ color: 'var(--color-surface-400)', fontWeight: 400, borderBottom: '1px dotted #b8b6b0', cursor: 'default' }}
             >Composite score</span>
             {scoreHover && (
               <span style={{
@@ -170,18 +173,18 @@ export default function PlatformCard({ platform, onViewDetails }) {
           onClick={() => onViewDetails(platform.id)}
           className="w-full text-sm py-2 border transition-all"
           style={{
-            color: platform.color,
+            color: platform.textColor,
             borderColor: platform.color,
             background: 'transparent',
             fontWeight: 400,
           }}
           onMouseEnter={e => {
-            e.currentTarget.style.background = platform.color
+            e.currentTarget.style.background = platform.textColor
             e.currentTarget.style.color = '#fff'
           }}
           onMouseLeave={e => {
             e.currentTarget.style.background = 'transparent'
-            e.currentTarget.style.color = platform.color
+            e.currentTarget.style.color = platform.textColor
           }}
         >
           View Details →

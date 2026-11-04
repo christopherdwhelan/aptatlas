@@ -96,7 +96,7 @@ export default function PlatformRadar({ platformId, color, caption = false }) {
         </RadarChart>
       </ResponsiveContainer>
       {caption && (
-        <p style={{ fontSize: 10, color: '#a3a19d', fontWeight: 400, marginTop: 4, lineHeight: 1.4 }}>
+        <p style={{ fontSize: 10, color: 'var(--color-label)', fontWeight: 400, marginTop: 4, lineHeight: 1.4 }}>
           Axes are independent ordinal scales; the enclosed shape is not a summary statistic. Compare platforms spoke by spoke.
         </p>
       )}
