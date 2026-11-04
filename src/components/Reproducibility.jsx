@@ -1,6 +1,7 @@
 import SectionLayout from './SectionLayout'
+import RouteLink from './RouteLink'
 
-function SectionCard({ children, id }) {
+export function SectionCard({ children, id }) {
   return (
     <div id={id} className="bg-white px-7 py-6 mb-5" style={{
       border: '1px solid #e5e4e2',
@@ -12,7 +13,7 @@ function SectionCard({ children, id }) {
   )
 }
 
-function SectionHeading({ children }) {
+export function SectionHeading({ children }) {
   return (
     <h2 className="text-base mb-4" style={{ color: '#141310', fontWeight: 400 }}>{children}</h2>
   )
@@ -55,7 +56,7 @@ const COMBINE_FILES = [
   { file: 'combine_engine_spec.json', type: 'JSON', title: 'Engine specification', desc: 'Axes, default weights, and scoring formulas (engine v3.7).' },
   { file: 'regen_fairness.py', type: 'PY', title: 'Reproducible sweep script', desc: 'Regenerates the priority sweep and the coverage CIs from the spec. Seeded, Python 3, requires numpy.' },
   { file: 'fairness_priority_sweep.csv', type: 'CSV', title: 'Priority-sweep outputs', desc: 'Win, top-3, regret, and rank per pair and platform across 924 priority scenarios.' },
-  { file: 'coverage_bootstrap_ci.csv', type: 'CSV', title: 'Coverage confidence intervals', desc: '2,000-resample bootstrap 95% CI per pair, drug-target denominator.' },
+  { file: 'coverage_bootstrap_ci.csv', type: 'CSV', title: 'Coverage confidence intervals', desc: '2,000-resample bootstrap 95% CI per pair, for the drug-target and FDA-biomarker denominators.' },
 ]
 
 const PATHWAY_FILES = [
@@ -92,6 +93,10 @@ export default function Reproducibility() {
           engine, so there is nothing to regenerate), in one place. Platform scores themselves are not
           simulated; they are curated from published evidence and expert assessment, and their sourcing is
           documented dimension-by-dimension in Methods and per-study in the Evidence Base.
+        </p>
+        <p className="text-sm leading-relaxed mt-3" style={{ color: '#52504a', fontWeight: 400 }}>
+          The data files the site is built from, with their schemas, are on the{' '}
+          <RouteLink tab="data" className="hover:underline" style={{ color: 'var(--color-brand-500)' }}>Data page</RouteLink>.
         </p>
       </div>
 

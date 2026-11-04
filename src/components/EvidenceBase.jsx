@@ -6,8 +6,7 @@ import {
   studyCount, independentHeadToHeadCount, foundationalCount, studiesWithParticipants,
   participantsAny, participantsMulti, approx, atLeastK,
 } from '../data/siteStats'
-
-const LAST_UPDATED = 'November 2026'
+import { LAST_UPDATED_MONTH } from '../version'
 
 const platformMap = { ...Object.fromEntries(platforms.map(p => [p.id, p])), ...OTHER_PLATFORMS }
 const allYears = [...new Set(evidence.map(s => s.year))].sort((a, b) => b - a)
@@ -134,6 +133,9 @@ function StudyCard({ study }) {
           </p>
         )}
 
+        {study.note && (
+          <p className="text-xs mb-2.5" style={{ color: 'var(--color-surface-400)' }}>{study.note}</p>
+        )}
         {study.disclosureNote && (
           <p className="text-xs mb-2.5" style={{ color: 'var(--color-surface-400)' }}>{study.disclosureNote}</p>
         )}
@@ -153,7 +155,7 @@ function StudyCard({ study }) {
                 className="mt-1.5 w-1.5 h-1.5 rounded-full flex-shrink-0"
                 style={{ background: study.landmark ? 'var(--color-brand-500)' : '#d0cfcc' }}
               />
-              {f}
+              {f.text}
             </li>
           ))}
         </ul>
@@ -242,7 +244,7 @@ export default function EvidenceBase() {
           study.shortCitation,
           study.fullCitation,
           study.journal,
-          ...study.keyFindings,
+          ...study.keyFindings.map(f => f.text),
           study.sampleSize || '',
         ].join(' ').toLowerCase()
         if (!searchable.includes(q)) return false
@@ -328,7 +330,7 @@ export default function EvidenceBase() {
         </svg>
         <p className="text-xs leading-relaxed" style={{ color: '#52504a', fontWeight: 400 }}>
           <span style={{ color: 'var(--color-brand-500)', fontWeight: 400 }}>Curated evidence base</span>
-          , updated with each release. Last updated: <span style={{ fontWeight: 400 }}>{LAST_UPDATED}</span>.{' '}
+          , updated with each release. Last updated: <span style={{ fontWeight: 400 }}>{LAST_UPDATED_MONTH}</span>.{' '}
           Evidence depth varies across platforms: newer platforms (Nomic nELISA, NULISA) have
           substantially less published head-to-head data than established platforms (Olink, SomaScan/SomaSeq).
           Studies marked <span style={{ color: 'var(--color-brand-500)', fontWeight: 400 }}>Landmark</span> are

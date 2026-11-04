@@ -1,0 +1,35 @@
+{
+  "schema": "https://aptatlas.org/data/v4.6/coverage_counts.schema.json",
+  "name": "coverage_counts",
+  "title": "Coverage counts",
+  "version": "4.6",
+  "last_updated": "2026-11-04",
+  "licence": "CC-BY-4.0",
+  "licence_url": "https://creativecommons.org/licenses/by/4.0/",
+  "citation": "Whelan CD, Smith-Byrne K. Atlas of Proteomic Technologies: an evidence-based framework for selecting and combining commercial proteomics platforms. bioRxiv 2026. https://doi.org/10.64898/2026.09.10.750723",
+  "archive_doi": "10.5281/zenodo.22697191",
+  "third_party": [
+    {
+      "name": "UniProt",
+      "licence": "CC-BY-4.0",
+      "url": "https://www.uniprot.org/",
+      "relationship": "source",
+      "note": "Accessions, gene symbols and protein names."
+    }
+  ],
+  "data": {
+    "entries": 15128,
+    "unmappedEntries": 47,
+    "proteins": 14340,
+    "perPlatform": {
+      "seer-proteograph": 10065,
+      "illumina-protein-prep": 9324,
+      "olink-explore-ht": 5423,
+      "biognosys-truediscovery": 3569,
+      "nomic-omni": 1059,
+      "nulisa": 387
+    },
+    "onOnePlatform": 5722,
+    "onAllPlatforms": 118
+  }
+}

@@ -1,6 +1,8 @@
 // The title, description and social tags for each page. Numbers come from the site's data.
 import { pathForTab, NOT_FOUND_TAB } from './routes'
 import { SITE_URL } from './siteConfig'
+import { APP_VERSION, LAST_UPDATED_ISO, VERSION } from './version'
+import { ARCHIVE_DOI, CITATION, DATA_FILES, LICENCE_URL, fileName } from './dataFiles'
 import {
   coverage, catalogueCount, assessedCount, scoredDimensionCount, proteinsOnNoPlatform,
   studyCount, independentHeadToHeadCount, foundationalCount,
@@ -54,10 +56,44 @@ const META = {
     title: `Reproducibility | ${SITE}`,
     description: 'Download the engine specifications, scripts and outputs behind the Help Me Choose and Help Me Combine figures.',
   },
+  data: {
+    title: `Data | ${SITE}`,
+    description: 'Versioned data files and JSON Schemas for the atlas: platforms, scores, evidence, coverage and engine specifications, released under CC BY 4.0.',
+  },
   [NOT_FOUND_TAB]: {
     title: `Page not found | ${SITE}`,
     description: 'This address is not part of the Atlas of Proteomic Technologies.',
   },
+}
+
+// schema.org Dataset, on the main page and /data
+function datasetJsonLd() {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Dataset',
+    name: SITE,
+    alternateName: 'APT',
+    description: `Evidence-based data on commercial high-plex proteomics platforms: scores for ${platforms} assessed platforms, a catalogue of ${catalogueCount} platforms, per-protein coverage, structured evidence claims and recommendation-engine specifications. For research use only.`,
+    url: `${SITE_URL}/data`,
+    version: VERSION,
+    dateModified: LAST_UPDATED_ISO,
+    license: LICENCE_URL,
+    isAccessibleForFree: true,
+    identifier: `https://doi.org/${ARCHIVE_DOI}`,
+    citation: CITATION,
+    keywords: ['proteomics', 'high-plex proteomics', 'platform comparison', 'pQTL', 'plasma proteomics'],
+    creator: [
+      { '@type': 'Person', name: 'Christopher D. Whelan' },
+      { '@type': 'Person', name: 'K. Smith-Byrne' },
+    ],
+    publisher: { '@type': 'Organization', name: 'Ignition Scientific LLC', url: 'https://ignitionscientific.com' },
+    distribution: DATA_FILES.map(f => ({
+      '@type': 'DataDownload',
+      name: f.title,
+      encodingFormat: f.format === 'csv' ? 'text/csv' : 'application/json',
+      contentUrl: `${SITE_URL}/data/${APP_VERSION}/${fileName(f)}`,
+    })),
+  }
 }
 
 const metaFor = tab => META[tab] ?? META[NOT_FOUND_TAB]
@@ -92,6 +128,9 @@ export function headHtml(tab) {
   if (tab === 'overview') {
     const site = { '@context': 'https://schema.org', '@type': 'WebSite', name: SITE, alternateName: 'APT', url: `${SITE_URL}/` }
     tags.push(`<script type="application/ld+json">${JSON.stringify(site)}</script>`)
+  }
+  if (tab === 'overview' || tab === 'data') {
+    tags.push(`<script type="application/ld+json">${JSON.stringify(datasetJsonLd()).replaceAll('<', '\\u003c')}</script>`)
   }
   return tags.join('\n    ')
 }

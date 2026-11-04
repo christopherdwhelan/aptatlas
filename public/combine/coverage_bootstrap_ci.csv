@@ -1,16 +1,16 @@
-platform_a,platform_b,coverage_pct,ci_lo,ci_hi
-Nomic Omni,Olink Explore HT,44.3,41.7,47.0
-Nomic Omni,SomaSeq,66.5,64.2,68.9
-Nomic Omni,Alamar NULISA,25.3,23.0,27.4
-Nomic Omni,Seer Proteograph XT,64.5,62.1,67.0
-Nomic Omni,Biognosys TrueDiscovery,43.8,41.3,46.3
-Olink Explore HT,SomaSeq,70.5,68.0,72.8
-Olink Explore HT,Alamar NULISA,41.3,38.6,43.8
-Olink Explore HT,Seer Proteograph XT,70.0,67.8,72.3
-Olink Explore HT,Biognosys TrueDiscovery,53.7,51.2,56.2
-SomaSeq,Alamar NULISA,65.8,63.4,68.3
-SomaSeq,Seer Proteograph XT,78.1,75.9,80.2
-SomaSeq,Biognosys TrueDiscovery,69.4,67.0,71.8
-Alamar NULISA,Seer Proteograph XT,61.4,58.9,63.9
-Alamar NULISA,Biognosys TrueDiscovery,39.3,37.0,41.8
-Seer Proteograph XT,Biognosys TrueDiscovery,60.6,58.0,63.1
+platform_a,platform_b,coverage_pct,ci_lo,ci_hi,coverage_pct_fda,fda_ci_lo,fda_ci_hi
+Nomic Omni,Olink Explore HT,44.3,41.7,47.0,68.1,62.0,74.1
+Nomic Omni,SomaSeq,66.5,64.2,68.9,92.1,88.4,95.4
+Nomic Omni,Alamar NULISA,25.3,23.0,27.4,45.4,38.9,52.3
+Nomic Omni,Seer Proteograph XT,64.5,62.1,67.0,91.7,88.0,95.4
+Nomic Omni,Biognosys TrueDiscovery,43.8,41.3,46.3,79.2,73.6,84.3
+Olink Explore HT,SomaSeq,70.5,68.0,72.8,94.9,91.7,97.7
+Olink Explore HT,Alamar NULISA,41.3,38.6,43.8,62.0,55.6,68.1
+Olink Explore HT,Seer Proteograph XT,70.0,67.8,72.3,94.4,91.2,97.2
+Olink Explore HT,Biognosys TrueDiscovery,53.7,51.2,56.2,84.7,79.6,89.4
+SomaSeq,Alamar NULISA,65.8,63.4,68.3,91.7,88.0,94.9
+SomaSeq,Seer Proteograph XT,78.1,75.9,80.2,98.1,95.8,99.5
+SomaSeq,Biognosys TrueDiscovery,69.4,67.0,71.8,96.3,93.5,98.6
+Alamar NULISA,Seer Proteograph XT,61.4,58.9,63.9,90.3,86.1,94.0
+Alamar NULISA,Biognosys TrueDiscovery,39.3,37.0,41.8,77.8,72.2,83.3
+Seer Proteograph XT,Biognosys TrueDiscovery,60.6,58.0,63.1,90.7,86.6,94.4

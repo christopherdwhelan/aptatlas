@@ -1,0 +1,855 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aptatlas.org/data/helpMeCombine.schema.json",
+  "title": "Help Me Combine data",
+  "description": "Inputs to the pairing engine.",
+  "type": "object",
+  "required": [
+    "schema",
+    "name",
+    "title",
+    "version",
+    "last_updated",
+    "licence",
+    "licence_url",
+    "citation",
+    "archive_doi",
+    "third_party",
+    "data"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "schema": {
+      "type": "string",
+      "description": "URL of this schema for this release"
+    },
+    "name": {
+      "const": "helpMeCombine"
+    },
+    "title": {
+      "type": "string"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+$",
+      "description": "APT release"
+    },
+    "last_updated": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+    },
+    "licence": {
+      "const": "CC-BY-4.0"
+    },
+    "licence_url": {
+      "type": "string"
+    },
+    "citation": {
+      "type": "string"
+    },
+    "archive_doi": {
+      "type": "string"
+    },
+    "third_party": {
+      "type": "array",
+      "description": "Sources this file draws on that carry their own licence.",
+      "items": {
+        "type": "object",
+        "required": [
+          "name",
+          "licence",
+          "url",
+          "relationship",
+          "note"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "licence": {
+            "type": "string",
+            "description": "SPDX identifier"
+          },
+          "url": {
+            "type": "string"
+          },
+          "relationship": {
+            "enum": [
+              "source",
+              "derived"
+            ]
+          },
+          "note": {
+            "type": "string"
+          },
+          "fields": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "JSONPath, relative to data, of fields derived from this source"
+          },
+          "fields_derived_in_part": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "JSONPath, relative to data, of fields computed partly from the fields above"
+          }
+        }
+      }
+    },
+    "data": {
+      "type": "object",
+      "properties": {
+        "universe": {
+          "type": "object",
+          "properties": {
+            "drug_targets": {
+              "type": "integer"
+            },
+            "drug_targets_on_a_platform": {
+              "type": "integer"
+            },
+            "approved_phase4": {
+              "type": "integer"
+            },
+            "proteome_canonical": {
+              "type": "integer"
+            },
+            "proteome_atlas_union": {
+              "type": "integer"
+            },
+            "fda_approved_biomarkers": {
+              "type": "integer"
+            },
+            "atlas_fetch_date": {
+              "type": "string"
+            },
+            "chembl_fetch_date": {
+              "type": "string"
+            },
+            "fda_biomarker_source": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "drug_targets",
+            "drug_targets_on_a_platform",
+            "approved_phase4",
+            "proteome_canonical",
+            "proteome_atlas_union",
+            "fda_approved_biomarkers",
+            "atlas_fetch_date",
+            "chembl_fetch_date",
+            "fda_biomarker_source"
+          ],
+          "additionalProperties": false
+        },
+        "coverage_modes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "key": {
+                "type": "string"
+              },
+              "label": {
+                "type": "string"
+              },
+              "denominator": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "default": {
+                "type": "boolean"
+              },
+              "note": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "key",
+              "label",
+              "denominator"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "quality_dimensions": {
+          "type": "object",
+          "properties": {
+            "proteome_coverage": {
+              "type": "integer"
+            },
+            "precision": {
+              "type": "integer"
+            },
+            "specificity": {
+              "type": "integer"
+            },
+            "sensitivity": {
+              "type": "integer"
+            },
+            "cost_efficiency": {
+              "type": "integer"
+            },
+            "throughput": {
+              "type": "integer"
+            },
+            "quantification_type": {
+              "type": "integer"
+            },
+            "sample_flexibility": {
+              "type": "integer"
+            },
+            "evidence_depth": {
+              "type": "integer"
+            },
+            "pqtl_accuracy": {
+              "type": "integer"
+            }
+          },
+          "required": [
+            "proteome_coverage",
+            "precision",
+            "specificity",
+            "sensitivity",
+            "cost_efficiency",
+            "throughput",
+            "quantification_type",
+            "sample_flexibility",
+            "evidence_depth",
+            "pqtl_accuracy"
+          ],
+          "additionalProperties": false
+        },
+        "composite_axes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "key": {
+                "type": "string"
+              },
+              "default_weight": {
+                "type": "number"
+              },
+              "note": {
+                "type": "string"
+              },
+              "invert": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "key",
+              "default_weight"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "class_balance_rule": {
+          "type": "string"
+        },
+        "quality_axis_dims_used": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "dedup_note": {
+          "type": "string"
+        },
+        "no_feasibility_penalty": {
+          "type": "string"
+        },
+        "platforms": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "display_name": {
+                "type": "string"
+              },
+              "coverage_gene_set_size": {
+                "type": "integer"
+              },
+              "coverage": {
+                "type": "object",
+                "properties": {
+                  "drug_targets": {
+                    "type": "number"
+                  },
+                  "proteome_canonical": {
+                    "type": "number"
+                  },
+                  "proteome_atlas_union": {
+                    "type": "number"
+                  },
+                  "fda_biomarkers": {
+                    "type": "number"
+                  }
+                },
+                "required": [
+                  "drug_targets",
+                  "proteome_canonical",
+                  "proteome_atlas_union",
+                  "fda_biomarkers"
+                ],
+                "additionalProperties": false
+              },
+              "ptm_proteoform_capable": {
+                "type": "boolean"
+              },
+              "app_scores": {
+                "type": "object",
+                "properties": {
+                  "proteome_coverage": {
+                    "type": "integer"
+                  },
+                  "precision": {
+                    "type": "integer"
+                  },
+                  "specificity": {
+                    "type": "integer"
+                  },
+                  "sensitivity": {
+                    "type": "integer"
+                  },
+                  "cost_efficiency": {
+                    "type": "integer"
+                  },
+                  "throughput": {
+                    "type": "integer"
+                  },
+                  "quantification_type": {
+                    "type": "integer"
+                  },
+                  "sample_flexibility": {
+                    "type": "integer"
+                  },
+                  "evidence_depth": {
+                    "type": "integer"
+                  },
+                  "pqtl_accuracy": {
+                    "type": "integer"
+                  }
+                },
+                "required": [
+                  "proteome_coverage",
+                  "precision",
+                  "specificity",
+                  "sensitivity",
+                  "cost_efficiency",
+                  "throughput",
+                  "quantification_type",
+                  "sample_flexibility",
+                  "evidence_depth",
+                  "pqtl_accuracy"
+                ],
+                "additionalProperties": false
+              },
+              "sample_volume_uL": {
+                "type": "integer"
+              },
+              "cost_tier_rel": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "display_name",
+              "coverage_gene_set_size",
+              "coverage",
+              "ptm_proteoform_capable",
+              "app_scores",
+              "sample_volume_uL",
+              "cost_tier_rel"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "pairs": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "a": {
+                "type": "string"
+              },
+              "b": {
+                "type": "string"
+              },
+              "coverage_pct": {
+                "type": "number"
+              },
+              "coverage_ci_lo": {
+                "type": "number"
+              },
+              "coverage_ci_hi": {
+                "type": "number"
+              },
+              "coverage_pct_canonical": {
+                "type": "number"
+              },
+              "coverage_pct_atlas_union": {
+                "type": "number"
+              },
+              "coverage_pct_fda": {
+                "type": "number"
+              },
+              "coverage_fda_ci_lo": {
+                "type": "number"
+              },
+              "coverage_fda_ci_hi": {
+                "type": "number"
+              },
+              "net_new_targets": {
+                "type": "integer"
+              },
+              "net_new_pct": {
+                "type": "number"
+              },
+              "quality_intrinsic": {
+                "type": "number"
+              },
+              "quality_maturity": {
+                "type": "number"
+              },
+              "class_balance": {
+                "type": "number"
+              },
+              "total_cost": {
+                "type": "number"
+              },
+              "joint_volume_uL": {
+                "type": "integer"
+              },
+              "composite": {
+                "type": "number"
+              },
+              "pareto_nondominated": {
+                "type": "boolean"
+              },
+              "top3_pct": {
+                "type": "number"
+              },
+              "mean_regret": {
+                "type": "number"
+              },
+              "win_pct_secondary": {
+                "type": "number"
+              },
+              "tier": {
+                "type": "integer"
+              }
+            },
+            "required": [
+              "a",
+              "b",
+              "coverage_pct",
+              "coverage_ci_lo",
+              "coverage_ci_hi",
+              "coverage_pct_canonical",
+              "coverage_pct_atlas_union",
+              "coverage_pct_fda",
+              "coverage_fda_ci_lo",
+              "coverage_fda_ci_hi",
+              "net_new_targets",
+              "net_new_pct",
+              "quality_intrinsic",
+              "quality_maturity",
+              "class_balance",
+              "total_cost",
+              "joint_volume_uL",
+              "composite",
+              "pareto_nondominated",
+              "top3_pct",
+              "mean_regret",
+              "win_pct_secondary",
+              "tier"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "ms_note": {
+          "type": "string"
+        },
+        "fairness_note": {
+          "type": "string"
+        },
+        "quality_axes": {
+          "type": "object",
+          "properties": {
+            "intrinsic": {
+              "type": "object",
+              "properties": {
+                "dims": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "default_weight": {
+                  "type": "integer"
+                },
+                "label": {
+                  "type": "string"
+                },
+                "note": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "dims",
+                "default_weight",
+                "label",
+                "note"
+              ],
+              "additionalProperties": false
+            },
+            "maturity": {
+              "type": "object",
+              "properties": {
+                "dims": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "default_weight": {
+                  "type": "integer"
+                },
+                "label": {
+                  "type": "string"
+                },
+                "note": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "dims",
+                "default_weight",
+                "label",
+                "note"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "intrinsic",
+            "maturity"
+          ],
+          "additionalProperties": false
+        },
+        "quality_custom_weighting": {
+          "type": "string"
+        },
+        "naming_note": {
+          "type": "string"
+        },
+        "ranking_sensitivity_note": {
+          "type": "string"
+        },
+        "default_philosophy": {
+          "type": "string"
+        },
+        "complementarity_note": {
+          "type": "string"
+        },
+        "anchor_recommendations": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "anchor_solo_pct": {
+                "type": "number"
+              },
+              "single_suffices": {
+                "type": "boolean"
+              },
+              "tiered_partners": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "partner": {
+                      "type": "string"
+                    },
+                    "pair_coverage_pct": {
+                      "type": "number"
+                    },
+                    "net_new_targets": {
+                      "type": "integer"
+                    },
+                    "composite": {
+                      "type": "number"
+                    },
+                    "top3_pct": {
+                      "type": "number"
+                    },
+                    "mean_regret": {
+                      "type": "number"
+                    },
+                    "pareto": {
+                      "type": "boolean"
+                    },
+                    "coverage_gain_pp": {
+                      "type": "number"
+                    },
+                    "tier": {
+                      "type": "integer"
+                    }
+                  },
+                  "required": [
+                    "partner",
+                    "pair_coverage_pct",
+                    "net_new_targets",
+                    "composite",
+                    "top3_pct",
+                    "mean_regret",
+                    "pareto",
+                    "coverage_gain_pp",
+                    "tier"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            "required": [
+              "anchor_solo_pct",
+              "single_suffices",
+              "tiered_partners"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "interaction_modes": {
+          "type": "object",
+          "properties": {
+            "anchor_mode": {
+              "type": "object",
+              "properties": {
+                "description": {
+                  "type": "string"
+                },
+                "default_first_platform": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "description",
+                "default_first_platform"
+              ],
+              "additionalProperties": false
+            },
+            "discovery_mode": {
+              "type": "object",
+              "properties": {
+                "description": {
+                  "type": "string"
+                },
+                "trigger": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "description",
+                "trigger"
+              ],
+              "additionalProperties": false
+            },
+            "single_suffices_flag": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "anchor_mode",
+            "discovery_mode",
+            "single_suffices_flag"
+          ],
+          "additionalProperties": false
+        },
+        "fairness_analyses": {
+          "type": "object",
+          "properties": {
+            "coverage_confidence_intervals": {
+              "type": "object",
+              "properties": {
+                "method": {
+                  "type": "string"
+                },
+                "key_result": {
+                  "type": "string"
+                },
+                "table": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "method",
+                "key_result",
+                "table"
+              ],
+              "additionalProperties": false
+            },
+            "pareto_frontier": {
+              "type": "object",
+              "properties": {
+                "non_dominated": {
+                  "type": "integer"
+                },
+                "total": {
+                  "type": "integer"
+                },
+                "dominated": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "note": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "non_dominated",
+                "total",
+                "dominated",
+                "note"
+              ],
+              "additionalProperties": false
+            },
+            "quality_score_robustness": {
+              "type": "object",
+              "properties": {
+                "method": {
+                  "type": "string"
+                },
+                "key_result": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "method",
+                "key_result"
+              ],
+              "additionalProperties": false
+            },
+            "robustness_metric": {
+              "type": "object",
+              "properties": {
+                "primary": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "secondary": {
+                  "type": "string"
+                },
+                "why": {
+                  "type": "string"
+                },
+                "headline": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "primary",
+                "secondary",
+                "why",
+                "headline"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "coverage_confidence_intervals",
+            "pareto_frontier",
+            "quality_score_robustness",
+            "robustness_metric"
+          ],
+          "additionalProperties": false
+        },
+        "recommendation_output": {
+          "type": "object",
+          "properties": {
+            "mode": {
+              "type": "string"
+            },
+            "tiers": {
+              "type": "object",
+              "properties": {
+                "1": {
+                  "type": "string"
+                },
+                "2": {
+                  "type": "string"
+                },
+                "3": {
+                  "type": "string"
+                },
+                "4": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "1",
+                "2",
+                "3",
+                "4"
+              ],
+              "additionalProperties": false
+            },
+            "rule": {
+              "type": "string"
+            },
+            "consortium_note": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "mode",
+            "tiers",
+            "rule",
+            "consortium_note"
+          ],
+          "additionalProperties": false
+        },
+        "engine_version": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "universe",
+        "coverage_modes",
+        "quality_dimensions",
+        "composite_axes",
+        "class_balance_rule",
+        "quality_axis_dims_used",
+        "dedup_note",
+        "no_feasibility_penalty",
+        "platforms",
+        "pairs",
+        "ms_note",
+        "fairness_note",
+        "quality_axes",
+        "quality_custom_weighting",
+        "naming_note",
+        "ranking_sensitivity_note",
+        "default_philosophy",
+        "complementarity_note",
+        "anchor_recommendations",
+        "interaction_modes",
+        "fairness_analyses",
+        "recommendation_output",
+        "engine_version"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

@@ -139,12 +139,21 @@ def tally(scenarios):
     return win, top3, regret_sum, rank_sum, part, n
 
 
-# ── Bootstrap coverage CIs (drug-target universe, n=1450), pair order ──────────────────
+# ── Bootstrap coverage CIs (drug-target universe, n=1449), pair order ──────────────────
 rng_ci = np.random.default_rng(SEED)
+rng_fda = np.random.default_rng(SEED)  # separate generator, so FDA draws do not alter the drug-target stream
 ci_rows = []
+
+
+def ci(rng, n, pct):
+    draws = rng.binomial(n, pct / 100, size=BOOTSTRAP_DRAWS) / n * 100
+    return round(float(np.percentile(draws, 2.5)), 1), round(float(np.percentile(draws, 97.5)), 1)
+
+
 for p in PAIRS:
-    draws = rng_ci.binomial(DENOM_TOTAL["drug_targets"], p["coverage_pct"] / 100, size=BOOTSTRAP_DRAWS) / DENOM_TOTAL["drug_targets"] * 100
-    ci_rows.append((p["a"], p["b"], p["coverage_pct"], round(float(np.percentile(draws, 2.5)), 1), round(float(np.percentile(draws, 97.5)), 1)))
+    lo, hi = ci(rng_ci, DENOM_TOTAL["drug_targets"], p["coverage_pct"])
+    fda_lo, fda_hi = ci(rng_fda, DENOM_TOTAL["fda_biomarkers"], p["coverage_pct_fda"])
+    ci_rows.append((p["a"], p["b"], p["coverage_pct"], lo, hi, p["coverage_pct_fda"], fda_lo, fda_hi))
 
 # ── Priority sweep (deterministic) ──────────────────────────────────────────────────────
 combos = [list(c) for r in (1, 2, 3) for c in combinations(PRIORITIES, r)]
@@ -170,7 +179,7 @@ write_sweep_csv(os.path.join(HERE, "fairness_priority_sweep.csv"), p_win, p_top3
 
 with open(os.path.join(HERE, "coverage_bootstrap_ci.csv"), "w", newline="") as f:
     wr = csv.writer(f)
-    wr.writerow(["platform_a", "platform_b", "coverage_pct", "ci_lo", "ci_hi"])
+    wr.writerow(["platform_a", "platform_b", "coverage_pct", "ci_lo", "ci_hi", "coverage_pct_fda", "fda_ci_lo", "fda_ci_hi"])
     wr.writerows(ci_rows)
 
 

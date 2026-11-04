@@ -6,6 +6,7 @@ import { resolve } from 'path'
 import { coverageCounts, platformsByProtein } from './src/data/coverageCounts.js'
 import { STATUS_NONE, UNASSAYED_JSON } from './src/data/unassayed.js'
 import { hashRedirectScript } from './src/routes.js'
+import { APP_VERSION } from './src/version.js'
 
 // Coverage counts computed from the data at build time, served to the app as virtual:apt-stats.
 // The build stops if the data sources disagree, so a stale figure cannot ship.
@@ -44,10 +45,40 @@ function aptStats() {
         if (onAPlatform !== universe.drug_targets_on_a_platform) {
           problems.push(`${onAPlatform} drug targets are on a platform but helpMeCombine.json has ${universe.drug_targets_on_a_platform}`)
         }
+        // class_balance: normalised Shannon entropy of the nine target classes among a pair's covered drug targets.
+        const { platforms: combinePlatforms, pairs } = readJson('./src/data/helpMeCombine.json')
+        const slug = Object.fromEntries(Object.entries(combinePlatforms).map(([id, p]) => [p.display_name, id]))
+        const classOf = new Map(readFileSync(drugTargetFile, 'utf-8').trim().split('\n').slice(1).map(line => {
+          const cells = line.split(',')
+          return [cells[0], cells.at(-1)]
+        }))
+        for (const pair of pairs) {
+          const counts = {}
+          for (const [acc, cls] of classOf) {
+            const pids = byProtein.get(acc)
+            if (cls !== 'Unclassified' && pids && (pids.has(slug[pair.a]) || pids.has(slug[pair.b]))) counts[cls] = (counts[cls] || 0) + 1
+          }
+          const total = Object.values(counts).reduce((a, b) => a + b, 0)
+          const entropy = -Object.values(counts).reduce((sum, n) => sum + (n / total) * Math.log(n / total), 0)
+          const computed = Number((entropy / Math.log(9)).toFixed(3))
+          if (computed !== pair.class_balance) problems.push(`${pair.a} + ${pair.b}: class_balance is ${pair.class_balance} but computes to ${computed}`)
+        }
       }
       const unclassified = evidence.filter(s => !s.foundational && (s.platformsCompared.length < 2 || s.vendorAuthorship))
       if (unclassified.length) {
         problems.push(`evidence.json rows are neither foundational nor independent head-to-head: ${unclassified.map(s => s.id).join(', ')}`)
+      }
+      // Each key finding's figures must be numbers its own text states.
+      for (const study of evidence) {
+        for (const claim of study.keyFindings) {
+          for (const { value } of claim.figures) {
+            if (!claim.text.includes(value)) problems.push(`${claim.id} lists the figure "${value}", which is not in its text`)
+          }
+        }
+      }
+      const newestChangelog = readFileSync(resolve('./src/components/Methods.jsx'), 'utf-8').match(/version: '(v[\d.]+)', date:/)?.[1]
+      if (newestChangelog !== APP_VERSION) {
+        problems.push(`the newest Methods changelog entry is ${newestChangelog} but src/version.js says ${APP_VERSION}`)
       }
       if (problems.length) this.error(`Site data disagree: ${problems.join('; ')}`)
     },

@@ -9,3 +9,4 @@ dist-html/
 .DS_Store
 .vercel
 __pycache__/
+tools/mcp/bundle

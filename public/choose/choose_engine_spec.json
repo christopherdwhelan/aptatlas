@@ -1,12 +1,12 @@
 {
   "engine_version": "v3.7",
-  "generated_from": "src/components/HelpMeChoose.jsx + src/data/scoring.json (Atlas of Proteomic Technologies)",
+  "generated_from": "src/engine/choose.js + src/data/scoring.json (Atlas of Proteomic Technologies)",
   "source_locations": {
-    "scoring_function": "HelpMeChoose.jsx: computeResults()",
-    "goal_adjustments": "HelpMeChoose.jsx: computeResults(), goalAdj object",
-    "hard_filters": "HelpMeChoose.jsx: getHardFilter()",
-    "sample_flexibility_overrides": "HelpMeChoose.jsx: getSampleFlexScore()",
-    "priority_miss_penalty": "HelpMeChoose.jsx: computeResults(), PRIORITY_MISS_LABELS block",
+    "scoring_function": "src/engine/choose.js: computeResults()",
+    "goal_adjustments": "src/engine/choose.js: computeResults(), goalAdj object",
+    "hard_filters": "src/engine/choose.js: getHardFilter()",
+    "sample_flexibility_overrides": "src/engine/choose.js: getSampleFlexScore()",
+    "priority_miss_penalty": "src/engine/choose.js: computeResults(), PRIORITY_MISS_LABELS block",
     "data": "src/data/scoring.json, src/data/platforms.json"
   },
   "platform_ids": ["olink-explore-ht", "illumina-protein-prep", "nulisa", "nomic-omni", "seer-proteograph", "biognosys-truediscovery"],

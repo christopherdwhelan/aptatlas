@@ -1,0 +1,209 @@
+{
+  "schema": "https://aptatlas.org/data/v4.6/manifest.schema.json",
+  "name": "manifest",
+  "version": "4.6",
+  "last_updated": "2026-11-04",
+  "licence": "CC-BY-4.0",
+  "licence_url": "https://creativecommons.org/licenses/by/4.0/",
+  "citation": "Whelan CD, Smith-Byrne K. Atlas of Proteomic Technologies: an evidence-based framework for selecting and combining commercial proteomics platforms. bioRxiv 2026. https://doi.org/10.64898/2026.09.10.750723",
+  "archive_doi": "10.5281/zenodo.22697191",
+  "files": [
+    {
+      "file": "platforms.json",
+      "format": "json",
+      "title": "Assessed platforms",
+      "description": "Specifications, strengths and limitations for the six assessed platforms.",
+      "url": "https://aptatlas.org/data/v4.6/platforms.json",
+      "latest_url": "https://aptatlas.org/data/platforms.json",
+      "schema_url": "https://aptatlas.org/data/v4.6/platforms.schema.json",
+      "licence": "CC-BY-4.0",
+      "third_party": [],
+      "bytes": 25022,
+      "sha256": "f547ff8da0a13a28832f3fbcad754f6820a5ef28d64e3dc6d5879f4b6a66931f"
+    },
+    {
+      "file": "all_platforms.json",
+      "format": "json",
+      "title": "Platform catalogue",
+      "description": "The 46-platform catalogue, with evaluation level and integration readiness.",
+      "url": "https://aptatlas.org/data/v4.6/all_platforms.json",
+      "latest_url": "https://aptatlas.org/data/all_platforms.json",
+      "schema_url": "https://aptatlas.org/data/v4.6/all_platforms.schema.json",
+      "licence": "CC-BY-4.0",
+      "third_party": [],
+      "bytes": 195025,
+      "sha256": "b0453ee77f8f3ed951b41dd5e0af1bc35d7e5e8f143c91f85d69a8d96b7f19f8"
+    },
+    {
+      "file": "scoring.json",
+      "format": "json",
+      "title": "Scores",
+      "description": "The ten scored dimensions, each platform's scores, and which platforms are flagged lower confidence.",
+      "url": "https://aptatlas.org/data/v4.6/scoring.json",
+      "latest_url": "https://aptatlas.org/data/scoring.json",
+      "schema_url": "https://aptatlas.org/data/v4.6/scoring.schema.json",
+      "licence": "CC-BY-4.0",
+      "third_party": [],
+      "bytes": 6063,
+      "sha256": "3d01342f24867af699ffe8b090ca88afc56a416a4dd4f64cdc39f732cc5d71bd"
+    },
+    {
+      "file": "evidence.json",
+      "format": "json",
+      "title": "Evidence base",
+      "description": "Studies with their key findings as claim objects: text, platforms, topics, figures and source location.",
+      "url": "https://aptatlas.org/data/v4.6/evidence.json",
+      "latest_url": "https://aptatlas.org/data/evidence.json",
+      "schema_url": "https://aptatlas.org/data/v4.6/evidence.schema.json",
+      "licence": "CC-BY-4.0",
+      "third_party": [],
+      "bytes": 66318,
+      "sha256": "17790dcc7dd397266cd0a66357cfb8f7ef834c90bbf5e4cf66768cac333ae8f4"
+    },
+    {
+      "file": "evidence.csv",
+      "format": "csv",
+      "title": "Evidence base, flat",
+      "description": "One row per key finding, with study, DOI, claim, figures, source location and platforms.",
+      "url": "https://aptatlas.org/data/v4.6/evidence.csv",
+      "latest_url": "https://aptatlas.org/data/evidence.csv",
+      "schema_url": "https://aptatlas.org/data/v4.6/evidence.csv.schema.json",
+      "licence": "CC-BY-4.0",
+      "third_party": [],
+      "bytes": 26735,
+      "sha256": "7e7db4d86d70ddb29eaeb18451361d1f029ff7a5a97fe4a38783f229cf71c78b"
+    },
+    {
+      "file": "helpMeCombine.json",
+      "format": "json",
+      "title": "Help Me Combine data",
+      "description": "Per-platform and per-pair coverage, quality and cost values used by the pairing engine. Some fields are derived from ChEMBL (CC BY-SA 3.0); see third_party.",
+      "url": "https://aptatlas.org/data/v4.6/helpMeCombine.json",
+      "latest_url": "https://aptatlas.org/data/helpMeCombine.json",
+      "schema_url": "https://aptatlas.org/data/v4.6/helpMeCombine.schema.json",
+      "licence": "CC-BY-4.0",
+      "third_party": [
+        {
+          "name": "ChEMBL",
+          "licence": "CC-BY-SA-3.0",
+          "relationship": "derived"
+        }
+      ],
+      "bytes": 40632,
+      "sha256": "6f3ea9791042a6f0318a6c3115f5ae26adcd15a90859d31147d632fa8a7e4443"
+    },
+    {
+      "file": "coverage_counts.json",
+      "format": "json",
+      "title": "Coverage counts",
+      "description": "Distinct proteins overall and per platform, counted from the protein catalogue.",
+      "url": "https://aptatlas.org/data/v4.6/coverage_counts.json",
+      "latest_url": "https://aptatlas.org/data/coverage_counts.json",
+      "schema_url": "https://aptatlas.org/data/v4.6/coverage_counts.schema.json",
+      "licence": "CC-BY-4.0",
+      "third_party": [
+        {
+          "name": "UniProt",
+          "licence": "CC-BY-4.0",
+          "relationship": "source"
+        }
+      ],
+      "bytes": 1126,
+      "sha256": "f399383e6dc609a086c80eccef2fd9b67e3eb83896385be2f650f67e24bbb592"
+    },
+    {
+      "file": "proteins.json",
+      "format": "json",
+      "title": "Protein catalogue",
+      "description": "Per-protein coverage: gene, UniProt accessions and the platforms that list each protein, compiled from vendor catalogues.",
+      "url": "https://aptatlas.org/data/v4.6/proteins.json",
+      "latest_url": "https://aptatlas.org/data/proteins.json",
+      "schema_url": "https://aptatlas.org/data/v4.6/proteins.schema.json",
+      "licence": "CC-BY-4.0",
+      "third_party": [
+        {
+          "name": "UniProt",
+          "licence": "CC-BY-4.0",
+          "relationship": "source"
+        }
+      ],
+      "bytes": 4198864,
+      "sha256": "c4772292b5df4138f4127bbe2464fa9d50e3493840f78b8bc2436054814e103f"
+    },
+    {
+      "file": "reactome_pathways.json",
+      "format": "json",
+      "title": "Reactome pathways",
+      "description": "Pathway names and members used by the pathway selector.",
+      "url": "https://aptatlas.org/data/v4.6/reactome_pathways.json",
+      "latest_url": "https://aptatlas.org/data/reactome_pathways.json",
+      "schema_url": "https://aptatlas.org/data/v4.6/reactome_pathways.schema.json",
+      "licence": "CC-BY-4.0",
+      "third_party": [
+        {
+          "name": "Reactome",
+          "licence": "CC0-1.0",
+          "relationship": "source"
+        },
+        {
+          "name": "UniProt",
+          "licence": "CC-BY-4.0",
+          "relationship": "source"
+        }
+      ],
+      "bytes": 979921,
+      "sha256": "c995663dcfb6201c9e3e19730fc008f620e338ddde5a76bd1fb2d39cfe8623ad"
+    },
+    {
+      "file": "pathway_coverage.json",
+      "format": "json",
+      "title": "Pathway coverage",
+      "description": "Precomputed per-pathway coverage for each platform and pair.",
+      "url": "https://aptatlas.org/data/v4.6/pathway_coverage.json",
+      "latest_url": "https://aptatlas.org/data/pathway_coverage.json",
+      "schema_url": "https://aptatlas.org/data/v4.6/pathway_coverage.schema.json",
+      "licence": "CC-BY-4.0",
+      "third_party": [
+        {
+          "name": "Reactome",
+          "licence": "CC0-1.0",
+          "relationship": "source"
+        }
+      ],
+      "bytes": 811517,
+      "sha256": "e2036a617912cf8571220c296cbe6a1f6cbb1c52501154db5e97b4a0fda50313"
+    },
+    {
+      "file": "choose_engine_spec.json",
+      "format": "json",
+      "title": "Help Me Choose engine specification",
+      "description": "Every scoring constant the Help Me Choose engine uses.",
+      "url": "https://aptatlas.org/data/v4.6/choose_engine_spec.json",
+      "latest_url": "https://aptatlas.org/data/choose_engine_spec.json",
+      "schema_url": "https://aptatlas.org/data/v4.6/choose_engine_spec.schema.json",
+      "licence": "CC-BY-4.0",
+      "third_party": [],
+      "bytes": 29031,
+      "sha256": "1811c3ff282803d395504716e5350d6ac636072f415a671ba25c24baed2a4391"
+    },
+    {
+      "file": "combine_engine_spec.json",
+      "format": "json",
+      "title": "Help Me Combine engine specification",
+      "description": "Axes, weights and pair values the Help Me Combine engine uses. Some fields are derived from ChEMBL (CC BY-SA 3.0); see third_party.",
+      "url": "https://aptatlas.org/data/v4.6/combine_engine_spec.json",
+      "latest_url": "https://aptatlas.org/data/combine_engine_spec.json",
+      "schema_url": "https://aptatlas.org/data/v4.6/combine_engine_spec.schema.json",
+      "licence": "CC-BY-4.0",
+      "third_party": [
+        {
+          "name": "ChEMBL",
+          "licence": "CC-BY-SA-3.0",
+          "relationship": "derived"
+        }
+      ],
+      "bytes": 20365,
+      "sha256": "98096cd3676c5d216866624e81be9ae9af68e5b287244f6caab636155f5baa1e"
+    }
+  ]
+}

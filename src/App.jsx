@@ -13,6 +13,8 @@ import HelpMeChoose from './components/HelpMeChoose'
 import HelpMeCombine from './components/HelpMeCombine'
 import Methods from './components/Methods'
 import Reproducibility from './components/Reproducibility'
+import DataPage from './components/DataPage'
+import RouteLink from './components/RouteLink'
 import NotFound from './components/NotFound'
 import { currentTab, goToTab, onNavigate } from './navigation'
 import { applyHead } from './routeMeta'
@@ -76,7 +78,7 @@ export default function App({ initialTab }) {
 
       <main className="flex-1 max-w-screen-xl mx-auto w-full px-4 sm:px-6 py-5 sm:py-6">
         {/* key={activeTab} triggers remount → CSS fade animation plays on each switch */}
-        <div key={activeTab} className="tab-content" role="tabpanel" id="tabpanel" aria-labelledby={activeTab === NOT_FOUND_TAB ? undefined : `tab-${activeTab}`}>
+        <div key={activeTab} className="tab-content" role="tabpanel" id="tabpanel" aria-labelledby={activeTab === NOT_FOUND_TAB || activeTab === 'data' ? undefined : `tab-${activeTab}`} aria-label={activeTab === 'data' ? 'Data' : undefined}>
           {activeTab === 'overview'    && <Overview onNavigateToProteins={navigateToProteins} onOpenPlatform={navigateToPlatform} />}
           {activeTab === 'platforms'   && <AllPlatforms initialPlatform={platformToOpen} onCompareInDepth={() => handleTabChange('comparison')} />}
           {activeTab === 'comparison'  && <Comparison />}
@@ -87,6 +89,7 @@ export default function App({ initialTab }) {
           {activeTab === 'combine'     && <HelpMeCombine />}
           {activeTab === 'methods'     && <Methods />}
           {activeTab === 'reproducibility' && <Reproducibility />}
+          {activeTab === 'data'        && <DataPage />}
           {activeTab === NOT_FOUND_TAB && <NotFound />}
         </div>
       </main>
@@ -99,6 +102,8 @@ export default function App({ initialTab }) {
               style={{ color: 'var(--color-brand-500)' }}>
               ignitionscientific.com
             </a>
+            &nbsp;&middot;&nbsp;
+            <RouteLink tab="data" style={{ color: 'var(--color-brand-500)' }}>Data</RouteLink>
           </p>
           <p className="text-xs text-center sm:text-right" style={{ color: 'var(--color-surface-400)', fontWeight: 400 }}>
             For research use only. Not for clinical decision making.

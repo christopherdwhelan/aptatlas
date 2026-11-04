@@ -17,6 +17,10 @@ This repository accompanies the APT preprint (Whelan and Smith-Byrne, bioRxiv 20
 - `public/unassayed/`: the Unassayed Proteome list, as CSV and as the JSON the app loads. It holds the 9,072 human Swiss-Prot proteins on none of the four affinity catalogues; 5,850 of them are on none of the six platforms and the other 3,222 are on a mass spectrometry list only. Each row gives detection in two tissue proteomes (the GTEx tissue proteome, Jiang et al. 2020, and Wang et al. 2019), localization and names from UniProt, protein class and drug-target status from ChEMBL, and focused-paper counts from NCBI gene2pubmed.
 - `public/choose/`: Help Me Choose reproducibility bundle. Engine specification, the anonymised real-world respondent set, the fairness script, and its output CSVs.
 - `public/combine/`: Help Me Combine reproducibility bundle. Engine specification, the priority-sweep script, and its outputs.
+- `src/engine/`: the Help Me Choose and Help Me Combine engines, with no React or data imports. The site and the MCP server both run these files.
+- `data_schemas/`: JSON Schemas for the published data files.
+- `data_releases/`: the frozen data files for each release, as served at `https://aptatlas.org/data/vX.Y/`. The build fails if published data changes without a version bump.
+- `tools/mcp/`: an MCP server over the same engines and data, with a README and `SKILL.md`. Its identity test regenerates the Help Me Choose and Help Me Combine fairness files through the server and compares them byte for byte.
 - `figures/`: the platform radar figure and its generator, and `compute_figure4_niches_v3.py`, which recomputes the Figure 4A niche win-shares from the Help Me Choose engine.
 
 The live data-collection backend (per-visit logging, submission handling, and the admin API endpoints) is intentionally omitted from this archive. The admin dashboard UI component is present but is non-functional without that backend.
@@ -46,7 +50,7 @@ npm run dev      # local development server
 npm run build    # production build
 ```
 
-The build writes a prerendered page for each route to `dist/`, plus `sitemap.xml` and `robots.txt`.
+The build writes a prerendered page for each route to `dist/`, plus `sitemap.xml`, `robots.txt`, `llms.txt` and the data files in `dist/data/`.
 
 ## Citation
 
@@ -60,6 +64,6 @@ Machine-readable metadata is in `CITATION.cff`.
 
 ## License
 
-Released under the MIT License (see `LICENSE`).
+The code is released under the MIT License (see `LICENSE`). The data files in `data_releases/` and at https://aptatlas.org/data are released under CC BY 4.0, with third-party sources noted in each file's `third_party` field. Some Help Me Combine fields are derived from ChEMBL (CC BY-SA 3.0), and those files list them by path.
 
 An independent resource, provided free of charge; not sponsored by, affiliated with, or endorsed by any platform or vendor named. Scores and recommendations reflect the authors' assessment of published literature, offered as opinion to guide study-design decisions, not definitive or commercial rankings. For research use only; not for clinical decision making.

@@ -1,0 +1,37 @@
+{
+  "name": "aptatlas-mcp",
+  "version": "4.6.0",
+  "private": true,
+  "description": "MCP server for the Atlas of Proteomic Technologies: platform data, recommendation engines, protein coverage and evidence claims. For research use only.",
+  "type": "module",
+  "bin": {
+    "aptatlas-mcp": "server.js"
+  },
+  "files": [
+    "server.js",
+    "tools.js",
+    "bundle",
+    "README.md",
+    "SKILL.md"
+  ],
+  "license": "MIT",
+  "homepage": "https://aptatlas.org/data",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/christopherdwhelan/aptatlas.git",
+    "directory": "tools/mcp"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "bundle": "node scripts/bundle.js",
+    "prepack": "node scripts/bundle.js",
+    "test": "node scripts/bundle.js && node test/tools.test.js",
+    "test:identity": "node scripts/bundle.js && node test/identity.test.js"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "1.32.2",
+    "zod": "4.6.7"
+  }
+}

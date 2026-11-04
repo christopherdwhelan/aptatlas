@@ -1,10 +1,12 @@
 {
   "name": "aptatlas",
-  "version": "4.5.0",
+  "version": "4.6.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build && vite build --ssr src/entry-server.jsx && node scripts/prerender.js",
+    "build": "vite build && vite build --ssr src/entry-server.jsx && node scripts/prerender.js && node scripts/build-data.js",
+    "data:freeze": "node scripts/build-data.js --freeze",
+    "build:unfrozen": "vite build && vite build --ssr src/entry-server.jsx && node scripts/prerender.js && node scripts/build-data.js --unfrozen",
     "build:html": "BUILD_MODE=singlefile vite build",
     "lint": "eslint .",
     "preview": "vite preview"
@@ -19,6 +21,7 @@
     "resend": "^6.10.0"
   },
   "devDependencies": {
+    "ajv": "8.20.0",
     "@eslint/js": "^9.39.4",
     "@tailwindcss/vite": "^4.2.2",
     "@types/react": "^19.2.14",

@@ -1,0 +1,1374 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aptatlas.org/data/choose_engine_spec.schema.json",
+  "title": "Help Me Choose engine specification",
+  "description": "Every constant the Help Me Choose engine uses.",
+  "type": "object",
+  "required": [
+    "schema",
+    "name",
+    "title",
+    "version",
+    "last_updated",
+    "licence",
+    "licence_url",
+    "citation",
+    "archive_doi",
+    "third_party",
+    "data"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "schema": {
+      "type": "string",
+      "description": "URL of this schema for this release"
+    },
+    "name": {
+      "const": "choose_engine_spec"
+    },
+    "title": {
+      "type": "string"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+$",
+      "description": "APT release"
+    },
+    "last_updated": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+    },
+    "licence": {
+      "const": "CC-BY-4.0"
+    },
+    "licence_url": {
+      "type": "string"
+    },
+    "citation": {
+      "type": "string"
+    },
+    "archive_doi": {
+      "type": "string"
+    },
+    "third_party": {
+      "type": "array",
+      "description": "Sources this file draws on that carry their own licence.",
+      "items": {
+        "type": "object",
+        "required": [
+          "name",
+          "licence",
+          "url",
+          "relationship",
+          "note"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "licence": {
+            "type": "string",
+            "description": "SPDX identifier"
+          },
+          "url": {
+            "type": "string"
+          },
+          "relationship": {
+            "enum": [
+              "source",
+              "derived"
+            ]
+          },
+          "note": {
+            "type": "string"
+          },
+          "fields": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "JSONPath, relative to data, of fields derived from this source"
+          },
+          "fields_derived_in_part": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "JSONPath, relative to data, of fields computed partly from the fields above"
+          }
+        }
+      }
+    },
+    "data": {
+      "type": "object",
+      "properties": {
+        "engine_version": {
+          "type": "string"
+        },
+        "generated_from": {
+          "type": "string"
+        },
+        "source_locations": {
+          "type": "object",
+          "properties": {
+            "scoring_function": {
+              "type": "string"
+            },
+            "goal_adjustments": {
+              "type": "string"
+            },
+            "hard_filters": {
+              "type": "string"
+            },
+            "sample_flexibility_overrides": {
+              "type": "string"
+            },
+            "priority_miss_penalty": {
+              "type": "string"
+            },
+            "data": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "scoring_function",
+            "goal_adjustments",
+            "hard_filters",
+            "sample_flexibility_overrides",
+            "priority_miss_penalty",
+            "data"
+          ],
+          "additionalProperties": false
+        },
+        "platform_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "ptm_capable": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "absolute_quant_capable": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "cost_efficiency_bands": {
+          "type": "object",
+          "properties": {
+            "basis": {
+              "type": "string"
+            },
+            "bands": {
+              "type": "object",
+              "properties": {
+                "1": {
+                  "type": "string"
+                },
+                "2": {
+                  "type": "string"
+                },
+                "3": {
+                  "type": "string"
+                },
+                "4": {
+                  "type": "string"
+                },
+                "5": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "1",
+                "2",
+                "3",
+                "4",
+                "5"
+              ],
+              "additionalProperties": false
+            },
+            "band_note": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "basis",
+            "bands",
+            "band_note"
+          ],
+          "additionalProperties": false
+        },
+        "slider_dimensions": {
+          "type": "object",
+          "properties": {
+            "cost": {
+              "type": "string"
+            },
+            "coverage": {
+              "type": "string"
+            },
+            "precision": {
+              "type": "string"
+            },
+            "specificity": {
+              "type": "string"
+            },
+            "sensitivity": {
+              "type": "string"
+            },
+            "throughput": {
+              "type": "string"
+            },
+            "pqtl": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "cost",
+            "coverage",
+            "precision",
+            "specificity",
+            "sensitivity",
+            "throughput",
+            "pqtl"
+          ],
+          "additionalProperties": false
+        },
+        "goals": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "sample_types": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "study_sizes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "weight_range": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          }
+        },
+        "goal_adjustments": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "coverage": {
+                "type": "integer"
+              },
+              "specificity": {
+                "type": "integer"
+              },
+              "throughput": {
+                "type": "integer"
+              },
+              "sensitivity": {
+                "type": "integer"
+              },
+              "precision": {
+                "type": "integer"
+              },
+              "cost": {
+                "type": "integer"
+              }
+            },
+            "required": [],
+            "additionalProperties": false
+          }
+        },
+        "size_boost": {
+          "type": "object",
+          "properties": {
+            "formula": {
+              "type": "string"
+            },
+            "SIZE_BOOST_SCALE": {
+              "type": "number"
+            },
+            "note_v3.0": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "formula",
+            "SIZE_BOOST_SCALE",
+            "note_v3.0"
+          ],
+          "additionalProperties": false
+        },
+        "context_boosts": {
+          "type": "object",
+          "properties": {
+            "csf_sensitivity": {
+              "type": "object",
+              "properties": {
+                "condition": {
+                  "type": "string"
+                },
+                "value": {
+                  "type": "integer"
+                },
+                "applies_to": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "condition",
+                "value",
+                "applies_to"
+              ],
+              "additionalProperties": false
+            },
+            "cns_focus_sensitivity": {
+              "type": "object",
+              "properties": {
+                "condition": {
+                  "type": "string"
+                },
+                "value": {
+                  "type": "string"
+                },
+                "applies_to": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "condition",
+                "value",
+                "applies_to"
+              ],
+              "additionalProperties": false
+            },
+            "cns_focus_specificity": {
+              "type": "object",
+              "properties": {
+                "condition": {
+                  "type": "string"
+                },
+                "value": {
+                  "type": "string"
+                },
+                "applies_to": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "condition",
+                "value",
+                "applies_to"
+              ],
+              "additionalProperties": false
+            },
+            "longitudinal_precision": {
+              "type": "object",
+              "properties": {
+                "condition": {
+                  "type": "string"
+                },
+                "value": {
+                  "type": "integer"
+                },
+                "applies_to": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "condition",
+                "value",
+                "applies_to"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "csf_sensitivity",
+            "cns_focus_sensitivity",
+            "cns_focus_specificity",
+            "longitudinal_precision"
+          ],
+          "additionalProperties": false
+        },
+        "context_boost_provenance_note": {
+          "type": "string"
+        },
+        "effective_weight_formula": {
+          "type": "string"
+        },
+        "priority_miss_penalty": {
+          "type": "object",
+          "properties": {
+            "rule": {
+              "type": "string"
+            },
+            "changed_in_v3.0": {
+              "type": "string"
+            },
+            "note": {
+              "type": "string"
+            },
+            "fix_d": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "rule",
+            "changed_in_v3.0",
+            "note",
+            "fix_d"
+          ],
+          "additionalProperties": false
+        },
+        "quantification_weight": {
+          "type": "object",
+          "properties": {
+            "yes": {
+              "type": "integer"
+            },
+            "nice": {
+              "type": "integer"
+            },
+            "no": {
+              "type": "integer"
+            },
+            "applies_to": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "yes",
+            "nice",
+            "no",
+            "applies_to"
+          ],
+          "additionalProperties": false
+        },
+        "sample_flexibility_weight": {
+          "type": "object",
+          "properties": {
+            "base_by_sample_type": {
+              "type": "object",
+              "properties": {
+                "tissue": {
+                  "type": "integer"
+                },
+                "cell_culture": {
+                  "type": "integer"
+                },
+                "multiple": {
+                  "type": "integer"
+                },
+                "csf": {
+                  "type": "integer"
+                },
+                "default": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "tissue",
+                "cell_culture",
+                "multiple",
+                "csf",
+                "default"
+              ],
+              "additionalProperties": false
+            },
+            "note_v3.0": {
+              "type": "string"
+            },
+            "per_platform_overrides": {
+              "type": "object",
+              "properties": {
+                "tissue": {
+                  "type": "object",
+                  "properties": {
+                    "nulisa": {
+                      "type": "integer"
+                    },
+                    "nomic-omni": {
+                      "type": "integer"
+                    },
+                    "seer-proteograph": {
+                      "type": "integer"
+                    },
+                    "olink-explore-ht": {
+                      "type": "integer"
+                    },
+                    "illumina-protein-prep": {
+                      "type": "integer"
+                    },
+                    "biognosys-truediscovery": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "nulisa",
+                    "nomic-omni",
+                    "seer-proteograph",
+                    "olink-explore-ht",
+                    "illumina-protein-prep",
+                    "biognosys-truediscovery"
+                  ],
+                  "additionalProperties": false
+                },
+                "tissue_rationale": {
+                  "type": "string"
+                },
+                "cell_culture": {
+                  "type": "object",
+                  "properties": {
+                    "nomic-omni": {
+                      "type": "integer"
+                    }
+                  },
+                  "required": [
+                    "nomic-omni"
+                  ],
+                  "additionalProperties": false
+                },
+                "cell_culture_rationale": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "tissue",
+                "tissue_rationale",
+                "cell_culture",
+                "cell_culture_rationale"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "base_by_sample_type",
+            "note_v3.0",
+            "per_platform_overrides"
+          ],
+          "additionalProperties": false
+        },
+        "protein_target_weight": {
+          "type": "object",
+          "properties": {
+            "value": {
+              "type": "integer"
+            },
+            "condition": {
+              "type": "string"
+            },
+            "hard_filter": {
+              "type": "string"
+            },
+            "simulation_coverage_note": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "value",
+            "condition",
+            "hard_filter",
+            "simulation_coverage_note"
+          ],
+          "additionalProperties": false
+        },
+        "hard_filters": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "condition": {
+                "type": "string"
+              },
+              "excludes": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "condition",
+              "excludes"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "calibration": {
+          "type": "object",
+          "properties": {
+            "total_weight": {
+              "type": "string"
+            },
+            "min_possible_raw": {
+              "type": "string"
+            },
+            "max_possible_raw": {
+              "type": "string"
+            },
+            "display_pct": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "total_weight",
+            "min_possible_raw",
+            "max_possible_raw",
+            "display_pct"
+          ],
+          "additionalProperties": false
+        },
+        "rounding_rule": {
+          "type": "object",
+          "properties": {
+            "spec": {
+              "type": "string"
+            },
+            "why_this_is_called_out": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "spec",
+            "why_this_is_called_out"
+          ],
+          "additionalProperties": false
+        },
+        "tie_band": {
+          "type": "integer"
+        },
+        "tie_band_note": {
+          "type": "string"
+        },
+        "win_statistics_definition": {
+          "type": "string"
+        },
+        "prevalence_weighting": {
+          "type": "object",
+          "properties": {
+            "rationale": {
+              "type": "string"
+            },
+            "goal_prevalence": {
+              "type": "object",
+              "properties": {
+                "discovery": {
+                  "type": "number"
+                },
+                "disease_char": {
+                  "type": "number"
+                },
+                "population": {
+                  "type": "number"
+                },
+                "drug_target": {
+                  "type": "number"
+                },
+                "validation": {
+                  "type": "number"
+                },
+                "pharmacoproteomics": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "discovery",
+                "disease_char",
+                "population",
+                "drug_target",
+                "validation",
+                "pharmacoproteomics"
+              ],
+              "additionalProperties": false
+            },
+            "sample_type_prevalence": {
+              "type": "object",
+              "properties": {
+                "plasma": {
+                  "type": "number"
+                },
+                "multiple": {
+                  "type": "number"
+                },
+                "serum": {
+                  "type": "number"
+                },
+                "csf": {
+                  "type": "number"
+                },
+                "tissue": {
+                  "type": "number"
+                },
+                "cell_culture": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "plasma",
+                "multiple",
+                "serum",
+                "csf",
+                "tissue",
+                "cell_culture"
+              ],
+              "additionalProperties": false
+            },
+            "study_size_prevalence": {
+              "type": "object",
+              "properties": {
+                "small": {
+                  "type": "number"
+                },
+                "medium": {
+                  "type": "number"
+                },
+                "large": {
+                  "type": "number"
+                },
+                "xlarge": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "small",
+                "medium",
+                "large",
+                "xlarge"
+              ],
+              "additionalProperties": false
+            },
+            "cns_focus_prevalence": {
+              "type": "number"
+            },
+            "longitudinal_prevalence": {
+              "type": "number"
+            },
+            "toggle_prevalence_note": {
+              "type": "string"
+            },
+            "source": {
+              "type": "string"
+            },
+            "scope_note": {
+              "type": "string"
+            },
+            "superseded_methodology": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "rationale",
+            "goal_prevalence",
+            "sample_type_prevalence",
+            "study_size_prevalence",
+            "cns_focus_prevalence",
+            "longitudinal_prevalence",
+            "toggle_prevalence_note",
+            "source",
+            "scope_note",
+            "superseded_methodology"
+          ],
+          "additionalProperties": false
+        },
+        "baseline_grid": {
+          "type": "object",
+          "properties": {
+            "description": {
+              "type": "string"
+            },
+            "n": {
+              "type": "string"
+            },
+            "outright_win_pct": {
+              "type": "object",
+              "properties": {
+                "seer-proteograph": {
+                  "type": "number"
+                },
+                "illumina-protein-prep": {
+                  "type": "number"
+                },
+                "nomic-omni": {
+                  "type": "number"
+                },
+                "nulisa": {
+                  "type": "number"
+                },
+                "olink-explore-ht": {
+                  "type": "number"
+                },
+                "biognosys-truediscovery": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "seer-proteograph",
+                "illumina-protein-prep",
+                "nomic-omni",
+                "nulisa",
+                "olink-explore-ht",
+                "biognosys-truediscovery"
+              ],
+              "additionalProperties": false
+            },
+            "co_recommended_pct": {
+              "type": "object",
+              "properties": {
+                "seer-proteograph": {
+                  "type": "number"
+                },
+                "illumina-protein-prep": {
+                  "type": "number"
+                },
+                "olink-explore-ht": {
+                  "type": "number"
+                },
+                "nomic-omni": {
+                  "type": "number"
+                },
+                "nulisa": {
+                  "type": "number"
+                },
+                "biognosys-truediscovery": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "seer-proteograph",
+                "illumina-protein-prep",
+                "olink-explore-ht",
+                "nomic-omni",
+                "nulisa",
+                "biognosys-truediscovery"
+              ],
+              "additionalProperties": false
+            },
+            "tie_group_size_distribution": {
+              "type": "object",
+              "properties": {
+                "1_outright_win": {
+                  "type": "number"
+                },
+                "2_way_tie": {
+                  "type": "number"
+                },
+                "3_way_tie": {
+                  "type": "number"
+                },
+                "4_way_tie": {
+                  "type": "number"
+                },
+                "5_way_tie": {
+                  "type": "number"
+                },
+                "6_way_tie": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "1_outright_win",
+                "2_way_tie",
+                "3_way_tie",
+                "4_way_tie",
+                "5_way_tie",
+                "6_way_tie"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "description",
+            "n",
+            "outright_win_pct",
+            "co_recommended_pct",
+            "tie_group_size_distribution"
+          ],
+          "additionalProperties": false
+        },
+        "baseline_grid_uniform_legacy": {
+          "type": "object",
+          "properties": {
+            "description": {
+              "type": "string"
+            },
+            "n": {
+              "type": "integer"
+            },
+            "outright_win_pct": {
+              "type": "object",
+              "properties": {
+                "nomic-omni": {
+                  "type": "number"
+                },
+                "illumina-protein-prep": {
+                  "type": "number"
+                },
+                "seer-proteograph": {
+                  "type": "number"
+                },
+                "nulisa": {
+                  "type": "number"
+                },
+                "biognosys-truediscovery": {
+                  "type": "number"
+                },
+                "olink-explore-ht": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "nomic-omni",
+                "illumina-protein-prep",
+                "seer-proteograph",
+                "nulisa",
+                "biognosys-truediscovery",
+                "olink-explore-ht"
+              ],
+              "additionalProperties": false
+            },
+            "co_recommended_pct": {
+              "type": "object",
+              "properties": {
+                "illumina-protein-prep": {
+                  "type": "number"
+                },
+                "seer-proteograph": {
+                  "type": "number"
+                },
+                "olink-explore-ht": {
+                  "type": "number"
+                },
+                "nomic-omni": {
+                  "type": "number"
+                },
+                "biognosys-truediscovery": {
+                  "type": "number"
+                },
+                "nulisa": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "illumina-protein-prep",
+                "seer-proteograph",
+                "olink-explore-ht",
+                "nomic-omni",
+                "biognosys-truediscovery",
+                "nulisa"
+              ],
+              "additionalProperties": false
+            },
+            "tie_group_size_distribution": {
+              "type": "object",
+              "properties": {
+                "1_outright_win": {
+                  "type": "number"
+                },
+                "2_way_tie": {
+                  "type": "number"
+                },
+                "3_way_tie": {
+                  "type": "number"
+                },
+                "4_way_tie": {
+                  "type": "number"
+                },
+                "5_way_tie": {
+                  "type": "number"
+                },
+                "6_way_tie": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "1_outright_win",
+                "2_way_tie",
+                "3_way_tie",
+                "4_way_tie",
+                "5_way_tie",
+                "6_way_tie"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "description",
+            "n",
+            "outright_win_pct",
+            "co_recommended_pct",
+            "tie_group_size_distribution"
+          ],
+          "additionalProperties": false
+        },
+        "secondary_check": {
+          "type": "object",
+          "properties": {
+            "description": {
+              "type": "string"
+            },
+            "n": {
+              "type": "integer"
+            },
+            "outright_win_pct": {
+              "type": "object",
+              "properties": {
+                "seer-proteograph": {
+                  "type": "number"
+                },
+                "nomic-omni": {
+                  "type": "number"
+                },
+                "illumina-protein-prep": {
+                  "type": "number"
+                },
+                "olink-explore-ht": {
+                  "type": "number"
+                },
+                "nulisa": {
+                  "type": "number"
+                },
+                "biognosys-truediscovery": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "seer-proteograph",
+                "nomic-omni",
+                "illumina-protein-prep",
+                "olink-explore-ht",
+                "nulisa",
+                "biognosys-truediscovery"
+              ],
+              "additionalProperties": false
+            },
+            "co_recommended_pct": {
+              "type": "object",
+              "properties": {
+                "seer-proteograph": {
+                  "type": "number"
+                },
+                "olink-explore-ht": {
+                  "type": "number"
+                },
+                "nomic-omni": {
+                  "type": "number"
+                },
+                "illumina-protein-prep": {
+                  "type": "number"
+                },
+                "nulisa": {
+                  "type": "number"
+                },
+                "biognosys-truediscovery": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "seer-proteograph",
+                "olink-explore-ht",
+                "nomic-omni",
+                "illumina-protein-prep",
+                "nulisa",
+                "biognosys-truediscovery"
+              ],
+              "additionalProperties": false
+            },
+            "tie_group_size_distribution": {
+              "type": "object",
+              "properties": {
+                "1_outright_win": {
+                  "type": "number"
+                },
+                "2_way_tie": {
+                  "type": "number"
+                },
+                "3_way_tie": {
+                  "type": "number"
+                },
+                "4_way_tie": {
+                  "type": "number"
+                },
+                "5_way_tie": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "1_outright_win",
+                "2_way_tie",
+                "3_way_tie",
+                "4_way_tie",
+                "5_way_tie"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "description",
+            "n",
+            "outright_win_pct",
+            "co_recommended_pct",
+            "tie_group_size_distribution"
+          ],
+          "additionalProperties": false
+        },
+        "real_world": {
+          "type": "object",
+          "properties": {
+            "description": {
+              "type": "string"
+            },
+            "n_downloaded": {
+              "type": "integer"
+            },
+            "n_test_excluded": {
+              "type": "integer"
+            },
+            "n_fully_hard_filtered": {
+              "type": "integer"
+            },
+            "n_scored": {
+              "type": "integer"
+            },
+            "outright_win_pct": {
+              "type": "object",
+              "properties": {
+                "nomic-omni": {
+                  "type": "number"
+                },
+                "seer-proteograph": {
+                  "type": "number"
+                },
+                "olink-explore-ht": {
+                  "type": "integer"
+                },
+                "illumina-protein-prep": {
+                  "type": "integer"
+                },
+                "nulisa": {
+                  "type": "integer"
+                },
+                "biognosys-truediscovery": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "nomic-omni",
+                "seer-proteograph",
+                "olink-explore-ht",
+                "illumina-protein-prep",
+                "nulisa",
+                "biognosys-truediscovery"
+              ],
+              "additionalProperties": false
+            },
+            "co_recommended_pct": {
+              "type": "object",
+              "properties": {
+                "seer-proteograph": {
+                  "type": "number"
+                },
+                "illumina-protein-prep": {
+                  "type": "number"
+                },
+                "olink-explore-ht": {
+                  "type": "number"
+                },
+                "nomic-omni": {
+                  "type": "number"
+                },
+                "biognosys-truediscovery": {
+                  "type": "number"
+                },
+                "nulisa": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "seer-proteograph",
+                "illumina-protein-prep",
+                "olink-explore-ht",
+                "nomic-omni",
+                "biognosys-truediscovery",
+                "nulisa"
+              ],
+              "additionalProperties": false
+            },
+            "tie_group_size_distribution": {
+              "type": "object",
+              "properties": {
+                "1_outright_win": {
+                  "type": "number"
+                },
+                "2_way_tie": {
+                  "type": "number"
+                },
+                "3_way_tie": {
+                  "type": "number"
+                },
+                "4_way_tie": {
+                  "type": "number"
+                },
+                "5_way_tie": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "1_outright_win",
+                "2_way_tie",
+                "3_way_tie",
+                "4_way_tie",
+                "5_way_tie"
+              ],
+              "additionalProperties": false
+            },
+            "anonymized_data_file": {
+              "type": "string"
+            },
+            "note": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "description",
+            "n_downloaded",
+            "n_test_excluded",
+            "n_fully_hard_filtered",
+            "n_scored",
+            "outright_win_pct",
+            "co_recommended_pct",
+            "tie_group_size_distribution",
+            "anonymized_data_file",
+            "note"
+          ],
+          "additionalProperties": false
+        },
+        "known_limitations": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "platforms": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "display_name": {
+                "type": "string"
+              },
+              "scores": {
+                "type": "object",
+                "properties": {
+                  "proteome_coverage": {
+                    "type": "integer"
+                  },
+                  "precision": {
+                    "type": "integer"
+                  },
+                  "specificity": {
+                    "type": "integer"
+                  },
+                  "sensitivity": {
+                    "type": "integer"
+                  },
+                  "cost_efficiency": {
+                    "type": "integer"
+                  },
+                  "throughput": {
+                    "type": "integer"
+                  },
+                  "quantification_type": {
+                    "type": "integer"
+                  },
+                  "sample_flexibility": {
+                    "type": "integer"
+                  },
+                  "evidence_depth": {
+                    "type": "integer"
+                  },
+                  "pqtl_accuracy": {
+                    "type": "integer"
+                  }
+                },
+                "required": [
+                  "proteome_coverage",
+                  "precision",
+                  "specificity",
+                  "sensitivity",
+                  "cost_efficiency",
+                  "throughput",
+                  "quantification_type",
+                  "sample_flexibility",
+                  "evidence_depth",
+                  "pqtl_accuracy"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "display_name",
+              "scores"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "scores_source": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "engine_version",
+        "generated_from",
+        "source_locations",
+        "platform_ids",
+        "ptm_capable",
+        "absolute_quant_capable",
+        "cost_efficiency_bands",
+        "slider_dimensions",
+        "goals",
+        "sample_types",
+        "study_sizes",
+        "weight_range",
+        "goal_adjustments",
+        "size_boost",
+        "context_boosts",
+        "context_boost_provenance_note",
+        "effective_weight_formula",
+        "priority_miss_penalty",
+        "quantification_weight",
+        "sample_flexibility_weight",
+        "protein_target_weight",
+        "hard_filters",
+        "calibration",
+        "rounding_rule",
+        "tie_band",
+        "tie_band_note",
+        "win_statistics_definition",
+        "prevalence_weighting",
+        "baseline_grid",
+        "baseline_grid_uniform_legacy",
+        "secondary_check",
+        "real_world",
+        "known_limitations",
+        "platforms",
+        "scores_source"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

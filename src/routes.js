@@ -12,6 +12,8 @@ export const ROUTES = [
   { tab: 'evidence',        path: '/evidence' },
   { tab: 'methods',         path: '/methods' },
   { tab: 'reproducibility', path: '/reproducibility' },
+  // Linked from the footer and Reproducibility; not a nav tab.
+  { tab: 'data',            path: '/data' },
 ]
 
 export const NOT_FOUND_TAB = 'notfound'

@@ -1,0 +1,326 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aptatlas.org/data/evidence.schema.json",
+  "title": "Evidence base",
+  "description": "Studies and their key findings as claim objects.",
+  "type": "object",
+  "required": [
+    "schema",
+    "name",
+    "title",
+    "version",
+    "last_updated",
+    "licence",
+    "licence_url",
+    "citation",
+    "archive_doi",
+    "third_party",
+    "data"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "schema": {
+      "type": "string",
+      "description": "URL of this schema for this release"
+    },
+    "name": {
+      "const": "evidence"
+    },
+    "title": {
+      "type": "string"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+$",
+      "description": "APT release"
+    },
+    "last_updated": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+    },
+    "licence": {
+      "const": "CC-BY-4.0"
+    },
+    "licence_url": {
+      "type": "string"
+    },
+    "citation": {
+      "type": "string"
+    },
+    "archive_doi": {
+      "type": "string"
+    },
+    "third_party": {
+      "type": "array",
+      "description": "Sources this file draws on that carry their own licence.",
+      "items": {
+        "type": "object",
+        "required": [
+          "name",
+          "licence",
+          "url",
+          "relationship",
+          "note"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "licence": {
+            "type": "string",
+            "description": "SPDX identifier"
+          },
+          "url": {
+            "type": "string"
+          },
+          "relationship": {
+            "enum": [
+              "source",
+              "derived"
+            ]
+          },
+          "note": {
+            "type": "string"
+          },
+          "fields": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "JSONPath, relative to data, of fields derived from this source"
+          },
+          "fields_derived_in_part": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "JSONPath, relative to data, of fields computed partly from the fields above"
+          }
+        }
+      }
+    },
+    "data": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z-]+-\\d{4}$",
+            "description": "First-author-year"
+          },
+          "shortCitation": {
+            "type": "string"
+          },
+          "fullCitation": {
+            "type": "string"
+          },
+          "year": {
+            "type": "integer"
+          },
+          "journal": {
+            "type": "string"
+          },
+          "platformsCompared": {
+            "type": "array",
+            "items": {
+              "enum": [
+                "olink-explore-ht",
+                "illumina-protein-prep",
+                "nulisa",
+                "nomic-omni",
+                "seer-proteograph",
+                "biognosys-truediscovery",
+                "other-ms"
+              ]
+            }
+          },
+          "sampleSize": {
+            "type": "string"
+          },
+          "participants": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "participantsMultiPlatform": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "keyFindings": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "pattern": "^[a-z-]+-\\d{4}-\\d+$",
+                  "description": "Study id plus the claim number"
+                },
+                "text": {
+                  "type": "string",
+                  "description": "The claim as shown on the Evidence Base page"
+                },
+                "platforms": {
+                  "type": "array",
+                  "minItems": 1,
+                  "items": {
+                    "enum": [
+                      "olink-explore-ht",
+                      "illumina-protein-prep",
+                      "nulisa",
+                      "nomic-omni",
+                      "seer-proteograph",
+                      "biognosys-truediscovery",
+                      "other-ms"
+                    ]
+                  },
+                  "description": "Platforms the claim concerns. A tag covers the platform family, including older products; the text names the version where it matters."
+                },
+                "topics": {
+                  "type": "array",
+                  "minItems": 1,
+                  "items": {
+                    "enum": [
+                      "study_design",
+                      "precision",
+                      "correlation",
+                      "pqtl",
+                      "specificity",
+                      "sensitivity",
+                      "coverage",
+                      "stability",
+                      "disease_association",
+                      "ancestry",
+                      "throughput",
+                      "cost",
+                      "quantification",
+                      "cns",
+                      "catalogue_source"
+                    ]
+                  }
+                },
+                "figures": {
+                  "type": "array",
+                  "description": "Numbers the claim states. Each value appears literally in text.",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "value",
+                      "about"
+                    ],
+                    "additionalProperties": false,
+                    "properties": {
+                      "value": {
+                        "type": "string"
+                      },
+                      "about": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "source": {
+                  "type": "object",
+                  "required": [
+                    "location",
+                    "version",
+                    "basis"
+                  ],
+                  "additionalProperties": false,
+                  "properties": {
+                    "location": {
+                      "type": "string",
+                      "description": "Where in the paper, at section level. Location only, no quoted text."
+                    },
+                    "version": {
+                      "enum": [
+                        "published",
+                        "preprint",
+                        "unverified"
+                      ],
+                      "description": "unverified means the value has not been confirmed against the published version"
+                    },
+                    "basis": {
+                      "enum": [
+                        "full_text",
+                        "abstract",
+                        "abstract_and_preprint"
+                      ],
+                      "description": "What was read to check the claim"
+                    }
+                  }
+                }
+              },
+              "required": [
+                "id",
+                "text",
+                "platforms",
+                "topics",
+                "figures",
+                "source"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "url": {
+            "type": "string"
+          },
+          "doi": {
+            "type": "string",
+            "pattern": "^10\\."
+          },
+          "landmark": {
+            "type": "boolean"
+          },
+          "foundational": {
+            "type": "boolean"
+          },
+          "vendorAuthorship": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "disclosureNote": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "note": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "A note on the study, such as a differing count reported elsewhere"
+          }
+        },
+        "required": [
+          "id",
+          "shortCitation",
+          "fullCitation",
+          "year",
+          "journal",
+          "platformsCompared",
+          "sampleSize",
+          "participants",
+          "participantsMultiPlatform",
+          "keyFindings",
+          "url",
+          "doi",
+          "landmark",
+          "foundational",
+          "vendorAuthorship",
+          "disclosureNote",
+          "note"
+        ],
+        "additionalProperties": false
+      }
+    }
+  }
+}

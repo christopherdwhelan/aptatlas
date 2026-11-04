@@ -18,7 +18,7 @@ matters: it changes real classifications, not just cosmetic display digits.
 
 IMPORTANT - what the two platform-level statistics mean. For each scenario, look
 at every eligible platform within TIE_BAND points of the top displayPct (the
-"tie group" for that scenario - this is exactly HelpMeChoose.jsx's own
+"tie group" for that scenario - this is exactly src/engine/choose.js's own
 isTopTier condition). Two mutually exclusive things can happen to a platform in
 that tie group, and every scenario resolves to exactly one of them for every
 platform that reaches it:

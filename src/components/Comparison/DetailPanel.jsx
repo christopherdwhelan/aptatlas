@@ -324,7 +324,7 @@ export default function DetailPanel({ platformId, onClose }) {
                       {study.keyFindings.slice(0, 3).map((f, i) => (
                         <li key={i} className="flex items-start gap-1.5 text-xs" style={{ color: '#52504a', fontWeight: 400 }}>
                           <span className="mt-1.5 w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: platform.color }} />
-                          {f}
+                          {f.text}
                         </li>
                       ))}
                     </ul>
